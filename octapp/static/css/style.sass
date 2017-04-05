@@ -62,6 +62,8 @@ h1, h2, h3, h4, h5, h6
 
 
 /*============    ШАПКА    ===========*/
+$avatar_width: 80px
+$avatar_height: 80px
 header
   border-radius: 0 0 10px 10px
   border: 2px solid gray
@@ -69,11 +71,13 @@ header
   background-color: ivory
   .row
     padding: 5px
+  .header_element
+    margin: 0
   .header_element:not(:last-of-type)
     border-right: 1px dashed gray
-  .header_element:nth-of-type(1) 
+  .header_element:nth-of-type(1)
     h2
-      border-bottom: 1px solid gray
+      border-bottom: 1px dashed #888888
     p
       font-size: 120%
 
@@ -95,16 +99,21 @@ header
 
   .header_element:nth-of-type(3)
     img
-      width: 80px
-      height: 80px
+      width: $avatar_width
+      height: $avatar_height
       margin: 0
-    .table_cell
-      vertical-align: top
-      .btn
-        width: auto
-
+    .user_container
+      width: auto
+      .avatar_container
+        width: $avatar_width
       
   .header_element:last-of-type
+    .table
+      border-spacing: 5px
+    .table_cell
+      input
+        width: 100%
+      width: 50%
     .btn
       width: 100%
 
