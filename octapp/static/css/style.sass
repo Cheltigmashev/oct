@@ -62,26 +62,31 @@ h1, h2, h3, h4, h5, h6
 
 
 /*============    ШАПКА    ===========*/
-$avatar_width: 80px
-$avatar_height: 80px
+$avatar_width: 90px
+$avatar_height: 90px
 header
   border-radius: 0 0 10px 10px
   border: 2px solid gray
   box-shadow: 2px 4px 8px 2px #777777
   background-color: ivory
   .row
-    padding: 5px
+    padding: 0
   .header_element
     margin: 0
-  .header_element:not(:last-of-type)
+  .header_element:not(:last-of-type):not(:first-of-type)
     border-right: 1px dashed gray
+
   .header_element:nth-of-type(1)
+    align-self: center
     h2
       border-bottom: 1px dashed #888888
     p
       font-size: 120%
 
   .header_element:nth-of-type(2)
+    border-left: 1px dashed gray
+    h3
+      margin: 5px 0 0 0
     input[type=search]
       width: 100%
       min-width: 200px
@@ -98,6 +103,7 @@ header
         width: 6%
 
   .header_element:nth-of-type(3)
+    align-self: center
     img
       width: $avatar_width
       height: $avatar_height
@@ -108,14 +114,23 @@ header
         width: $avatar_width
       
   .header_element:last-of-type
+    align-self: center
     .table
-      border-spacing: 5px
+      margin: 0
+      border-spacing: 2px
     .table_cell
       input
         width: 100%
+      label
+        margin-top: 0
+        margin-bottom: 0
+    .table_cell:nth-of-type(1)
+      width: 50%
+    .table_cell:nth-of-type(2)
       width: 50%
     .btn
       width: 100%
+      margin: 0
 
 /*============    КОНТЕНТ    ===========*/
 .test-list

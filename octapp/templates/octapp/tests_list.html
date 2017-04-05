@@ -55,7 +55,7 @@
                 </form>
               </div>
 
-              <div class="col-md-3 header_element">
+              <div class="col-md-2 header_element">
                 
                     {% if user.is_authenticated %}
                     <div class="center-block text-center user_container">
@@ -72,21 +72,26 @@
                 
               </div>
 
-              <div class="col-md-3 header_element">
-                <div class="table">
+              <div class="col-md-4 header_element">
+                <div class="table center-block">
                 <div class="table_row">
                     {% if user.is_authenticated %}
                     <div class="table_cell">
                     <a href="#" class="btn btn-default" role="button">Ваши тесты</a>
+                    </div>
+                    <div class="table_cell">
                     <a href="#" class="btn btn-default">Новый тест</a>
                     </div>
-
+                </div>
+                <div class="table_row">
                     <div class="table_cell">
                     <a href="#" class="btn btn-default" role="button">
                         Ваши результаты</a>
+                    </div>
+                    <div class="table_cell">
                     <a href="#" class="btn btn-default">Выйти</a>
                     </div>
-
+                </div>
                     {% else %}
                     <div class="table_cell">
                         <label for="username">Логин:</label>
