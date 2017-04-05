@@ -1,0 +1,135 @@
+@charset "utf-8"
+
+/*============    СБРОС СВОЙСТВ    ===========*/
+*
+  margin: 0
+  padding: 0
+  color: black
+  text-decoration: none
+  list-style: none
+
+a:hover, a:active, a:visited, a:link
+  text-decoration: none
+  color: black
+
+/*============    ШРИФТЫ    ===========*/
+* 
+  font-family: 'Neucha', sans-serif
+
+h1, h2, h3, h4, h5, h6, .title-font
+  font-family: 'Neucha', serif
+
+.mono-font
+  font-family: 'Roboto Mono', monospace
+
+/*============    ПРИМЕСИ    ===========*/
+@mixin abs_decor($radius)
+  position: absolute
+  top: 0
+  left: 0
+
+@mixin color_of_background($color)
+  background-color: $color
+
+@mixin simple_border($color)
+  border: 2px solid $color
+
+/*============    ЗАГОЛОВКИ    ===========*/
+h1, h2, h3, h4, h5, h6
+  text-align: center
+  margin-top: 2px
+
+/*============    ДЛЯ РАЗНЫХ ЭЛЕМЕНТОВ    ===========*/
+.table
+  display: table
+  border-spacing: 0
+  .table_row
+    display: table-row
+  .table_cell
+    display: table-cell
+
+.underscore
+  text-decoration: underline
+
+.flex
+  display: flex
+  flex-wrap: wrap
+
+/*============    КНОПКИ    ===========*/
+.btn
+  padding: 5px
+  margin: 2px
+
+
+/*============    ШАПКА    ===========*/
+header
+  border-radius: 0 0 10px 10px
+  border: 2px solid gray
+  box-shadow: 2px 4px 8px 2px #777777
+  background-color: ivory
+  .row
+    padding: 5px
+  .header_element:not(:last-of-type)
+    border-right: 1px dashed gray
+  .header_element:nth-of-type(1) 
+    h2
+      border-bottom: 1px solid gray
+    p
+      font-size: 120%
+
+  .header_element:nth-of-type(2)
+    input[type=search]
+      width: 100%
+      min-width: 200px
+    .search_buttons_div
+      padding: 5px
+      min-width: 200px
+      .table_cell:first-child, .table_cell:last-child
+        color: red
+        width: 42%
+        margin: 2px
+        .btn
+          width: 100%
+      .empty_gap_cell
+        width: 6%
+
+  .header_element:nth-of-type(3)
+    img
+      width: 80px
+      height: 80px
+      margin: 0
+    .table_cell
+      vertical-align: top
+      .btn
+        width: auto
+
+      
+  .header_element:last-of-type
+    .btn
+      width: 100%
+
+/*============    КОНТЕНТ    ===========*/
+.test-list
+  .test
+    border: 2px solid orange
+    border-radius: 10px
+
+/*============    ПОДВАЛ    ===========*/
+
+/*============    	ВСПЛЫВАЮЩИЕ ОКНА    ===========*/
+
+
+/*============    	АДАПТИВ    ===========*/
+
+@media(min-width:0px) and (max-width:320px)
+
+@media(min-width:321px) and (max-width:480px)
+
+@media(min-width:481px) and (max-width:768px)
+
+@media(min-width:769px) and (max-width:992px)
+
+@media(min-width:993px) and (max-width:1200px)
+
+
+
