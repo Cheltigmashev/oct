@@ -51,6 +51,8 @@ h1, h2, h3, h4, h5, h6
     display: table-cell
   .wide_cell
     width: auto
+.inline_block
+  display: inline-block
 
 .underscore
   text-decoration: underline
@@ -69,7 +71,6 @@ h1, h2, h3, h4, h5, h6
 $avatar_width: 90px
 $avatar_height: 90px
 header
-
   border-radius: 0 0 10px 10px
   border: 2px solid gray
   box-shadow: 2px 4px 8px 2px #777777
@@ -91,10 +92,8 @@ header
       margin: 5px 0 0 0
     input[type=search]
       width: 100%
-
     .search_buttons_div
-      padding: 5px
-
+      padding: 2px
       .table_cell:first-child, .table_cell:last-child
         color: red
         width: 42%
@@ -139,6 +138,21 @@ header
       width: 100%
       margin: 0
 
+/*============    ПОДВАЛ    ===========*/
+
+footer
+  position: absolute
+  bottom: 0
+  left: 0
+  border-radius: 10px 10px 0 0
+  border: 2px solid gray
+  box-shadow: 2px 4px 8px 2px #777777
+  background-color: ivory
+  width: 100%
+  .badge
+    cursor: default
+    font-size: 16px
+
 /*============    КОНТЕНТ    ===========*/
 .test-list
   .test
@@ -152,7 +166,7 @@ header
 
 /*============    	АДАПТИВ    ===========*/
 
-@media(min-width:0px) and (max-width:768px)
+@media(min-width:0px) and (max-width:767px)
   .header_element
     border-style: none
   .header_element_2
@@ -160,7 +174,7 @@ header
   .header_element_3
     border-right: 1px dashed gray
 
-@media(min-width:769px) and (max-width:992px)
+@media(min-width:768px) and (max-width:991px)
   .header_element
     border-style: none
   .header_element_1
@@ -171,7 +185,7 @@ header
   .header_element_3
     border-right: 1px dashed gray
 
-@media(min-width:993px) and (max-width:1200px)
+@media(min-width:992px) and (max-width:1199px)
   .header
     position: fixed
   .header_element
