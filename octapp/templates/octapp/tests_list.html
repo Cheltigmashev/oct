@@ -40,6 +40,7 @@
               <div class="col-md-3 header_element">
                 <h3>Поиск тестов</h3>
                 <form action="POST">
+                {% csrf_token %}
                     <input name="search" type="search"><br>
                     <div class="search_buttons_div table center-block">
                         <div class="table_row">
@@ -74,45 +75,163 @@
 
               <div class="col-md-4 header_element">
                 <div class="table center-block">
-                <div class="table_row">
-                    {% if user.is_authenticated %}
-                    <div class="table_cell">
-                    <a href="#" class="btn btn-default" role="button">Ваши тесты</a>
+                    <div class="table_row">
+                        {% if user.is_authenticated %}
+                        <div class="table_cell">
+                            <a href="#" class="btn btn-default" role="button">Ваши тесты</a>
+                        </div>
+                        <div class="table_cell">
+                            <a href="#" class="btn btn-default">Новый тест</a>
+                        </div>
                     </div>
-                    <div class="table_cell">
-                    <a href="#" class="btn btn-default">Новый тест</a>
-                    </div>
-                </div>
-                <div class="table_row">
-                    <div class="table_cell">
-                    <a href="#" class="btn btn-default" role="button">
-                        Ваши результаты</a>
-                    </div>
-                    <div class="table_cell">
-                    <a href="#" class="btn btn-default">Выйти</a>
-                    </div>
-                </div>
-                    {% else %}
-                    <div class="table_cell">
-                        <label for="username">Логин:</label>
-                        <input name="username" type="text">
-                    </div>
-                    <div class="table_cell">
-                        <label for="password">Пароль:</label>
-                        <input name="password" type="password">
+                    <div class="table_row">
+                        <div class="table_cell">
+                        <a href="#" class="btn btn-default" role="button">
+                            Ваши результаты</a>
+                        </div>
+                        <div class="table_cell">
+                        <a href="#" class="btn btn-default">Выйти</a>
+                        </div>
                     </div>
                 </div>
-                <div class="table_row">
-                    <div class="table_cell"><a href="#" class="btn btn-default">Войти</a></div>
-                    <div class="table_cell"><a href="#" class="btn btn-default">Регистрация</a></div>
-                    {% endif %}
-                </div>
-                </div>
-                </a>
+                <a href="#" class="btn btn-default">Пользователи системы</a>
+                        {% else %}
+                    <div class="table center-block">
+                        <form method="POST">
+                            <div class="table_row">
+                                <div class="table_cell">
+                                    <label for="username">Логин:</label>
+                                    <input name="username" type="text">
+                                </div>
+                                <div class="table_cell">
+                                    <label for="password">Пароль:</label>
+                                    <input name="password" type="password">
+                                </div>
+                            </div>
+                            <div class="table_row">
+                                {% csrf_token %}
+                                    <div class="table_cell"><a href="#" class="btn btn-default">Войти</a></div>
+                                    <div class="table_cell"><a href="#" class="btn btn-default">Регистрация</a></div>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
               </div>
             </div>
           </div>
         </header>
+
+
+
+
+
+        <div class="container" style="background-color: gray;">
+            <div class="row flex">
+                <col-md-3 style="background-color: blue; border: 2px solid yellow">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">OnlineCustomTesting</h2>
+                    <p>MD</p>
+                </a>
+                    </div>
+                </col-md-3>
+                <col-md-3 style="background-color: blue; border: 2px solid yellow">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">OnlineCustomTesting</h2>
+                    <p>MD</p>
+                </a>
+                    </div>
+                </col-md-3>
+                <col-md-3 style="background-color: blue; border: 2px solid yellow">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">OnlineCustomTesting</h2>
+                    <p>MD</p>
+                </a>
+                    </div>
+                </col-md-3>
+                <col-md-3 style="background-color: blue; border: 2px solid yellow">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">OnlineCustomTesting</h2>
+                    <p>MD</p>
+                </a>
+                    </div>
+                </col-md-3>
+            </div>
+            <div class="row flex">
+                <col-lg-3 style="background-color: red; border: 2px solid black">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">OnlineCustomTesting</h2>
+                    <p>LG</p>
+                </a>
+                    </div>
+                </col-lg-3>
+                <col-lg-3 style="background-color: red; border: 2px solid black">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">OnlineCustomTesting</h2>
+                    <p>LG</p>
+                </a>
+                    </div>
+                </col-lg-3>
+                <col-lg-3 style="background-color: red; border: 2px solid black">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">OnlineCustomTesting</h2>
+                    <p>LG</p>
+                </a>
+                    </div>
+                </col-lg-3>
+                <col-lg-3 style="background-color: red; border: 2px solid black">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">OnlineCustomTesting</h2>
+                    <p>LG</p>
+                </a>
+                    </div>
+                </col-lg-3>
+            </div>
+
+
+
+            <div class="row flex">
+                <col-xs-3 style="background-color: blue; border: 2px solid yellow">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">XS</h2>
+                    <p>XS</p>
+                </a>
+                    </div>
+                </col-xs-3>
+                <col-xs-3 style="background-color: blue; border: 2px solid yellow">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">XS</h2>
+                    <p>XS</p>
+                </a>
+                    </div>
+                </col-xs-3>
+                <col-xs-3 style="background-color: blue; border: 2px solid yellow">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">XS</h2>
+                    <p>XS</p>
+                </a>
+                    </div>
+                </col-xs-3>
+                <col-xs-3 style="background-color: blue; border: 2px solid yellow">
+                    <div class="center-block text-center user_container">
+                        <a href="{% url 'tests_list' %}">
+                    <h2 class="text-left">XS</h2>
+                    <p>XS</p>
+                </a>
+                    </div>
+                </col-xs-3>
+            </div>
+        </div>
 
 
         <div class="content container">
@@ -121,6 +240,8 @@
                 {% endblock %}
             </div>
         </div>
+
+
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

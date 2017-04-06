@@ -47,6 +47,8 @@ h1, h2, h3, h4, h5, h6
     display: table-row
   .table_cell
     display: table-cell
+  .wide_cell
+    width: auto
 
 .underscore
   text-decoration: underline
@@ -124,9 +126,9 @@ header
       label
         margin-top: 0
         margin-bottom: 0
-    .table_cell:nth-of-type(1)
+    .table_cell:nth-of-type(1):not(:only-of-type)
       width: 50%
-    .table_cell:nth-of-type(2)
+    .table_cell:nth-of-type(2):not(:only-of-type)
       width: 50%
     .btn
       width: 100%
