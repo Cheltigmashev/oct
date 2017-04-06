@@ -30,53 +30,54 @@
           <div class="container">
             <div class="row flex">
 
-              <div class="col-md-3 header_element">
+              <div class="col-md-3 col-sm-6 header_element hidden-xs header_element_1">
                 <a href="{% url 'tests_list' %}">
                     <h2 class="text-left">OnlineCustomTesting</h2>
                     <p>Открытая онлайн система пользовательских тестов</p>
                 </a>
               </div>
 
-              <div class="col-md-3 header_element">
+              <div class="col-md-3 col-sm-6 col-xs-12 header_element header_element_2">
                 <h3>Поиск тестов</h3>
-                <form action="POST">
-                {% csrf_token %}
+                <form name="search_form" action="POST">
+{% csrf_token %}
                     <input name="search" type="search"><br>
                     <div class="search_buttons_div table center-block">
                         <div class="table_row">
                             <div class="table_cell">
-                                <button type="submit" class="btn btn-sm btn-default" role=submit>Искать в именах</button>
+                                <button type="submit" class="btn btn-default" role=submit>Искать в именах</button>
                             </div>
                             <div class="empty_gap_cell table_cell"></div>
                             <div class="table_cell">
-                                <button type="submit" class="btn btn-sm btn-default" role=submit>Искать в вопросах</button>
+                                <button type="submit" class="btn btn-default" role=submit>Искать в вопросах</button>
                             </div>
                         </div>
                     </div>
                 </form>
               </div>
 
-              <div class="col-md-2 header_element">
+              <div class="col-md-2 col-sm-6 col-xs-6 header_element header_element_3">
                 
-                    {% if user.is_authenticated %}
+{% if user.is_authenticated %}
                     <div class="center-block text-center user_container">
-                        <span class="">Пользователь: <br>{{ user.username }}</span>
+                        <small><span>Пользователь: {{ user.username }}</span></small>
                         <div class="avatar_container center-block">
                             <img class="img-thumbnail thumbnail" src="../../static/img/default_avatar.png">
                         </div>
                     </div>
-                    {% else %}
+{% else %}
 
                     <small><p>Вы в гостевом режиме.<br>Зарегистрируйтесь и войдите в систему для добавления тестов и просмотра статистики.</p></small>
 
-                    {% endif %}
+{% endif %}
                 
               </div>
 
-              <div class="col-md-4 header_element">
+              <div class="col-md-4 col-sm-6 col-xs-6 header_element header_element_4">
+                <div class="all_buttons_container">
                 <div class="table center-block">
                     <div class="table_row">
-                        {% if user.is_authenticated %}
+{% if user.is_authenticated %}
                         <div class="table_cell">
                             <a href="#" class="btn btn-default" role="button">Ваши тесты</a>
                         </div>
@@ -94,10 +95,11 @@
                         </div>
                     </div>
                 </div>
-                <a href="#" class="btn btn-default">Пользователи системы</a>
-                        {% else %}
+                <div class="system_users_button_container"><a href="#" class="btn btn-default">Пользователи системы</a></div>
+{% else %}
+                <form name="login_form" method="POST">
+{% csrf_token %}
                     <div class="table center-block">
-                        <form method="POST">
                             <div class="table_row">
                                 <div class="table_cell">
                                     <label for="username">Логин:</label>
@@ -109,125 +111,17 @@
                                 </div>
                             </div>
                             <div class="table_row">
-                                {% csrf_token %}
                                     <div class="table_cell"><a href="#" class="btn btn-default">Войти</a></div>
                                     <div class="table_cell"><a href="#" class="btn btn-default">Регистрация</a></div>
-                                {% endif %}
                             </div>
-                        </form>
+{% endif %}
                     </div>
+                 </form>
+                </div>
               </div>
-            </div>
+            </div> <!-- row flex end -->
           </div>
         </header>
-
-
-            <div class="row flex">
-                <col-md-3 style="background-color: blue; border: 2px solid yellow">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>MD</p>
-                </a>
-                    </div>
-                </col-md-3>
-                <col-md-3 style="background-color: blue; border: 2px solid yellow">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>MD</p>
-                </a>
-                    </div>
-                </col-md-3>
-                <col-md-3 style="background-color: blue; border: 2px solid yellow">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>MD</p>
-                </a>
-                    </div>
-                </col-md-3>
-                <col-md-3 style="background-color: blue; border: 2px solid yellow">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>MD</p>
-                </a>
-                    </div>
-                </col-md-3>
-            </div>
-            <div class="row flex">
-                <col-lg-3 style="background-color: red; border: 2px solid black">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>LG</p>
-                </a>
-                    </div>
-                </col-lg-3>
-                <col-lg-3 style="background-color: red; border: 2px solid black">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>LG</p>
-                </a>
-                    </div>
-                </col-lg-3>
-                <col-lg-3 style="background-color: red; border: 2px solid black">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>LG</p>
-                </a>
-                    </div>
-                </col-lg-3>
-                <col-lg-3 style="background-color: red; border: 2px solid black">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>LG</p>
-                </a>
-                    </div>
-                </col-lg-3>
-            </div>
-
-
-
-            <div class="row flex">
-                <col-xs-3 style="background-color: blue; border: 2px solid yellow">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>XS</p>
-                </a>
-                    </div>
-                </col-xs-3>
-                <col-xs-3 style="background-color: blue; border: 2px solid yellow">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>XS</p>
-                </a>
-                    </div>
-                </col-xs-3>
-                <col-xs-3 style="background-color: blue; border: 2px solid yellow">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>XS</p>
-                </a>
-                    </div>
-                </col-xs-3>
-                <col-xs-3 style="background-color: blue; border: 2px solid yellow">
-                    <div class="center-block text-center user_container">
-                        <a href="{% url 'tests_list' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>XS</p>
-                </a>
-                    </div>
-                </col-xs-3>
-            </div>
-
 
 
         <div class="content container">

@@ -42,6 +42,8 @@ h1, h2, h3, h4, h5, h6
 /*============    ДЛЯ РАЗНЫХ ЭЛЕМЕНТОВ    ===========*/
 .table
   display: table
+  margin: 0
+  padding: 0
   border-spacing: 0
   .table_row
     display: table-row
@@ -74,19 +76,15 @@ header
   .row
     padding: 0
   .header_element
+    padding: 0 4px
     margin: 0
-  .header_element:not(:last-of-type):not(:first-of-type)
-    border-right: 1px dashed gray
-
-  .header_element:nth-of-type(1)
-    align-self: center
+    // background-color: rgba(0, 0, 0, 0.1)
+  .header_element_1
     h2
-      border-bottom: 1px dashed #888888
+      margin-bottom: 2px
     p
-      font-size: 120%
-
-  .header_element:nth-of-type(2)
-    border-left: 1px dashed gray
+      font-size: 140%
+  .header_element_2
     h3
       margin: 5px 0 0 0
     input[type=search]
@@ -104,8 +102,7 @@ header
       .empty_gap_cell
         width: 6%
 
-  .header_element:nth-of-type(3)
-    align-self: center
+  .header_element_3
     img
       width: $avatar_width
       height: $avatar_height
@@ -115,9 +112,14 @@ header
       .avatar_container
         width: $avatar_width
       
-  .header_element:last-of-type
-    align-self: center
+  .header_element_4
+    .all_buttons_container
+      padding: 2px
+      .system_users_button_container
+        margin: 2px
+        margin-top: 0
     .table
+      background-color: ivory
       margin: 0
       border-spacing: 2px
     .table_cell
@@ -126,9 +128,9 @@ header
       label
         margin-top: 0
         margin-bottom: 0
-    .table_cell:nth-of-type(1):not(:only-of-type)
+    .table_cell:nth-of-type(1)
       width: 50%
-    .table_cell:nth-of-type(2):not(:only-of-type)
+    .table_cell:nth-of-type(2)
       width: 50%
     .btn
       width: 100%
@@ -147,15 +149,37 @@ header
 
 /*============    	АДАПТИВ    ===========*/
 
-@media(min-width:0px) and (max-width:320px)
-
-@media(min-width:321px) and (max-width:480px)
-
-@media(min-width:481px) and (max-width:768px)
+@media(min-width:0px) and (max-width:768px)
+  .header_element
+    border-style: none
+  .header_element_2
+    border-bottom: 1px dashed gray
+  .header_element_3
+    border-right: 1px dashed gray
 
 @media(min-width:769px) and (max-width:992px)
+  .header_element
+    border-style: none
+  .header_element_1
+    border-bottom: 1px dashed gray
+    border-right: 1px dashed gray
+  .header_element_2
+    border-bottom: 1px dashed gray
+  .header_element_3
+    border-right: 1px dashed gray
 
 @media(min-width:993px) and (max-width:1200px)
+  .header
+    position: fixed
+  .header_element
+    border-style: none
+  .header_element:not(:last-of-type)
+    border-right: 1px dashed gray
 
-
-
+@media(min-width:1200px)
+  .header
+    position: fixed
+  .header_element
+    border-style: none
+  .header_element:not(:last-of-type)
+    border-right: 1px dashed gray
