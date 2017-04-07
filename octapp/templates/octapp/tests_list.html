@@ -40,15 +40,15 @@
                 <h3>Поиск тестов</h3>
                 <form name="search_form" action="POST">
 {% csrf_token %}
-                    <input name="search" type="search"><br>
+                    <input name="search" placeholder="Искать тесты с совпадениями" type="search">
                     <div class="search_buttons_div table center-block">
                         <div class="table_row">
                             <div class="table_cell">
-                                <button type="submit" class="btn btn-default" role=submit>Искать в именах</button>
+                                <button type="submit" class="btn btn-sm btn-default" role=submit>В названиях</button>
                             </div>
                             <div class="empty_gap_cell table_cell"></div>
                             <div class="table_cell">
-                                <button type="submit" class="btn btn-default" role=submit>Искать в вопросах</button>
+                                <button type="submit" class="btn btn-sm btn-default" role=submit>В вопросах</button>
                             </div>
                         </div>
                     </div>
