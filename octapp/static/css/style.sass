@@ -68,8 +68,8 @@ h1, h2, h3, h4, h5, h6
 
 
 /*============    ШАПКА    ===========*/
-$avatar_width: 90px
-$avatar_height: 90px
+$avatar_width: 80px
+$avatar_height: 80px
 header
   z-index: 10
   position: fixed
@@ -100,7 +100,7 @@ header
       min-width: 132px
     
     .search_buttons_div
-      padding: 2px
+      padding: 4px
       .table_cell
         width: 48%
         .btn
@@ -170,6 +170,8 @@ footer
     // flex container properties
     justify-content: center
     align-items: stretch
+  .test, .category
+    border-bottom: 1px dashed #bbbbbb
   a
     color: black
     cursor: pointer
@@ -177,11 +179,13 @@ footer
     transition: all ease 0.2s
     text-decoration: underline
     color: orange
+  a.test:hover, a.category:hover
+    border-bottom: 1px dashed orange
   a.test:hover span, a.category:hover span
     transition: all ease 0.2s
     background-color: orange
   ul.pagination
-    margin: 2px 0 0 0
+    margin: 5px 0 0 0
   .pagination_block
     // flex-block properties
     align-self: flex-end
@@ -193,7 +197,7 @@ footer
 
 @media(min-width:0px) and (max-width:767px)
   .content
-    padding-top: 100px
+    padding-top: 103px
     padding-bottom: 100px
     .tests_list:not(:last-of-type)
       border-style: none none dashed none
@@ -208,7 +212,7 @@ footer
 
 @media(min-width:768px) and (max-width:991px)
   .content
-    padding-top: 105px
+    padding-top: 103px
     padding-bottom: 0
     .tests_list
       border-style: none
@@ -223,7 +227,7 @@ footer
 
 @media(min-width:992px) and (max-width:1199px)
   .content
-    padding-top: 115px
+    padding-top: 118px
     padding-bottom: 0
     .tests_list
       border-style: none
@@ -238,7 +242,7 @@ footer
 
 @media(min-width:1200px)
   .content
-    padding-top: 120px
+    padding-top: 118px
     padding-bottom: 0
     .tests_list:not(:last-of-type)
       border-right: 1px dashed lighten(orange, 20%)

@@ -57,14 +57,14 @@
 
               <div class="col-md-2 col-sm-6 col-xs-6 header_element hidden-xs hidden-sm header_element_3">
 {% if user.is_authenticated %}
-                    <div class="center-block text-center user_container">
-                        <small><span>Пользователь: {{ user.username }}</span></small>
-                        <div class="avatar_container center-block">
-                            <img class="img-thumbnail thumbnail" src="../../static/img/default_avatar.png">
-                        </div>
+                <div class="center-block text-center user_container">
+                    <small><span>Пользователь: {{ user.username }}</span></small>
+                    <div class="avatar_container center-block">
+                        <img class="img-thumbnail thumbnail" src="../../static/img/default_avatar.png">
                     </div>
+                </div>
 {% else %}
-                    <small><p>Вы в гостевом режиме.<br>Зарегистрируйтесь и войдите в систему для добавления тестов и просмотра статистики.</p></small>
+                <small><p>Вы в гостевом режиме.<br>Зарегистрируйтесь и войдите в систему для добавления тестов и просмотра статистики.</p></small>
 {% endif %}
                 
               </div>
@@ -128,16 +128,10 @@
                         <div class="table_row">
                             <div class="table_cell">
                                 <div><a class="test">Тест на тип темперамента</a></div>
-                            </div>
-                            <div class="table_cell">
-                                <div><a class="test">Сети и телекоммуникации</a></div>
-                            </div>
-                        </div>
-                        <div class="table_row">
-                            <div class="table_cell">
                                 <div><a class="test">Парадигмы программирования</a></div>
                             </div>
                             <div class="table_cell">
+                                <div><a class="test">Сети и телекоммуникации</a></div>
                                 <div><a class="test">Информационные системы и технологии</a></div>
                             </div>
                         </div>
@@ -168,17 +162,15 @@
                         <div class="table_row">
                             <div class="table_cell">
                                 <div><a class="test">Анатомия человека</a></div>
+                                <div><a class="test">Тест по географии</a></div>
+                                <div><a class="test">Тест на тип темперамента</a></div>
+                                <div><a class="test">Парадигмы программирования</a></div>
                             </div>
                             <div class="table_cell">
                                 <div><a class="test">Философия буддизма</a></div>
-                            </div>
-                        </div>
-                        <div class="table_row">
-                            <div class="table_cell">
                                 <div><a class="test">Тест по кулинарии</a></div>
-                            </div>
-                            <div class="table_cell">
-                                <div><a class="test">Тест по географии</a></div>
+                                <div><a class="test">Сети и телекоммуникации</a></div>
+                                <div><a class="test">Информационные системы и технологии</a></div>
                             </div>
                         </div>
                     </div>
@@ -282,12 +274,12 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-                        <a href="" class="btn btn-default">О проекте</a>
-                        <a href="" class="btn btn-default">Демо-ролик</a>
-                        <a href="" class="btn btn-default">Инструкция по модерированию</a>
-                        <a href="" class="btn btn-default">Инструкция пользователя</a>
-                        <a href="" class="btn btn-default">Пользовательское соглашение</a>
-                        <a href="" class="btn btn-default">Обратная связь</a>
+                        <a href="" class="btn btn-sm btn-default">О проекте</a>
+                        <a href="" class="btn btn-sm btn-default">Демо-ролик</a>
+                        <a href="" class="btn btn-sm btn-default">Инструкция по модерированию</a>
+                        <a href="" class="btn btn-sm btn-default">Инструкция пользователя</a>
+                        <a href="" class="btn btn-sm btn-default">Пользовательское соглашение</a>
+                        <a href="" class="btn btn-sm btn-default">Обратная связь</a>
                         <div class="general_statictics inline_block">
                             <span class="badge">Тестов: XXX</span>
                             <span class="badge">Категорий: XXX</span>
