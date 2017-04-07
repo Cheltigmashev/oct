@@ -122,7 +122,7 @@
         <div class="content container">
             <div class="row flex">
                 <!--div.col-md-6.col-sm-12.col-xs-12.col-lg-3.tests_list*4>h2+div.list+div.paginator-->
-                <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
+                <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list flex">
                     <a href=""><h2>НОВЫЕ ТЕСТЫ</h2></a>
                     <div class="table">
                         <div class="table_row">
@@ -142,7 +142,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pagination_block">
+                    <div class="pagination_block text-center">
                         <ul class="pagination">
                             <li>
                             <a href="#" aria-label="Previous">
@@ -162,7 +162,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
+                <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list flex">
                     <a href=""><h2>ПОПУЛЯРНЫЕ ТЕСТЫ</h2></a>
                     <div class="table">
                         <div class="table_row">
@@ -182,7 +182,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pagination_block">
+                    <div class="pagination_block text-center">
                         <ul class="pagination">
                             <li>
                             <a href="#" aria-label="Previous">
@@ -202,16 +202,17 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
+                <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list flex">
                     <a href=""><h2>ТЕСТЫ ПО КАТЕГОРИЯМИ</h2></a>
+                    <div>
                     <a class="category">Обществознание <span class="badge">(XXX штук)</span></a>
                     <a class="category">Базы данных <span class="badge">(XXX штук)</span></a>
                     <a class="category">Психология <span class="badge">(XXX штук)</span></a>
                     <a class="category">Биология <span class="badge">(XXX штук)</span></a>
                     <a class="category">Иностранные языки <span class="badge">(XXX штук)</span></a>
                     <a class="category">История <span class="badge">(XXX штук)</span></a>
-                    <br>
-                    <div class="pagination_block">
+                    </div>
+                    <div class="pagination_block text-center">
                         <ul class="pagination">
                             <li>
                             <a href="#" aria-label="Previous">
@@ -231,8 +232,9 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
+                <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list flex">
                     <a href=""><h2>ТЕСТЫ ПО ТЕГАМ</h2></a>
+                    <div>
                     <a class="test">Образовательные <span class="badge">(XXX штук)</span></a>
                     <a class="test">Небольшие <span class="badge">(XXX штук)</span></a>
                     <a class="test">Большие <span class="badge">(XXX штук)</span></a>
@@ -244,8 +246,8 @@
                     <a class="test">На 20-30 минут <span class="badge">(XXX штук)</span></a>
                     <a class="test">С лимитом времени <span class="badge">(XXX штук)</span></a>
                     <a class="test">Без лимита времени <span class="badge">(XXX штук)</span></a>
-                    <br>
-                    <div class="pagination_block">
+                    </div>
+                    <div class="pagination_block text-center">
                         <ul class="pagination">
                             <li>
                             <a href="#" aria-label="Previous">
@@ -268,12 +270,12 @@
             </div>
         </div>
 
-        <div class="content container">
+        {% comment %}<div class="content container">
             <div class="row">
                 {% block content %}
                 {% endblock %}
             </div>
-        </div>
+        </div>{% endcomment %}
 
         {% comment %}footer>div.container>div.row>div.col-md-12.col-sm-12.col-xs-12.col-lg-12>a.btn.btn-default*8{% endcomment %}
         <footer>

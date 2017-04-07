@@ -97,7 +97,7 @@ header
       margin: 2px 0 0 0
     input[type=search]
       width: 100%
-      min-width: 157px
+      min-width: 132px
     
     .search_buttons_div
       padding: 2px
@@ -162,9 +162,13 @@ footer
     color: #222222
     background-color: #cccccc
 
-/*============    КОНТЕНТ    ===========*/
+/*============    СПИСКИ ТЕСТОВ, ГЛАВНАЯ СТРАНИЦА    ===========*/
 
 .content
+  .tests_list
+    // flex container properties
+    justify-content: center
+    align-items: stretch
   a
     color: black
     cursor: pointer
@@ -176,10 +180,10 @@ footer
     transition: all ease 0.2s
     background-color: orange
   ul.pagination
-    margin: 2px 0 0 10px
-    width: auto
+    margin: 2px 0 0 0
   .pagination_block
-    text-align: center
+    // flex-block properties
+    align-self: flex-end
 
 /*============    	ВСПЛЫВАЮЩИЕ ОКНА    ===========*/
 
@@ -188,8 +192,8 @@ footer
 
 @media(min-width:0px) and (max-width:767px)
   .content
-    padding-top: 115px
-    padding-bottom: 0
+    padding-top: 100px
+    padding-bottom: 100px
     .tests_list:not(:last-of-type)
       border-style: none none dashed none
     .tests_list:not(:last-of-type)
@@ -203,7 +207,7 @@ footer
 
 @media(min-width:768px) and (max-width:991px)
   .content
-    padding-top: 115px
+    padding-top: 105px
     padding-bottom: 0
     .tests_list
       border-style: none
