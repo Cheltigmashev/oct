@@ -1,0 +1,205 @@
+@charset "UTF-8";
+/*============    СБРОС СВОЙСТВ    =========== */
+* {
+  margin: 0;
+  padding: 0;
+  color: black;
+  text-decoration: none;
+  list-style: none; }
+
+a:hover, a:active, a:visited, a:link {
+  text-decoration: none;
+  color: black; }
+
+/*============    ШРИФТЫ    =========== */
+* {
+  font-family: "Roboto Condensed", sans-serif; }
+
+h1, h2, h3, h4, h5, h6, .title-font {
+  font-family: "Neucha", serif; }
+
+.mono-font, pre {
+  font-family: "Roboto Mono", monospace; }
+
+/*============    ПРИМЕСИ    =========== */
+/*============    ЗАГОЛОВКИ    =========== */
+h1, h2, h3, h4, h5, h6 {
+  text-align: center;
+  margin-top: 2px; }
+
+/*============    ДЛЯ РАЗНЫХ ЭЛЕМЕНТОВ    =========== */
+.table {
+  display: table;
+  margin: 0;
+  padding: 0;
+  border-spacing: 0; }
+  .table .table_row {
+    display: table-row; }
+  .table .table_cell {
+    display: table-cell; }
+  .table .wide_cell {
+    width: auto; }
+
+.inline_block {
+  display: inline-block; }
+
+.underscore {
+  text-decoration: underline; }
+
+.flex {
+  display: flex;
+  flex-wrap: wrap; }
+
+/*============    КНОПКИ    =========== */
+.btn {
+  padding: 5px;
+  margin: 2px; }
+
+/*============    ШАПКА    =========== */
+header {
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-radius: 0 0 10px 10px;
+  border: 2px solid gray;
+  box-shadow: 2px 4px 8px 2px #777777;
+  background-color: ivory; }
+  header .row {
+    padding: 0; }
+  header .header_element {
+    overflow: auto;
+    padding: 0 4px;
+    margin: 0; }
+  header .header_element_1 h2 {
+    margin-bottom: 2px; }
+  header .header_element_1 p {
+    font-size: 140%; }
+  header .header_element_2 h3 {
+    margin: 2px 0 0 0; }
+  header .header_element_2 input[type=search] {
+    width: 100%;
+    min-width: 132px; }
+  header .header_element_2 .search_buttons_div {
+    padding: 4px; }
+    header .header_element_2 .search_buttons_div .table_cell {
+      width: 48%; }
+      header .header_element_2 .search_buttons_div .table_cell .btn {
+        width: 100%;
+        margin: 0; }
+    header .header_element_2 .search_buttons_div .empty_gap_cell {
+      width: 4%; }
+  header .header_element_3 img {
+    width: 80px;
+    height: 80px;
+    margin: 0; }
+  header .header_element_3 .user_container {
+    width: auto; }
+    header .header_element_3 .user_container .avatar_container {
+      width: 80px; }
+  header .header_element_4 .all_buttons_container {
+    padding: 2px; }
+    header .header_element_4 .all_buttons_container .system_users_button_container {
+      margin: 2px;
+      margin-top: 0;
+      min-width: 151px; }
+  header .header_element_4 .table {
+    background-color: ivory;
+    margin: 0;
+    border-spacing: 2px; }
+  header .header_element_4 .table_cell input {
+    width: 100%; }
+  header .header_element_4 .table_cell label {
+    margin-top: 0;
+    margin-bottom: 0; }
+  header .header_element_4 .table_cell:nth-of-type(1) {
+    width: 50%;
+    min-width: 80px; }
+  header .header_element_4 .table_cell:nth-of-type(2) {
+    width: 50%; }
+  header .header_element_4 .btn {
+    width: 100%;
+    margin: 0;
+    padding: 3px; }
+
+/*============    ПОДВАЛ    =========== */
+footer {
+  z-index: 10;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  border-radius: 10px 10px 0 0;
+  border: 2px solid gray;
+  box-shadow: 2px 4px 8px 2px #777777;
+  background-color: ivory;
+  width: 100%; }
+  footer .badge {
+    cursor: default;
+    color: #222222;
+    background-color: #d5d5d5; }
+
+/*============    	ВСПЛЫВАЮЩИЕ ОКНА    =========== */
+/*============    	АДАПТИВ    =========== */
+@media(min-width:0px) and (max-width:767px) {
+  .content {
+    padding-top: 103px;
+    padding-bottom: 100px; }
+    .content .tests_list:not(:last-of-type) {
+      border-style: none none dashed none; }
+    .content .tests_list:not(:last-of-type) {
+      border-bottom: 1px dashed #ffc966; }
+
+  .header_element {
+    border-style: none; }
+
+  .header_element_2 {
+    border-right: 1px dashed gray; }
+    .header_element_2 .empty_gap_cell {
+      display: none; } }
+@media(min-width:768px) and (max-width:991px) {
+  .content {
+    padding-top: 103px;
+    padding-bottom: 0; }
+    .content .tests_list {
+      border-style: none; }
+    .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(2) {
+      border-bottom: 1px dashed #ffc966; }
+    .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(3) {
+      border-right: 1px dashed #ffc966; }
+
+  .header_element {
+    border-style: none; }
+
+  .header_element_2 {
+    border-right: 1px dashed gray; } }
+@media(min-width:992px) and (max-width:1199px) {
+  .content {
+    padding-top: 118px;
+    padding-bottom: 0; }
+    .content .tests_list {
+      border-style: none; }
+    .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(2) {
+      border-bottom: 1px dashed #ffc966; }
+    .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(3) {
+      border-right: 1px dashed #ffc966; }
+
+  .header_element {
+    border-style: none; }
+
+  .header_element:not(:last-of-type) {
+    border-right: 1px dashed gray; } }
+@media(min-width:1200px) {
+  .content {
+    padding-top: 118px;
+    padding-bottom: 0; }
+    .content .tests_list:not(:last-of-type) {
+      border-right: 1px dashed #ffc966; }
+
+  .header_element {
+    border-style: none; }
+
+  .header_element:not(:last-of-type) {
+    border-right: 1px dashed gray; } }
+
+/*# sourceMappingURL=base.css.map */

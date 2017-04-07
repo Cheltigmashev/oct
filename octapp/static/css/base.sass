@@ -1,0 +1,224 @@
+@charset "utf-8"
+
+/*============    СБРОС СВОЙСТВ    ===========*/
+*
+  margin: 0
+  padding: 0
+  color: black
+  text-decoration: none
+  list-style: none
+
+a:hover, a:active, a:visited, a:link
+  text-decoration: none
+  color: black
+
+/*============    ШРИФТЫ    ===========*/
+* 
+  font-family: 'Roboto Condensed', sans-serif
+
+h1, h2, h3, h4, h5, h6, .title-font
+  font-family: 'Neucha', serif
+
+.mono-font, pre
+  font-family: 'Roboto Mono', monospace
+
+/*============    ПРИМЕСИ    ===========*/
+@mixin abs_decor($radius)
+  position: absolute
+  top: 0
+  left: 0
+
+@mixin color_of_background($color)
+  background-color: $color
+
+@mixin simple_border($color)
+  border: 2px solid $color
+
+/*============    ЗАГОЛОВКИ    ===========*/
+h1, h2, h3, h4, h5, h6
+  text-align: center
+  margin-top: 2px
+
+/*============    ДЛЯ РАЗНЫХ ЭЛЕМЕНТОВ    ===========*/
+.table
+  display: table
+  margin: 0
+  padding: 0
+  border-spacing: 0
+  .table_row
+    display: table-row
+  .table_cell
+    display: table-cell
+  .wide_cell
+    width: auto
+.inline_block
+  display: inline-block
+
+.underscore
+  text-decoration: underline
+
+.flex
+  display: flex
+  flex-wrap: wrap
+
+/*============    КНОПКИ    ===========*/
+.btn
+  padding: 5px
+  margin: 2px
+
+
+/*============    ШАПКА    ===========*/
+$avatar_width: 80px
+$avatar_height: 80px
+header
+  z-index: 10
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  border-radius: 0 0 10px 10px
+  border: 2px solid gray
+  box-shadow: 2px 4px 8px 2px #777777
+  background-color: ivory
+  .row
+    padding: 0
+  .header_element
+    overflow: auto
+    padding: 0 4px
+    margin: 0
+    // background-color: rgba(0, 0, 0, 0.1)
+  .header_element_1
+    h2
+      margin-bottom: 2px
+    p
+      font-size: 140%
+  .header_element_2
+    h3
+      margin: 2px 0 0 0
+    input[type=search]
+      width: 100%
+      min-width: 132px
+    .search_buttons_div
+      padding: 4px
+      .table_cell
+        width: 48%
+        .btn
+          width: 100%
+          margin: 0
+      .empty_gap_cell
+        width: 4% 
+
+  .header_element_3
+    img
+      width: $avatar_width
+      height: $avatar_height
+      margin: 0
+    .user_container
+      width: auto
+      .avatar_container
+        width: $avatar_width
+      
+  .header_element_4
+    .all_buttons_container
+      padding: 2px
+      .system_users_button_container
+        margin: 2px
+        margin-top: 0
+        min-width: 151px
+    .table
+      background-color: ivory
+      margin: 0
+      border-spacing: 2px
+    .table_cell
+      input
+        width: 100%
+      label
+        margin-top: 0
+        margin-bottom: 0
+    .table_cell:nth-of-type(1)
+      width: 50%
+      min-width: 80px 
+    .table_cell:nth-of-type(2)
+      width: 50%
+    .btn
+      width: 100%
+      margin: 0
+      padding: 3px
+
+/*============    ПОДВАЛ    ===========*/
+
+footer
+  z-index: 10
+  position: fixed
+  bottom: 0
+  left: 0
+  border-radius: 10px 10px 0 0
+  border: 2px solid gray
+  box-shadow: 2px 4px 8px 2px #777777
+  background-color: ivory
+  width: 100%
+  .badge
+    cursor: default
+    color: #222222
+    background-color: #d5d5d5
+
+/*============    	ВСПЛЫВАЮЩИЕ ОКНА    ===========*/
+
+
+/*============    	АДАПТИВ    ===========*/
+
+@media(min-width:0px) and (max-width:767px)
+  .content
+    padding-top: 103px
+    padding-bottom: 100px
+    .tests_list:not(:last-of-type)
+      border-style: none none dashed none
+    .tests_list:not(:last-of-type)
+      border-bottom: 1px dashed lighten(orange, 20%)
+  .header_element
+    border-style: none
+  .header_element_2
+    border-right: 1px dashed gray
+    .empty_gap_cell
+      display: none
+
+@media(min-width:768px) and (max-width:991px)
+  .content
+    padding-top: 103px
+    padding-bottom: 0
+    .tests_list
+      border-style: none
+    .tests_list:nth-of-type(1), .tests_list:nth-of-type(2)
+      border-bottom: 1px dashed lighten(orange, 20%)
+    .tests_list:nth-of-type(1), .tests_list:nth-of-type(3)
+      border-right: 1px dashed lighten(orange, 20%)
+  .header_element
+    border-style: none
+  .header_element_2
+    border-right: 1px dashed gray
+
+@media(min-width:992px) and (max-width:1199px)
+  .content
+    padding-top: 118px
+    padding-bottom: 0
+    .tests_list
+      border-style: none
+    .tests_list:nth-of-type(1), .tests_list:nth-of-type(2)
+      border-bottom: 1px dashed lighten(orange, 20%)
+    .tests_list:nth-of-type(1), .tests_list:nth-of-type(3)
+      border-right: 1px dashed lighten(orange, 20%)
+  .header_element
+    border-style: none
+  .header_element:not(:last-of-type)
+    border-right: 1px dashed gray
+
+@media(min-width:1200px)
+  .content
+    padding-top: 118px
+    padding-bottom: 0
+    .tests_list:not(:last-of-type)
+      border-right: 1px dashed lighten(orange, 20%)
+  .header_element
+    border-style: none
+  .header_element:not(:last-of-type)
+    border-right: 1px dashed gray
