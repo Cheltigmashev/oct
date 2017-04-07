@@ -1,5 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
-def tests_list(request):
-    return render(request, 'octapp/tests_list.html', {})
+# View of main page.
+def tests_lists(request):
+    return render(request, 'octapp/tests_lists.html', {})
