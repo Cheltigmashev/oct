@@ -71,7 +71,8 @@ h1, h2, h3, h4, h5, h6
 $avatar_width: 90px
 $avatar_height: 90px
 header
-  position: absolute
+  z-index: 10
+  position: fixed
   top: 0
   left: 0
   width: 100%
@@ -145,7 +146,8 @@ header
 /*============    ПОДВАЛ    ===========*/
 
 footer
-  position: absolute
+  z-index: 10
+  position: fixed
   bottom: 0
   left: 0
   border-radius: 10px 10px 0 0
@@ -155,15 +157,26 @@ footer
   width: 100%
   .badge
     cursor: default
+    color: #222222
+    background-color: #cccccc
     font-size: 16px
 
 /*============    КОНТЕНТ    ===========*/
-.test-list
-  .test
-    border: 2px solid orange
-    border-radius: 10px
 
-/*============    ПОДВАЛ    ===========*/
+.content
+  a
+    color: black
+    cursor: pointer
+  a.test:hover, a.category:hover, a:hover h2
+    transition: all ease 0.2s
+    text-decoration: underline
+    color: orange
+  a.test:hover span, a.category:hover span
+    transition: all ease 0.2s
+    background-color: orange
+  ul.pagination
+    margin: 2px 0 0 10px
+    width: auto
 
 /*============    	ВСПЛЫВАЮЩИЕ ОКНА    ===========*/
 
@@ -171,6 +184,9 @@ footer
 /*============    	АДАПТИВ    ===========*/
 
 @media(min-width:0px) and (max-width:767px)
+  .content
+    padding-top: 200px
+    padding-bottom: 0
   .header_element
     border-style: none
   .header_element_2
@@ -179,6 +195,9 @@ footer
     border-right: 1px dashed gray
 
 @media(min-width:768px) and (max-width:991px)
+  .content
+    padding-top: 200px
+    padding-bottom: 0
   .header_element
     border-style: none
   .header_element_1
@@ -190,16 +209,18 @@ footer
     border-right: 1px dashed gray
 
 @media(min-width:992px) and (max-width:1199px)
-  .header
-    position: fixed
+  .content
+    padding-top: 120px
+    padding-bottom: 0
   .header_element
     border-style: none
   .header_element:not(:last-of-type)
     border-right: 1px dashed gray
 
 @media(min-width:1200px)
-  .header
-    position: fixed
+  .content
+    padding-top: 120px
+    padding-bottom: 0
   .header_element
     border-style: none
   .header_element:not(:last-of-type)
