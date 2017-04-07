@@ -159,7 +159,6 @@ footer
     cursor: default
     color: #222222
     background-color: #cccccc
-    font-size: 16px
 
 /*============    КОНТЕНТ    ===========*/
 
@@ -177,6 +176,8 @@ footer
   ul.pagination
     margin: 2px 0 0 10px
     width: auto
+  .pagination_block
+    text-align: center
 
 /*============    	ВСПЛЫВАЮЩИЕ ОКНА    ===========*/
 
@@ -185,33 +186,42 @@ footer
 
 @media(min-width:0px) and (max-width:767px)
   .content
-    padding-top: 200px
+    padding-top: 115px
     padding-bottom: 0
+    .tests_list:not(:last-of-type)
+      border-style: none none dashed none
+    .tests_list:not(:last-of-type)
+      border-bottom: 1px dashed lighten(orange, 20%)
   .header_element
     border-style: none
   .header_element_2
-    border-bottom: 1px dashed gray
-  .header_element_3
     border-right: 1px dashed gray
 
 @media(min-width:768px) and (max-width:991px)
   .content
-    padding-top: 200px
+    padding-top: 115px
     padding-bottom: 0
+    .tests_list
+      border-style: none
+    .tests_list:nth-of-type(1), .tests_list:nth-of-type(2)
+      border-bottom: 1px dashed lighten(orange, 20%)
+    .tests_list:nth-of-type(1), .tests_list:nth-of-type(3)
+      border-right: 1px dashed lighten(orange, 20%)
   .header_element
     border-style: none
-  .header_element_1
-    border-bottom: 1px dashed gray
-    border-right: 1px dashed gray
   .header_element_2
-    border-bottom: 1px dashed gray
-  .header_element_3
     border-right: 1px dashed gray
 
 @media(min-width:992px) and (max-width:1199px)
   .content
-    padding-top: 120px
+    padding-top: 115px
     padding-bottom: 0
+    .tests_list
+      border-style: none
+    .tests_list:nth-of-type(1), .tests_list:nth-of-type(2)
+      border-bottom: 1px dashed lighten(orange, 20%)
+    .tests_list:nth-of-type(1), .tests_list:nth-of-type(3)
+      border-right: 1px dashed lighten(orange, 20%)
   .header_element
     border-style: none
   .header_element:not(:last-of-type)
@@ -221,6 +231,8 @@ footer
   .content
     padding-top: 120px
     padding-bottom: 0
+    .tests_list:not(:last-of-type)
+      border-right: 1px dashed lighten(orange, 20%)
   .header_element
     border-style: none
   .header_element:not(:last-of-type)
