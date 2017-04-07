@@ -75,23 +75,23 @@
                     <div class="table_row">
 {% if user.is_authenticated %}
                         <div class="table_cell">
-                            <a href="#" class="btn btn-default" role="button">Ваши тесты</a>
+                            <a href="#" class="btn btn-default btn-sm" role="button">Ваши тесты</a>
                         </div>
                         <div class="table_cell">
-                            <a href="#" class="btn btn-default">Новый тест</a>
+                            <a href="#" class="btn btn-default btn-sm">Новый тест</a>
                         </div>
                     </div>
                     <div class="table_row">
                         <div class="table_cell">
-                        <a href="#" class="btn btn-default" role="button">
+                        <a href="#" class="btn btn-default btn-sm" role="button">
                             Результаты</a>
                         </div>
                         <div class="table_cell">
-                        <a href="#" class="btn btn-default">Выйти</a>
+                        <a href="#" class="btn btn-default btn-sm">Выйти</a>
                         </div>
                     </div>
                 </div>
-                <div class="system_users_button_container"><a href="#" class="btn btn-default">Пользователи системы</a></div>
+                <div class="system_users_button_container"><a href="#" class="btn btn-default btn-sm">Пользователи системы</a></div>
 {% else %}
                 <form name="login_form" method="POST">
 {% csrf_token %}
@@ -107,8 +107,8 @@
                                 </div>
                             </div>
                             <div class="table_row">
-                                    <div class="table_cell"><a href="#" class="btn btn-default">Войти</a></div>
-                                    <div class="table_cell"><a href="#" class="btn btn-default">Регистрация</a></div>
+                                    <div class="table_cell"><a href="#" class="btn btn-default btn-sm">Войти</a></div>
+                                    <div class="table_cell"><a href="#" class="btn btn-default btn-sm">Регистрация</a></div>
                             </div>
 {% endif %}
                     </div>
