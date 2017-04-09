@@ -19,4 +19,6 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('octapp.urls')),
+    url(r'^accounts/', include('registration.backends.hmac.urls')),
+    # url(r'^accounts/', include('registration.auth_urls')),
 ]

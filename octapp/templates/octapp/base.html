@@ -75,9 +75,9 @@
 
               <div class="col-md-4 col-sm-6 col-xs-6 header_element header_element_4">
                 <div class="all_buttons_container">
-                <div class="table center-block">
-                    <div class="table_row">
 {% if user.is_authenticated %}
+                <div class="table center-block authorized_user_buttons">
+                    <div class="table_row">
                         <div class="table_cell">
                             <a href="#" class="btn btn-default btn-sm" role="button">Ваши тесты</a>
                         </div>
@@ -91,16 +91,17 @@
                             Результаты</a>
                         </div>
                         <div class="table_cell">
-                        <a href="#" class="btn btn-default btn-sm">Выйти</a>
+                        <a href="{% url 'auth_logout' %}" class="btn btn-default btn-sm">Выйти</a>
                         </div>
                     </div>
                 </div>
                 <!-- If user is admin - администрирование, if moderator - модерирование -->
-                <div class="system_users_button_container"><a href="#" class="btn btn-default btn-sm">Модерирование</a></div>
+                <div class="admin_moder_button_container"><a href="#" class="btn btn-default btn-sm">Модерирование</a></div>
 {% else %}
-                <form name="login_form" method="POST">
+                <div class="authorization_div">
+                    <form name="login_form" method="POST" action="{% url 'auth_login' %}">
 {% csrf_token %}
-                    <div class="table center-block">
+                        <div class="table">
                             <div class="table_row">
                                 <div class="table_cell">
                                     <label for="username">Логин:</label>
@@ -111,17 +112,23 @@
                                     <input name="password" type="password">
                                 </div>
                             </div>
-                            <div class="table_row">
-                                    <div class="table_cell"><a href="#" class="btn btn-default btn-sm">Войти</a></div>
-                                    <div class="table_cell"><a href="#" class="btn btn-default btn-sm">Регистрация</a></div>
-                            </div>
-{% endif %}
-                    </div>
-                 </form>
+                        </div>
+                        <div class="flex">
+                            <div><button type="submit" class="btn btn-default btn-sm">Войти</a></div>
+                            <div><a href="{% url 'auth_password_reset' %}" class="btn btn-default btn-sm">Забыл(а) пароль</a></div>
+                            <div><a href="{% url 'registration_register' %}" class="btn btn-default btn-sm">Регистрация</a></div>
+                        </div>
+                    </form>
                 </div>
-              </div>
+{% endif %}      
+{% if form.errors %}
+    <small><p>Ваше имя пользователя и пароль не соответствуют. Пожалуйста,
+    попытайтесь еще разок.</p></small>
+{% endif %}
+                </div> <!-- all_buttons_container end -->
+              </div> <!-- header_element end -->
             </div> <!-- row flex end -->
-          </div>
+          </div> <!-- container end -->
         </header>
 
 

@@ -28,17 +28,22 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 2px; }
 
 /*============    ДЛЯ РАЗНЫХ ЭЛЕМЕНТОВ    =========== */
-.table {
-  display: table;
+.table, .inline_table {
   margin: 0;
   padding: 0;
   border-spacing: 0; }
+
+.table {
+  display: table; }
   .table .table_row {
     display: table-row; }
   .table .table_cell {
     display: table-cell; }
   .table .wide_cell {
     width: auto; }
+
+.inline_table {
+  display: inline-table; }
 
 .inline_block {
   display: inline-block; }
@@ -80,12 +85,13 @@ header {
     margin: 2px 0 0 0; }
   header .header_element_2 input[type=search] {
     width: 100%;
-    min-width: 132px; }
+    min-width: 156px; }
   header .header_element_2 .search_buttons_div {
     padding: 4px; }
-    header .header_element_2 .search_buttons_div .table_cell {
-      width: 48%; }
-      header .header_element_2 .search_buttons_div .table_cell .btn {
+    header .header_element_2 .search_buttons_div .table_cell:not(.empty_gap_cell) {
+      width: 48%;
+      min-width: 74px; }
+      header .header_element_2 .search_buttons_div .table_cell:not(.empty_gap_cell) .btn {
         width: 100%;
         margin: 0; }
     header .header_element_2 .search_buttons_div .empty_gap_cell {
@@ -99,11 +105,11 @@ header {
     header .header_element_3 .user_container .avatar_container {
       width: 80px; }
   header .header_element_4 .all_buttons_container {
-    padding: 2px; }
-    header .header_element_4 .all_buttons_container .system_users_button_container {
+    padding: 3px 0; }
+    header .header_element_4 .all_buttons_container .admin_moder_button_container {
       margin: 2px;
       margin-top: 0;
-      min-width: 151px; }
+      min-width: 131px; }
   header .header_element_4 .table {
     background-color: ivory;
     margin: 0;
@@ -113,15 +119,27 @@ header {
   header .header_element_4 .table_cell label {
     margin-top: 0;
     margin-bottom: 0; }
-  header .header_element_4 .table_cell:nth-of-type(1) {
-    width: 50%;
-    min-width: 80px; }
-  header .header_element_4 .table_cell:nth-of-type(2) {
+  header .header_element_4 .table_row:first-of-type .table_cell:nth-of-type(1) {
     width: 50%; }
+  header .header_element_4 .table_row:first-of-type .table_cell:nth-of-type(2) {
+    width: 50%; }
+  header .header_element_4 .table_row:nth-of-type(2) .table_cell:nth-of-type(1) {
+    width: 33%; }
+  header .header_element_4 .table_row:nth-of-type(2) .table_cell:nth-of-type(2) {
+    width: 33%; }
   header .header_element_4 .btn {
     width: 100%;
     margin: 0;
-    padding: 3px; }
+    padding: 2px; }
+  header .header_element_4 .authorization_div .btn {
+    width: 100%; }
+  header .header_element_4 .authorization_div .flex {
+    min-width: 133px;
+    padding: 0 2px;
+    justify-content: space-between;
+    align-items: center; }
+    header .header_element_4 .authorization_div .flex div {
+      flex-basis: 32%; }
 
 /*============    ПОДВАЛ    =========== */
 footer {
@@ -149,13 +167,24 @@ footer {
     .content .tests_list:not(:last-of-type) {
       border-bottom: 1px dashed #ffc966; }
 
-  .header_element {
+  header .header_element {
     border-style: none; }
-
-  .header_element_2 {
+  header .header_element_2 {
     border-right: 1px dashed gray; }
-    .header_element_2 .empty_gap_cell {
+    header .header_element_2 .empty_gap_cell {
       display: none; }
+  header .header_element_4 .authorization_div input[type="text"], header .header_element_4 .authorization_div input[type="password"] {
+    height: 50%; }
+  header .header_element_4 .authorization_div .btn {
+    padding: 0;
+    margin: 0; }
+  header .header_element_4 .authorization_div .flex {
+    justify-content: center;
+    align-items: center; }
+    header .header_element_4 .authorization_div .flex div {
+      flex-basis: 50%; }
+    header .header_element_4 .authorization_div .flex div:nth-of-type(2) {
+      order: 3; }
 
   footer .btn {
     padding: 3px;
@@ -171,11 +200,27 @@ footer {
     .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(3) {
       border-right: 1px dashed #ffc966; }
 
-  .header_element {
+  header .header_element {
     border-style: none; }
-
-  .header_element_2 {
+  header .header_element_2 {
     border-right: 1px dashed gray; }
+    header .header_element_2 .btn {
+      padding: 4px 0;
+      font-size: 14px; }
+  header .header_element_4 .authorized_user_buttons .btn {
+    padding: 2px 0;
+    font-size: 14px; }
+  header .header_element_4 .admin_moder_button_container .btn {
+    padding: 2px 0;
+    font-size: 14px; }
+  header .header_element_4 .authorization_div .btn {
+    padding: 8px 4px;
+    font-size: 14px; }
+  header .header_element_4 .authorization_div .flex {
+    justify-content: space-between;
+    align-items: center; }
+    header .header_element_4 .authorization_div .flex div {
+      flex-basis: 32%; }
 
   footer .btn {
     padding: 3px; } }
@@ -190,11 +235,27 @@ footer {
     .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(3) {
       border-right: 1px dashed #ffc966; }
 
-  .header_element {
+  header .header_element {
     border-style: none; }
-
-  .header_element:not(:last-of-type) {
+  header .header_element:not(:last-of-type) {
     border-right: 1px dashed gray; }
+  header .header_element_2 .btn {
+    padding: 6px 4px;
+    font-size: 14px; }
+  header .header_element_4 .authorized_user_buttons .btn {
+    padding: 3px 0;
+    font-size: 14px; }
+  header .header_element_4 .admin_moder_button_container .btn {
+    padding: 3px 0;
+    font-size: 14px; }
+  header .header_element_4 .authorization_div .btn {
+    padding: 10px 2px;
+    font-size: 14px; }
+  header .header_element_4 .authorization_div .flex {
+    justify-content: space-between;
+    align-items: center; }
+    header .header_element_4 .authorization_div .flex div {
+      flex-basis: 32%; }
 
   footer .btn {
     padding: 3px; } }
@@ -205,11 +266,26 @@ footer {
     .content .tests_list:not(:last-of-type) {
       border-right: 1px dashed #ffc966; }
 
-  .header_element {
+  header .header_element {
     border-style: none; }
-
-  .header_element:not(:last-of-type) {
+  header .header_element:not(:last-of-type) {
     border-right: 1px dashed gray; }
+  header .header_element_2 .btn {
+    font-size: 16px; }
+  header .header_element_4 .authorized_user_buttons .btn {
+    padding: 3px 0;
+    font-size: 14px; }
+  header .header_element_4 .admin_moder_button_container .btn {
+    padding: 3px 0;
+    font-size: 14px; }
+  header .header_element_4 .authorization_div .btn {
+    padding: 8px 4px;
+    font-size: 16px; }
+  header .header_element_4 .authorization_div .flex {
+    justify-content: space-between;
+    align-items: center; }
+    header .header_element_4 .authorization_div .flex div {
+      flex-basis: 32%; }
 
   footer .btn {
     padding: 3px; } }
