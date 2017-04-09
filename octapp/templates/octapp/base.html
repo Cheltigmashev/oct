@@ -95,7 +95,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="system_users_button_container"><a href="#" class="btn btn-default btn-sm">Модерирование/Администрирование</a></div>
+                <!-- If user is admin - администрирование, if moderator - модерирование -->
+                <div class="system_users_button_container"><a href="#" class="btn btn-default btn-sm">Модерирование</a></div>
 {% else %}
                 <form name="login_form" method="POST">
 {% csrf_token %}
@@ -137,7 +138,7 @@
                         <a href="" class="btn btn-sm btn-default">Инструкция по модерированию</a>
                         <a href="" class="btn btn-sm btn-default">Инструкция пользователя</a>
                         <a href="" class="btn btn-sm btn-default">Пользовательское соглашение</a>
-                        <a href="" class="btn btn-sm btn-default">Обратная связь</a>
+                        <a href="" class="btn btn-sm btn-default hidden-xs">Обратная связь</a>
                         <div class="general_statictics inline_block hidden-xs">
                             <span class="badge">Тестов: XXX</span>
                             <span class="badge">Категорий: XXX</span>

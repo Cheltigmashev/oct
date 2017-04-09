@@ -158,7 +158,8 @@ footer {
       display: none; }
 
   footer .btn {
-    padding: 3px; } }
+    padding: 3px;
+    margin: 1px; } }
 @media(min-width:768px) and (max-width:991px) {
   .content {
     padding-top: 103px;
