@@ -22,6 +22,6 @@ urlpatterns = [
     url(r'', include('octapp.urls')),
     url(r'^accounts/logout/$', views.logout, name='auth_logout', kwargs={'next_page': '/'}),
     url(r'^accounts/login/$', views.login, name='auth_login'),
-    url(r'^accounts/', include('registration.backends.hmac.urls')),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^accounts/', include('registration.auth_urls')),
 ]
