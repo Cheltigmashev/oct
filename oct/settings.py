@@ -128,9 +128,9 @@ LOGIN_REDIRECT_URL = '/'
 
 # настройки для отправки кода активации
 AUTH_USER_EMAIL_UNIQUE = True
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'cryptograph2013@gmail.com'
-EMAIL_HOST_PASSWORD = 'YaBabayan18621922'
+EMAIL_HOST_USER = 'danil.cheltigmashev@yandex.ru'
+EMAIL_HOST_PASSWORD = 'yadanilcheltigmashev'
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'cryptograph2013@gmail.com'
+DEFAULT_FROM_EMAIL = 'danil.cheltigmashev@yandex.ru'
