@@ -23,7 +23,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('octapp.urls')),
     url(r'^avatar/', include('avatar.urls')),
-    url(r'^media/avatars/', include('avatar.urls')),
     url(r'^accounts/logout/$', views.logout, name='auth_logout', kwargs={'next_page': '/'}),
     url(r'^accounts/login/$', views.login, name='auth_login'),
     url(r'^accounts/', include('registration.backends.simple.urls')),

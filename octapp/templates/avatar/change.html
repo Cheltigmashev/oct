@@ -18,5 +18,5 @@
         {{ upload_avatar_form.as_p }}
         <p>{% csrf_token %}<input type="submit" class="btn btn-default" value="{% trans "Upload New Image" %}" /></p>
     </form>
-    <a ref="{% url 'avatar_delete' %}" class="btn btn-default">Удаление аватар</a>
+    <a href="{% url 'avatar_delete' %}" class="btn btn-default">Удаление аватарок</a>
 {% endblock %}
