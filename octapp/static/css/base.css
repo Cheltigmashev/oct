@@ -141,6 +141,10 @@ header {
     header .header_element_4 .authorization_div .flex div {
       flex-basis: 32%; }
 
+/*============    БЛОК КОНТЕНТА    =========== */
+.content {
+  padding: 103px 20px 100px 20px; }
+
 /*============    ПОДВАЛ    =========== */
 footer {
   z-index: 10;
@@ -226,6 +230,8 @@ footer {
   header .header_element_2 .btn {
     padding: 6px 4px;
     font-size: 14px; }
+  header .header_element_3 p {
+    font-size: 12px; }
   header .header_element_4 .authorized_user_buttons .btn {
     padding: 3px 0;
     font-size: 14px; }
@@ -254,6 +260,8 @@ footer {
     border-right: 1px dashed gray; }
   header .header_element_2 .btn {
     font-size: 16px; }
+  header .header_element_3 p {
+    font-size: 14px; }
   header .header_element_4 .authorized_user_buttons .btn {
     padding: 3px 0;
     font-size: 14px; }

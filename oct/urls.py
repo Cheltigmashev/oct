@@ -16,27 +16,12 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views
-from octapp.views import tests_lists
-
-#https://djbook.ru/forum/topic/2366/
-from registration.backends.model_activation.views import RegistrationView
-from registration.forms import RegistrationFormUniqueEmail
-
-# view с формой, проверяющей email на уникальность
-class RegistrationViewUniqueEmail(RegistrationView):
-    form_class = RegistrationFormUniqueEmail
-
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('octapp.urls')),
-
-    #https://djbook.ru/forum/topic/2366/
-    url(r'^accounts/register/$', RegistrationViewUniqueEmail.as_view(), name='registration_register'),
-
     url(r'^accounts/logout/$', views.logout, name='auth_logout', kwargs={'next_page': '/'}),
     url(r'^accounts/login/$', views.login, name='auth_login'),
-
     url(r'^accounts/', include('registration.backends.hmac.urls')),
     url(r'^accounts/', include('registration.auth_urls')),
 ]

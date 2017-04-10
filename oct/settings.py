@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'octapp',
-    'registration',
 ]
 
 MIDDLEWARE = [
@@ -126,3 +125,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 ACCOUNT_ACTIVATION_DAYS = 7
 
 LOGIN_REDIRECT_URL = '/'
+
+# настройки для отправки кода активации
+AUTH_USER_EMAIL_UNIQUE = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'cryptograph2013@gmail.com'
+EMAIL_HOST_PASSWORD = 'YaBabayan18621922'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'cryptograph2013@gmail.com'
