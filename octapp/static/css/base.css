@@ -162,10 +162,6 @@ footer {
   .content {
     padding-top: 103px;
     padding-bottom: 100px; }
-    .content .tests_list:not(:last-of-type) {
-      border-style: none none dashed none; }
-    .content .tests_list:not(:last-of-type) {
-      border-bottom: 1px dashed #ffc966; }
 
   header .header_element {
     border-style: none; }
@@ -193,12 +189,6 @@ footer {
   .content {
     padding-top: 103px;
     padding-bottom: 0; }
-    .content .tests_list {
-      border-style: none; }
-    .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(2) {
-      border-bottom: 1px dashed #ffc966; }
-    .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(3) {
-      border-right: 1px dashed #ffc966; }
 
   header .header_element {
     border-style: none; }
@@ -228,12 +218,6 @@ footer {
   .content {
     padding-top: 118px;
     padding-bottom: 0; }
-    .content .tests_list {
-      border-style: none; }
-    .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(2) {
-      border-bottom: 1px dashed #ffc966; }
-    .content .tests_list:nth-of-type(1), .content .tests_list:nth-of-type(3) {
-      border-right: 1px dashed #ffc966; }
 
   header .header_element {
     border-style: none; }
@@ -263,8 +247,6 @@ footer {
   .content {
     padding-top: 118px;
     padding-bottom: 0; }
-    .content .tests_list:not(:last-of-type) {
-      border-right: 1px dashed #ffc966; }
 
   header .header_element {
     border-style: none; }

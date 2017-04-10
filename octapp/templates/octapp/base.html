@@ -68,7 +68,7 @@
                     </div>
                 </div>
 {% else %}
-                <small><p>Вы в гостевом режиме.<br>Зарегистрируйтесь и войдите в систему для добавления тестов и просмотра статистики.</p></small>
+                <p>Вы в гостевом режиме.<br>Зарегистрируйтесь и войдите в систему для добавления тестов и просмотра статистики.</p>
 {% endif %}
                 
               </div>
@@ -114,17 +114,17 @@
                             </div>
                         </div>
                         <div class="flex">
-                            <div><button type="submit" class="btn btn-default btn-sm">Войти</a></div>
+    {% if form.errors %}
+                            <div><button type="submit" class="btn btn-default btn-sm" id="signin_button" data-toggle="popover" data-container="body" title="Что-то пошло не так..." data-content="Пожалуйста, введите правильные имя пользователя и пароль. Оба поля могут быть чувствительны к регистру.">Войти</button></div>
+    {% else %}
+                            <div><button type="submit" class="btn btn-default btn-sm">Войти</button></div>
+    {% endif %}                     
                             <div><a href="{% url 'auth_password_reset' %}" class="btn btn-default btn-sm">Забыл(а) пароль</a></div>
                             <div><a href="{% url 'registration_register' %}" class="btn btn-default btn-sm">Регистрация</a></div>
                         </div>
                     </form>
                 </div>
 {% endif %}      
-{% if form.errors %}
-    <small><p>Ваше имя пользователя и пароль не соответствуют. Пожалуйста,
-    попытайтесь еще разок.</p></small>
-{% endif %}
                 </div> <!-- all_buttons_container end -->
               </div> <!-- header_element end -->
             </div> <!-- row flex end -->
@@ -156,21 +156,21 @@
             </div>
         </footer>
 
-
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.nicescroll.min.js"></script>
-    <script>
-      new WOW().init();
-    </script>
-    <script>
-      $(document).ready(
-          function() {
-              $("html").niceScroll({cursorcolor:"#000"});
-          }
-      );
+    <script src="../../static/js/bootstrap.min.js"></script>
+    <script src="../../static/js/jquery.nicescroll.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $("html").niceScroll({cursorcolor:"#000"});
+        $('[data-toggle="popover"]').popover({
+            // Установление направления отображения popover
+            placement : 'bottom'
+        });
+        // Чтобы сразу после загрузки страницы показать сообщение о неудачной аутентификации
+        $("#signin_button").popover('show');
+      });
     </script>
     </body>
 </html>

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'octapp',
+    'registration',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +124,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # django-registration
 ACCOUNT_ACTIVATION_DAYS = 7
+
+LOGIN_REDIRECT_URL = '/'
