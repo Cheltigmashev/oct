@@ -18,6 +18,13 @@ from django.contrib import admin
 from django.contrib.auth import views
 from django.conf import settings
 from django.conf.urls.static import static
+from registration.backends.simple.views import RegistrationView
+from octapp.forms import RegistrationFormTermOfServiceUniqueEmail
+
+class RegistrationViewTermOfServiceUniqueEmail(RegistrationView):
+    form_class = RegistrationFormTermOfServiceUniqueEmail
+
+admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -25,6 +32,7 @@ urlpatterns = [
     url(r'^avatar/', include('avatar.urls')),
     url(r'^accounts/logout/$', views.logout, name='auth_logout', kwargs={'next_page': '/'}),
     url(r'^accounts/login/$', views.login, name='auth_login'),
+    url(r'^accounts/register/$', RegistrationViewTermOfServiceUniqueEmail.as_view(), name='registration_register'),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^accounts/', include('registration.auth_urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
