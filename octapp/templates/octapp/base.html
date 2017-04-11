@@ -61,9 +61,9 @@
               <div class="col-md-2 col-sm-6 col-xs-6 header_element hidden-xs hidden-sm header_element_3">
 {% if user.is_authenticated %}
                 <div class="center-block text-center user_container">
-                    <small><span>Пользователь: {{ user.username }}</span></small>
+                    <small><span>Пользователь: {{ user.username|truncatechars:16 }}</span></small>
                     <div class="avatar_container center-block">
-                        <a href="{% url 'avatar_change' %}" data-toggle="popover" data-trigger="hover" data-container="body" title="Аватар" data-content="Щелкните, чтобы изменить аватар или удалить загруженные.">
+                        <a href="{% url 'avatar_change' %}" data-toggle="popover" data-trigger="hover" data-container="body" title="Аватар" data-content="Щелкните, чтобы изменить аватарку или удалить загруженные аватарки.">
 {% avatar user 80 class="img-thumbnail thumbnail" %}
                         </a>
                     </div>

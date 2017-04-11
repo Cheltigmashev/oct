@@ -1,0 +1,33 @@
+@import base
+
+div.left_float
+  padding: 50px
+.clearfix::after
+  content: ""
+  display: table
+  clear: both
+.content .flex
+  justify-content: center
+  align-items: center
+.content .flex > div
+  margin: 0 10px
+  padding: 5px
+.loaded_avatars
+  img
+    @extend .thumbnail
+    cursor: pointer
+  li
+    float: left
+    margin-left: 10px
+
+#id_avatar
+  width: 0.1px
+  height: 0.1px
+  opacity: 0
+  overflow: hidden
+  position: absolute
+  z-index: -1
+
+#id_avatar:focus + label
+  outline: 1px dotted #000
+  outline: -webkit-focus-ring-color auto 5px

@@ -1,22 +1,41 @@
 {% extends "octapp/base.html" %}
 {% load i18n avatar_tags %}
+{% load staticfiles %}
+
+{% block page_style %}
+<link rel="stylesheet" href="{% static 'css/change_avatar.css' %}">
+{% endblock %}
 
 {% block content %}
-    <p>{% trans "Your current avatar: " %}</p>
-    {% avatar user %}
+    <div class="flex">
+        <div>
+            <p>Ваша аватарка<br>на данный момент:</p>
+    {% avatar user class="thumbnail" %}
     {% if not avatars %}
-        <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
-    {% else %}
-        <form method="POST" action="{% url 'avatar_change' %}">
-            <ul>
-                {{ primary_avatar_form.as_ul }}
-            </ul>
-            <p>{% csrf_token %}<input type="submit" class="btn btn-default" value="{% trans "Choose new Default" %}" /></p>
-        </form>
+            <p>Вы еще не загружали аватарки. Пожалуйста, загрузите одну или несколько.</p>    
     {% endif %}
-    <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
-        {{ upload_avatar_form.as_p }}
-        <p>{% csrf_token %}<input type="submit" class="btn btn-default" value="{% trans "Upload New Image" %}" /></p>
-    </form>
-    <a href="{% url 'avatar_delete' %}" class="btn btn-default">Удаление аватарок</a>
+        </div>
+
+    {% if avatars %}
+        <div class="loaded_avatars">
+        <form method="POST" class="left_float" action="{% url 'avatar_change' %}">
+        {% csrf_token %}
+            <p class="text-center">Выбор из уже загруженных аватарок</p>       
+            {{ primary_avatar_form.choice }}
+            <input type="submit" class="btn btn-block btn-default" value="Сделать выбранную текущей аватаркой">
+        </form>
+        </div>
+    {% endif %}
+
+        <div>
+        <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+{% csrf_token %}
+            <p>Или загрузите новое изображение для новой аватарки</p>
+{{ upload_avatar_form.avatar }}
+            <label class="btn btn-block btn-default" for="id_avatar">Выбрать файл</label>
+            <input type="submit" class="btn btn-block btn-default" value="Загрузить выбранный файл">
+            <a href="{% url 'avatar_delete' %}" class="btn btn-block btn-default">Удаление аватарок</a>
+        </form>
+        </div>
+    </div>
 {% endblock %}

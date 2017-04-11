@@ -6,7 +6,7 @@
   padding: 0
   color: black
   text-decoration: none
-  list-style: none
+  list-style-type: none
 
 a:hover, a:active, a:visited, a:link
   text-decoration: none
@@ -23,11 +23,6 @@ h1, h2, h3, h4, h5, h6, .title-font
   font-family: 'Roboto Mono', monospace
 
 /*============    ПРИМЕСИ    ===========*/
-@mixin abs_decor($radius)
-  position: absolute
-  top: 0
-  left: 0
-
 @mixin color_of_background($color)
   background-color: $color
 
@@ -61,6 +56,16 @@ h1, h2, h3, h4, h5, h6
 .flex
   display: flex
   flex-wrap: wrap
+.left_float
+  float: left
+
+.thumbnail
+  max-width: 100%
+  height: auto
+  padding: 2px
+  background-color: #fff
+  border: 1px solid #ddd
+  border-radius: 4px
 
 /*============    КНОПКИ    ===========*/
 .btn
