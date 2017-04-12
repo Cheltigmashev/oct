@@ -68,7 +68,7 @@
                     <small><span>Пользователь: {{ user.username|truncatechars:16 }}</span></small>
                     <div class="avatar_container center-block">
                         <a href="{% url 'avatar_change' %}" data-toggle="popover" data-trigger="hover" data-container="body" title="Аватар" data-content="Щелкните, чтобы изменить аватарку или удалить загруженные аватарки.">
-{% avatar user 80 class="img-thumbnail thumbnail" %}
+{% avatar user class="custom_thumbnail" %}
                         </a>
                     </div>
                 </div>

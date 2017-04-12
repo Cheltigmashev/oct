@@ -10,7 +10,7 @@
     <div class="flex">
         <div>
             <p>Ваша аватарка<br>на данный момент:</p>
-    {% avatar user class="thumbnail" %}
+    {% avatar user class="scaled_custom_thumbnail" %}
     {% if not avatars %}
             <p>Вы еще не загружали аватарки. Пожалуйста, загрузите одну или несколько.</p>    
     {% endif %}
@@ -22,7 +22,7 @@
         {% csrf_token %}
             <p class="text-center">Выбор из уже загруженных аватарок</p>       
             {{ primary_avatar_form.choice }}
-            <input type="submit" class="btn btn-block btn-default" value="Сделать выбранную текущей аватаркой">
+            <input type="submit" class="btn btn-block btn-default" value="Сменить аватарку на выбранную">
         </form>
         </div>
     {% endif %}
