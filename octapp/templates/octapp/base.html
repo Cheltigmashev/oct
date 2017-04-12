@@ -33,13 +33,16 @@
             <div class="row flex">
 
               <div class="col-md-3 header_element hidden-xs hidden-sm header_element_1">
-                <a href="{% url 'tests_lists' %}">
-                    <h2 class="text-left">OnlineCustomTesting</h2>
-                    <p>Открытая онлайн система пользовательских тестов</p>
-                </a>
+                <h2 class="text-left">OnlineCustomTesting</h2>
+                <p>Открытая онлайн система пользовательских тестов</p>
               </div>
 
-              <div class="col-md-3 col-sm-6 col-xs-6 header_element header_element_2">
+              <div class="col-md-3 col-sm-4 col-xs-6 header_element header_element_2">
+                <div class="relative">
+                <a href="{% url 'tests_lists' %}">
+                    <span class="glyphicon glyphicon-home link_to_home" data-toggle="popover" data-trigger="hover" data-container="body" title="На главную" data-content="Щелкните, чтобы перейти на главную страницу со списками тестов.">
+                    </span>
+                </a>
                 <h3>Поиск тестов</h3>
                 <form name="search_form" action="POST">
 {% csrf_token %}
@@ -56,9 +59,10 @@
                         </div>
                     </div>
                 </form>
+                </div>
               </div>
 
-              <div class="col-md-2 col-sm-6 col-xs-6 header_element hidden-xs hidden-sm header_element_3">
+              <div class="col-md-2 col-sm-4 col-xs-6 header_element hidden-xs header_element_3">
 {% if user.is_authenticated %}
                 <div class="center-block text-center user_container">
                     <small><span>Пользователь: {{ user.username|truncatechars:16 }}</span></small>
@@ -69,12 +73,11 @@
                     </div>
                 </div>
 {% else %}
-                <p>Вы в гостевом режиме.<br>Зарегистрируйтесь и войдите в систему для добавления тестов и просмотра статистики.</p>
+                <p>Вы в гостевом режиме.<br>Зарегистрируйтесь и/или войдите в систему для добавления тестов и просмотра статистики.</p>
 {% endif %}
               </div>
 
-              <div class="col-md-4 col-sm-6 col-xs-6 header_element header_element_4">
-                <div class="all_buttons_container">
+              <div class="col-md-4 col-sm-4 col-xs-6 header_element header_element_4">
 {% if user.is_authenticated %}
                 <div class="table center-block authorized_user_buttons">
                     <div class="table_row">
@@ -126,7 +129,6 @@
                     </form>
                 </div>
 {% endif %}      
-                </div> <!-- all_buttons_container end -->
               </div> <!-- header_element end -->
             </div> <!-- row flex end -->
           </div> <!-- container end -->

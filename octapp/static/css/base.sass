@@ -58,6 +58,8 @@ h1, h2, h3, h4, h5, h6
   flex-wrap: wrap
 .left_float
   float: left
+.relative
+  position: relative
 
 .thumbnail
   max-width: 100%
@@ -74,9 +76,11 @@ h1, h2, h3, h4, h5, h6
 
 
 /*============    ШАПКА    ===========*/
-$avatar_width: 80px
-$avatar_height: 80px
+$avatar_width: 68px
+$avatar_height: 68px
+$padding_for_user_buttons: 5px
 header
+  min-height: 95px
   z-index: 10
   position: fixed
   top: 0
@@ -97,8 +101,18 @@ header
     h2
       margin-bottom: 2px
     p
-      font-size: 140%
+      font-size: 110%
   .header_element_2
+    .link_to_home
+      text-align: center
+      cursor: pointer
+      position: absolute
+      top: 1px
+      left: 10px
+      width: 30px
+      height: 30px
+      font-size: 18pt
+      color: orange
     h3
       margin: 2px 0 0 0
     input[type=search]
@@ -113,7 +127,7 @@ header
           width: 100%
           margin: 0
       .empty_gap_cell
-        width: 4% 
+        width: 4%
 
   .header_element_3
     img
@@ -126,12 +140,12 @@ header
         width: $avatar_width
       
   .header_element_4
-    .all_buttons_container
-      padding: 3px 0
-      .admin_moder_button_container
-        margin: 2px
-        margin-top: 0
-        min-width: 131px
+    .authorized_user_buttons
+      padding-top: $padding_for_user_buttons
+    .admin_moder_button_container
+      margin: 2px
+      margin-top: 0
+      min-width: 131px
     .table
       background-color: ivory
       margin: 0
@@ -200,6 +214,12 @@ footer
       border-style: none
     .header_element_2
       border-right: 1px dashed gray
+      .link_to_home
+        top: 3px
+        left: 0
+        width: 30px
+        height: 30px
+        font-size: 14pt
       .empty_gap_cell
         display: none
     .header_element_4
@@ -208,12 +228,12 @@ footer
           height: 50%
         .btn
           padding: 0
-          margin: 0
+          margin: 1px
         .flex
           justify-content: center
           align-items: center
           div
-            flex-basis: 50%
+            flex-basis: 48%
           div:nth-of-type(2)
             order: 3
   footer
@@ -230,28 +250,35 @@ footer
     .header_element
       border-style: none
     .header_element_2
-      border-right: 1px dashed gray
       .btn
         padding: 4px 0
         font-size: 14px
+    .header_element_3
+      border-right: 1px dashed gray
+      border-left: 1px dashed gray
+      p
+        font-size: 13px
     .header_element_4
       .authorized_user_buttons
         .btn
           padding: 2px 0
-          font-size: 14px
+          font-size: 12px
       .admin_moder_button_container
         .btn
           padding: 2px 0
-          font-size: 14px
+          font-size: 12px
       .authorization_div
+        input[type="text"], input[type="password"]
+          height: 50%
         .btn
-          padding: 8px 4px
-          font-size: 14px
+          padding: 0
+          margin: 1px
+          font-size: 12px
         .flex
-          justify-content: space-between
+          justify-content: center
           align-items: center
           div
-            flex-basis: 32%
+            flex-basis: 48%
   footer
     .btn
       padding: 3px
@@ -268,30 +295,32 @@ footer
       border-right: 1px dashed gray
     .header_element_2
       .btn
-        padding: 6px 4px
+        padding: 4px 4px
         font-size: 14px
     .header_element_3
       p
-        font-size: 12px
+        font-size: 11px
     .header_element_4
       .authorized_user_buttons
+        padding-top: $padding_for_user_buttons - 2
         .btn
-          padding: 3px 0
-          font-size: 14px
+          padding: 2px 0
+          font-size: 13px
       .admin_moder_button_container
+        padding-bottom: $padding_for_user_buttons - 2
         .btn
-          padding: 3px 0
-          font-size: 14px
+          padding: 2px 0
+          font-size: 13px
       .authorization_div
+        padding: ($padding_for_user_buttons - 2px) 0
         .btn
-          padding: 10px 2px
+          padding: 6px 2px
           font-size: 14px
         .flex
           justify-content: space-between
           align-items: center
           div
             flex-basis: 32%
-            
   footer
     .btn
       padding: 3px
@@ -308,29 +337,31 @@ footer
       border-right: 1px dashed gray
     .header_element_2
       .btn
+        padding: 2px 4px
         font-size: 16px
     .header_element_3
       p
-        font-size: 14px
+        font-size: 13px
     .header_element_4
       .authorized_user_buttons
+        padding-top: $padding_for_user_buttons - 2
         .btn
-          padding: 3px 0
-          font-size: 14px
+          padding: 2px 0
+          font-size: 13px
       .admin_moder_button_container
+        padding-bottom: $padding_for_user_buttons - 2
         .btn
-          padding: 3px 0
-          font-size: 14px
+          padding: 2px 0
+          font-size: 13px
       .authorization_div
         .btn
-          padding: 8px 4px
+          padding: 6px 4px
           font-size: 16px
         .flex
           justify-content: space-between
           align-items: center
           div
             flex-basis: 32%
-
   footer
     .btn
       padding: 3px
