@@ -18,9 +18,9 @@
 
     {% if avatars %}
         <div class="loaded_avatars">
-        <form method="POST" class="left_float" action="{% url 'avatar_change' %}">
+        <p class="text-center">Выбор из уже загруженных аватарок</p> 
+        <form method="POST" action="{% url 'avatar_change' %}">
         {% csrf_token %}
-            <p class="text-center">Выбор из уже загруженных аватарок</p>       
             {{ primary_avatar_form.choice }}
             <input type="submit" class="btn btn-block btn-default" value="Сменить аватарку на выбранную">
         </form>
