@@ -1,0 +1,18 @@
+@charset "utf-8"
+// 80px - default resize in django-avatar
+$full_width_of_resized_avatar: 80px
+
+.custom_thumbnail
+  display: block
+  max-width: 100%
+  height: auto
+  padding: 2px
+  background-color: #fff
+  border: 1px solid #ddd
+  border-radius: 4px
+  cursor: pointer
+
+.scaled_custom_thumbnail
+  @extend .custom_thumbnail
+  width: full_width_of_resized_avatar
+  

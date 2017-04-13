@@ -1,2 +1,8 @@
 [0407/203048.509:ERROR:exception_snapshot_win.cc(87)] thread ID 7656 not found in process
 [0407/203048.515:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::Initialize failed
+[0414/031757.415:ERROR:process_info.cc(343)] VirtualQueryEx: Отказано в доступе. (0x5)
+[0414/031757.419:ERROR:process_info.cc(564)] ReadMemoryInfo failed
+[0414/031757.420:ERROR:process_reader_win.cc(233)] ReadMemory at 0x514c7dc8 of 12 bytes failed: Запрос ReadProcessMemory или WriteProcessMemory был выполнен только частично. (0x12B)
+[0414/031757.420:WARNING:process_snapshot_win.cc(68)] ReadMemory ExceptionInformation failed
+[0414/031757.420:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::Initialize failed
+[0414/031757.420:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess: Попытка доступа к процессу, выполняющему процедуру завершения.  (0xc000010a)
