@@ -87,6 +87,7 @@ header
   background-color: ivory
   .row
     padding: 0
+    min-height: 91px
   .header_element
     overflow: auto
     padding: 0 4px
@@ -179,7 +180,7 @@ header
 
 /*============    БЛОК КОНТЕНТА    ===========*/
 .content
-  padding: 103px 20px 100px 20px
+  padding: 104px 20px 50px 20px
 
 /*============    ПОДВАЛ    ===========*/
 
@@ -205,20 +206,24 @@ footer
 
 @media(min-width:0px) and (max-width:767px)
   .content
-    padding: 10px 0
-  
+    padding-top: 14px
+    padding-bottom: 69px
   header
     position: static
     .header_element
       border-style: none
     .header_element_2
       border-right: 1px dashed gray
+      .relative
+        padding-top: 7px
       .link_to_home
         top: 3px
         left: 0
         width: 30px
         height: 30px
         font-size: 14pt
+      h3
+        font-size: 16px
       .empty_gap_cell
         display: none
     .header_element_4
@@ -242,13 +247,16 @@ footer
 
 @media(min-width:768px) and (max-width:991px)
   .content
-    padding: 10px 0
-  
+    padding-top: 14px
+    padding-bottom: 59px
   header
     position: static
     .header_element
       border-style: none
     .header_element_2
+      .relative
+        padding-top: 0
+        padding-bottom: 0
       .btn
         padding: 4px 0
         font-size: 14px
@@ -286,8 +294,8 @@ footer
 
 @media(min-width:992px) and (max-width:1199px)
   .content
-    padding-top: 118px
-    padding-bottom: 60px
+    padding-top: 110px
+    padding-bottom: 39px
   
   header
     position: fixed
@@ -296,6 +304,9 @@ footer
     .header_element:not(:last-of-type)
       border-right: 1px dashed gray
     .header_element_2
+      .relative
+        padding-top: 0
+        padding-bottom: 0
       .btn
         padding: 4px 4px
         font-size: 14px
@@ -331,8 +342,8 @@ footer
 
 @media(min-width:1200px)
   .content
-    padding-top: 118px
-    padding-bottom: 50px
+    padding-top: 110px
+    padding-bottom: 39px
       
   header
     position: fixed
@@ -341,6 +352,9 @@ footer
     .header_element:not(:last-of-type)
       border-right: 1px dashed gray
     .header_element_2
+      .relative
+        padding-top: 0
+        padding-bottom: 0
       .btn
         padding: 2px 4px
         font-size: 16px
