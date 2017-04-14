@@ -14,5 +14,13 @@ $full_width_of_resized_avatar: 80px
 
 .scaled_custom_thumbnail
   @extend .custom_thumbnail
-  width: full_width_of_resized_avatar
+  width: $full_width_of_resized_avatar
+
+// for current user's avatar on changing of avatar page
+.scaled_custom_thumbnail_with_def_cur
+  @extend .scaled_custom_thumbnail
+  cursor: default
   
+.small_custom_thumbnail
+  @extend .custom_thumbnail
+  width: $full_width_of_resized_avatar / 2

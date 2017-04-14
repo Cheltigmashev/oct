@@ -43,6 +43,16 @@
                     <span class="glyphicon glyphicon-home link_to_home" data-toggle="popover" data-trigger="hover" data-container="body" title="На главную" data-content="Щелкните, чтобы перейти на главную страницу со списками тестов.">
                     </span>
                 </a>
+
+                <!-- Small thumbnail of user's avatar for xs width of screen -->
+{% if user.is_authenticated %}
+                <div class="small_avatar_for_xs">
+                    <a href="{% url 'avatar_change' %}" data-toggle="popover" data-trigger="hover" data-container="body" title="Аватар" data-content="Щелкните, чтобы изменить аватарку или удалить загруженные аватарки.">
+{% avatar user class="small_custom_thumbnail" %}
+                    </a>
+                </div>
+{% endif %}
+
                 <h3>Поиск тестов</h3>
                 <form name="search_form" action="POST">
 {% csrf_token %}

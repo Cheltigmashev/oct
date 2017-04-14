@@ -1,7 +1,0 @@
-{
-"version": 3,
-"mappings": "AAIA,0CAAiB,CACf,OAAO,CAAE,KAAK,CACd,SAAS,CAAE,IAAI,CACf,MAAM,CAAE,IAAI,CACZ,OAAO,CAAE,GAAG,CACZ,gBAAgB,CAAE,IAAI,CACtB,MAAM,CAAE,cAAc,CACtB,aAAa,CAAE,GAAG,CAClB,MAAM,CAAE,OAAO,CAEjB,wBAAwB,CAEtB,KAAK,CAAE,4BAA4B",
-"sources": ["custom_thumbnail.sass"],
-"names": [],
-"file": "custom_thumbnail.css"
-}
