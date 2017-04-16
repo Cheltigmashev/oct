@@ -21,10 +21,11 @@ from django.conf.urls.static import static
 from registration.backends.simple.views import RegistrationView
 from octapp.forms import RegistrationFormTermOfServiceUniqueEmail
 
+from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
+
 class RegistrationViewTermOfServiceUniqueEmail(RegistrationView):
     form_class = RegistrationFormTermOfServiceUniqueEmail
-
-admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -35,5 +36,9 @@ urlpatterns = [
     url(r'^accounts/register/$', RegistrationViewTermOfServiceUniqueEmail.as_view(), name='registration_register'),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^accounts/', include('registration.auth_urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    url(r'^ckeditor/upload/', login_required(ckeditor_uploader.views.upload), name='ckeditor_upload'),
+    url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_uploader.views.browse)), name='ckeditor_browse'),
+
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # ! only for developing

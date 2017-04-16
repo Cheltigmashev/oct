@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'octapp',
     'registration',
     'avatar',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -125,9 +127,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 LOGIN_REDIRECT_URL = '/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # django-avatar settings
 AVATAR_CHANGE_TEMPLATE = 'avatar/change.html'
 AVATAR_DELETE_TEMPLATE = 'avatar/delete.html'
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
