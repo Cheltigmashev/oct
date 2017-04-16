@@ -23,6 +23,7 @@ from octapp.forms import RegistrationFormTermOfServiceUniqueEmail
 
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
+import ckeditor_uploader
 
 class RegistrationViewTermOfServiceUniqueEmail(RegistrationView):
     form_class = RegistrationFormTermOfServiceUniqueEmail
