@@ -7,6 +7,7 @@ class Test(models.Model):
     author = models.ForeignKey('auth.User', related_name='tests', on_delete=models.CASCADE)
     category = models.ForeignKey('octapp.Category', related_name='tests', on_delete=models.CASCADE)
     scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE)
+    tag = models.ManyToManyField('octapp.Tag')
 
     name = models.CharField("Наименование теста", max_length=200, blank=False)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
@@ -72,7 +73,6 @@ class ResultScale(models.Model):
         verbose_name_plural = "Оценочные шкалы"
 
 class Tag(models.Model):
-    test = models.ManyToManyField('octapp.Test', related_name='tags')
     name = models.CharField("Наименование тега", max_length=40, blank=False)
 
     def __str__(self):

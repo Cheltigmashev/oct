@@ -7,14 +7,40 @@
 
 {% block content %}
 <h2>ТЕСТ «{{ test.name|upper }}»</h2>
-{{ test.author }}<br>
+
+<h3 class="text-left">Данный тест загрузил {{ test.author }}</h4>
+
+<h3 class="text-left">Описание теста</h4>
 {{ test.description|safe }}
-<h3 class="text-left">Контроль</h4>
-{{ test.controlling }}<br>
-<h3 class="text-left">Рейтинг</h4>
-{{ test.rating }}<br>
-<h3 class="text-left">Дата создания</h4>
+
+    {% if test.controlling %}
+<h3 class="text-left">Для данного теста задано использование контроля прохождения</h4>
+    {% else %}
+<h3 class="text-left">Для данного теста не задано использование контроля прохождения</h4>    
+    {% endif %}
+
+    {% if test.time_restricting %}
+<h3 class="text-left">Для данного теста установлено ограничение времени прохождения</h4>
+    {% else %}
+<h3 class="text-left">Данный тест — без ограничения на время прохождения</h4>    
+    {% endif %}
+
+<h3 class="text-left">Рейтинг теста: {{ test.rating }}</h4>
+
+<h3 class="text-left">Дата добавления теста в систему</h4>
 {{ test.created_date }}<br>
+
+    {% if test.published_date %}
 <h3 class="text-left">Дата публикации</h4>
 {{ test.published_date }}<br>
+    {% else %}
+    <h3 class="text-left">Пост еще не опубликован пользователем {{ test.author }}</h4>
+    {% endif %}
+
+<h3 class="text-left">Теги теста</h4>
+    {% for tag in test.tag.all %}
+<span>|{{ tag }}</span>
+    {% empty %}
+<p>Для данного теста какие-либо теги не назначены пользователем {{ test.author }} :(</p>
+    {% endfor %}
 {% endblock %}
