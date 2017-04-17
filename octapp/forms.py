@@ -30,4 +30,4 @@ class TestForm(forms.ModelForm):
     )
     class Meta:
         model = Test
-        fields = ('category', 'scale', 'name', 'description', 'controlling', 'time_restricting')
+        fields = ('category', 'scale', 'tag', 'name', 'description', 'controlling', 'time_restricting')

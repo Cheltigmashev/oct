@@ -31,10 +31,9 @@
 {{ test.created_date }}<br>
 
     {% if test.published_date %}
-<h3 class="text-left">Дата публикации</h4>
-{{ test.published_date }}<br>
+<h3 class="text-left">Дата публикации — {{ test.published_date }}</h4>
     {% else %}
-    <h3 class="text-left">Пост еще не опубликован пользователем {{ test.author }}</h4>
+    <h3 class="text-left">Данный тест еще не опубликован пользователем {{ test.author }}</h4>
     {% endif %}
 
 <h3 class="text-left">Теги теста</h4>
