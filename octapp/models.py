@@ -5,8 +5,8 @@ from ckeditor.fields import RichTextField
 
 class Test(models.Model):
     author = models.ForeignKey('auth.User', related_name='tests', on_delete=models.CASCADE)
-    category = models.ForeignKey('octapp.Category', related_name='tests_of_category', on_delete=models.CASCADE)
-    scale = models.ForeignKey('octapp.ResultScale', related_name='tests_with_scale', on_delete=models.CASCADE)
+    category = models.ForeignKey('octapp.Category', related_name='tests', on_delete=models.CASCADE)
+    scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE)
 
     name = models.CharField("Наименование теста", max_length=200, blank=False)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
