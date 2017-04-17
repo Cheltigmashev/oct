@@ -4,9 +4,9 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from ckeditor.fields import RichTextField
 
 class Test(models.Model):
-    author = models.ForeignKey('auth.User', related_name='tests')
-    category = models.ForeignKey('octapp.category', related_name='tests_of_category')
-    scale = models.ForeignKey('octapp.ResultScale', related_name='tests_with_scale')
+    author = models.ForeignKey('auth.User', related_name='tests', on_delete=models.CASCADE)
+    category = models.ForeignKey('octapp.category', related_name='tests_of_category', on_delete=models.CASCADE)
+    scale = models.ForeignKey('octapp.ResultScale', related_name='tests_with_scale', on_delete=models.CASCADE)
 
     name = models.CharField("Наименование теста", max_length=200, blank=False)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
@@ -28,7 +28,7 @@ class Test(models.Model):
         verbose_name_plural = "Тесты"
 
 class Comment(models.Model):
-    test = models.ForeignKey('octapp.test', related_name='comments')
+    test = models.ForeignKey('octapp.test', related_name='comments', on_delete=models.CASCADE)
     author = models.ForeignKey('auth.User', related_name='comments')
     content = RichTextField("Содержимое комментария", blank=False)
     created_date = models.DateTimeField(default=timezone.now)
@@ -72,8 +72,8 @@ class ResultScale(models.Model):
         verbose_name_plural = "Оценочные шкалы"
 
 class List_of_tags_of_test(models.Model):
-    test = models.ForeignKey('octapp.test', related_name='tags_of_test')
-    tag = models.ForeignKey('octapp.tag', related_name='lists_with_tag')
+    test = models.ForeignKey('octapp.test', related_name='tags_of_test', on_delete=models.CASCADE)
+    tag = models.ForeignKey('octapp.tag', related_name='lists_with_tag', on_delete=models.CASCADE)
     
     def __str__(self):
         return "Тег '{0}' из списка тегов теста '{1}'".format(self.tag, self.test)
