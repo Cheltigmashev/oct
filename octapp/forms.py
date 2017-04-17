@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 
 from registration import validators
 from registration.forms import RegistrationFormTermsOfService
+from ckeditor.widgets import CKEditorWidget
+from .models import Test, Comment
 
 User = get_user_model()
 
@@ -12,7 +14,7 @@ class RegistrationFormTermOfServiceUniqueEmail(RegistrationFormTermsOfService):
     user_manual = forms.BooleanField(
         widget=forms.CheckboxInput,
         label=(u'Я прочитал(а) инструкцию пользователя'),
-        required=True,
+        required=True
     )
 
     def clean_email(self):
@@ -20,3 +22,12 @@ class RegistrationFormTermOfServiceUniqueEmail(RegistrationFormTermsOfService):
             raise forms.ValidationError(validators.DUPLICATE_EMAIL)
         return self.cleaned_data['email']
 
+class TestForm(forms.ModelForm):
+    publish_after_adding = forms.BooleanField(
+        widget=forms.CheckboxInput,
+        label=(u'Опубликовать тест сразу после отправки (загрузки) теста'),
+        required=False
+    )
+    class Meta:
+        model = Test
+        fields = ('category', 'scale', 'name', 'description', 'controlling', 'time_restricting')

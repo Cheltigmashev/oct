@@ -136,3 +136,4 @@ AVATAR_DELETE_TEMPLATE = 'avatar/delete.html'
 
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
+

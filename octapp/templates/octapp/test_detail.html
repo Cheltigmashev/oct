@@ -1,0 +1,20 @@
+{% extends 'octapp/base.html' %}
+{% load staticfiles %}
+
+{% block page_style %}
+<link rel="stylesheet" href="">
+{% endblock %}
+
+{% block content %}
+<h2>ТЕСТ «{{ test.name|upper }}»</h2>
+{{ test.author }}<br>
+{{ test.description|safe }}
+<h3 class="text-left">Контроль</h4>
+{{ test.controlling }}<br>
+<h3 class="text-left">Рейтинг</h4>
+{{ test.rating }}<br>
+<h3 class="text-left">Дата создания</h4>
+{{ test.created_date }}<br>
+<h3 class="text-left">Дата публикации</h4>
+{{ test.published_date }}<br>
+{% endblock %}

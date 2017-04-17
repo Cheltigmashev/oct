@@ -26,6 +26,12 @@
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
 
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="{% static 'octapp/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'octapp/js/jquery.nicescroll.min.js' %}"></script>
+
     </head>
     <body>
         <header>
@@ -95,7 +101,7 @@
                             <a href="#" class="btn btn-default btn-sm" role="button">Ваши тесты</a>
                         </div>
                         <div class="table_cell">
-                            <a href="#" class="btn btn-default btn-sm">Новый тест</a>
+                            <a href="{% url 'test_adding' %}" class="btn btn-default btn-sm">Новый тест</a>
                         </div>
                     </div>
                     <div class="table_row">
@@ -169,11 +175,6 @@
             </div>
         </footer>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{% static 'octapp/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'octapp/js/jquery.nicescroll.min.js' %}"></script>
     <script type="text/javascript">
       $(document).ready(function() {
         $("html").niceScroll({cursorcolor:"#000"});

@@ -1,0 +1,16 @@
+{% extends 'octapp/base.html' %}
+{% load staticfiles %}
+
+{% block page_style %}
+<link rel="stylesheet" href="">
+{% endblock %}
+
+{% block content %}
+<h2>ДОБАВЛЕНИЕ ИЛИ РЕДАКТИРОВАНИЕ ТЕСТА</h2>
+<form action="{% url 'test_adding' %}" method="POST">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.as_p }}
+    <input type="submit">
+</form>
+{% endblock %}
