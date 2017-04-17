@@ -23,7 +23,7 @@ from octapp.forms import RegistrationFormTermOfServiceUniqueEmail
 
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
-import ckeditor_uploader
+from ckeditor_uploader import views as ckeditor_views
 
 class RegistrationViewTermOfServiceUniqueEmail(RegistrationView):
     form_class = RegistrationFormTermOfServiceUniqueEmail
@@ -38,8 +38,8 @@ urlpatterns = [
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^accounts/', include('registration.auth_urls')),
 
-    url(r'^ckeditor/upload/', login_required(ckeditor_uploader.views.upload), name='ckeditor_upload'),
-    url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_uploader.views.browse)), name='ckeditor_browse'),
+    url(r'^ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
+    url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # ! only for developing
