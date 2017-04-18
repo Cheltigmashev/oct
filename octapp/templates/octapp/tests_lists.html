@@ -15,12 +15,12 @@
             <div class="table_row">
                 <div class="table_cell">
                     {% for test in left_number_of_new_tests_list %}
-                    <div><a href="{% url 'test_detail' pk=test.pk %}" class="test">{{ test }}</a><hr></div>
+                    <a href="{% url 'test_detail' pk=test.pk %}"><div><span class="test">{{ test }}</span><hr></div></a>
                     {% endfor %}
                 </div>
                 <div class="table_cell">
                     {% for test in right_number_of_new_tests_list %}
-                    <div><a href="{% url 'test_detail' pk=test.pk %}" class="test">{{ test }}</a><hr></div>
+                    <a href="{% url 'test_detail' pk=test.pk %}"><div><span class="test">{{ test }}</span><hr></div></a>
                     {% endfor %}
                 </div>
             </div>
@@ -32,7 +32,7 @@
             <div class="table_row">
                 <div class="table_cell">
                     {% for test in left_number_of_new_tests_list %}
-                    <div><a href="{% url 'test_detail' pk=test.pk %}" class="test">{{ test }}</a><hr></div>
+                    <a href="{% url 'test_detail' pk=test.pk %}"><div><span class="test">{{ test }}</span><hr></div></a>
                     {% endfor %}
                 </div>
             </div>
@@ -48,16 +48,16 @@
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-                    <div><a class="test">Анатомия человека</a></div>
-                    <div><a class="test">Тест по географии</a></div>
-                    <div><a class="test">Тест на тип темперамента</a></div>
-                    <div><a class="test">Парадигмы программирования</a></div>
+                    <a><div><span class="test">Анатомия человека</span><hr></div></a>
+                    <a><div><span class="test">Тест по географии</span><hr></div></a>
+                    <a><div><span class="test">Тест на тип темперамента</span><hr></div></a>
+                    <a><div><span class="test">Парадигмы программирования</span><hr></div></a>
                 </div>
                 <div class="table_cell">
-                    <div><a class="test">Философия буддизма</a></div>
-                    <div><a class="test">Тест по кулинарии</a></div>
-                    <div><a class="test">Сети и телекоммуникации</a></div>
-                    <div><a class="test">Информационные системы и технологии</a></div>
+                    <a><div><span class="test">Философия буддизма</span><hr></div></a>
+                    <a><div><span class="test">Тест по кулинарии</span><hr></div></a>
+                    <a><div><span class="test">Сети и телекоммуникации</span><hr></div></a>
+                    <a><div><span class="test">Информационные системы и технологии</span><hr></div></a>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
         <a href="" class="tag"><span class="badge">Отношения (XXX штук)</span></a>
         <a href="" class="tag"><span class="badge">Для школьников (XXX штук)</span></a>
         <a href="" class="tag"><span class="badge">Для студентов (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">Развлекательные < (XXX штук)</span></a>
+        <a href="" class="tag"><span class="badge">Развлекательные (XXX штук)</span></a>
         <a href="" class="tag"><span class="badge">На 10-15 минут (XXX штук)</span></a>
         <a href="" class="tag"><span class="badge">На 20-30 минут (XXX штук)</span></a>
         <a href="" class="tag"><span class="badge">С лимитом времени (XXX штук)</span></a>
