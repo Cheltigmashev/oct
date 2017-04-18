@@ -31,6 +31,7 @@
         <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
 {% csrf_token %}
             <p>Загрузить новое изображение для новой аватарки:</p>
+            <p>NB! После выбора файла, используйте кнопку <q>Загрузить выбранный файл</q>!</p>
 {{ upload_avatar_form.avatar }}
             <label class="btn btn-block btn-default" for="id_avatar">Выбрать файл</label>
             <input type="submit" class="btn btn-block btn-default" value="Загрузить выбранный файл">
