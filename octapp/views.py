@@ -11,9 +11,9 @@ User = get_user_model()
 # Представление главной страницы
 def tests_lists(request):
     # левый ряд тестов для списка новых тестов, диапазон от 0го до 9го
-    left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('published_date')[:30]
+    left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('published_date')[:20]
     # левый ряд тестов для списка новых тестов, диапазон от 10го до 19го
-    right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('published_date')[30:61]
+    right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('published_date')[20:41]
     return render(request, 'octapp/tests_lists.html', {'left_number_of_new_tests_list': left_number_of_new_tests_list,
             'right_number_of_new_tests_list': right_number_of_new_tests_list})
 
