@@ -42,4 +42,22 @@
     {% empty %}
 <p>Для данного теста какие-либо теги не назначены пользователем {{ test.author }} :(</p>
     {% endfor %}
+
+    {% if is_author or request.user.is_staff %}
+<h2>Управление тестом</h2>
+<a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить тест</a>
+<a class="btn btn-default btn-lg">Добавить вопрос</a>
+    {% endif %}
+
+    {% if not is_author or request.user.is_staff and not request.user.is_superuser %}
+    Вы не автор теста, но вы относитесь к персоналу сайта, поэтому вам также доступен данный функционал.
+    {% endif %}
+
+    {% if is_author or request.user.is_superuser %}
+    Вы не автор теста, но являетесь суперпользователем, поэтому вам также доступен данный функционал.
+    {% endif %}
+
+    {{ request.user.get_all_permissions }}
+
+
 {% endblock %}

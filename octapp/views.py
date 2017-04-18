@@ -28,7 +28,11 @@ def test_adding(request):
 
 def test_detail(request, pk):
     test = get_object_or_404(Test, pk=pk)
-    return render(request, 'octapp/test_detail.html', {'test': test})
+    if (request.user == test.author):
+        is_author = True
+    else:
+        is_author = False
+    return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author})
 
 @login_required
 def test_edit(request, pk):
@@ -42,7 +46,7 @@ def test_edit(request, pk):
             return redirect('test_detail', pk=test.pk)
     else:
         form = TestForm(instance=test)
-    return render(request, 'blog/test_edit.html', {'form': form})
+    return render(request, 'octapp/test_edit.html', {'form': form})
 
 @login_required
 def test_publish(request, pk):

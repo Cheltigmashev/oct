@@ -58,6 +58,9 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+        permissions = (
+            ("confirm_category", "Can confirm_category"),
+        )
 
 class ResultScale(models.Model):
     name = models.CharField("Наименование шкалы", max_length=70, blank=False)
