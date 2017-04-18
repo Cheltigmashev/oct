@@ -37,8 +37,7 @@
 
 <h3 class="text-left">Рейтинг теста: {{ test.rating }}</h3>
 
-<h3 class="text-left">Дата добавления теста в систему</h3>
-{{ test.created_date }}<br>
+<h3 class="text-left">Дата добавления теста в систему — {{ test.created_date }}</h3>
 
     {% if test.published_date %}
 <h3 class="text-left">Дата публикации — {{ test.published_date }}</h3>
