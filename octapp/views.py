@@ -3,10 +3,25 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import TestForm
 from .models import Test, Comment
+from django.contrib.auth import get_user_model
+
+# Модель пользователя
+User = get_user_model()
 
 # Представление главной страницы
 def tests_lists(request):
-    return render(request, 'octapp/tests_lists.html', {})
+    # левый ряд тестов для списка новых тестов, диапазон от 0го до 9го
+    left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('published_date')[:10]
+    # левый ряд тестов для списка новых тестов, диапазон от 10го до 19го
+    right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('published_date')[10:20]
+    return render(request, 'octapp/tests_lists.html', {'left_number_of_new_tests_list': left_number_of_new_tests_list,
+            'right_number_of_new_tests_list': right_number_of_new_tests_list})
+
+def user_tests(request, pk):
+    published_user_tests = Test.objects.filter(author=request.user).order_by('name').filter(published_date__isnull=False)
+    unpublished_user_tests = Test.objects.filter(author=request.user).order_by('name').filter(published_date__isnull=True)
+    return render(request, 'octapp/user_tests.html', {'unpublished_user_tests': unpublished_user_tests,
+            'published_user_tests': published_user_tests})
 
 @login_required
 def test_new(request):

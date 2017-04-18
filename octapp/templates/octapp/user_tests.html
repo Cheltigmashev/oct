@@ -1,0 +1,23 @@
+{% extends 'octapp/base.html' %}
+{% load staticfiles %}
+
+{% block page_style %}
+<link rel="stylesheet" href="">
+{% endblock %}
+
+{% block content %}
+<h2>СПИСОК ЗАГРУЖЕННЫХ ВАМИ ТЕСТОВ В АЛФАВИТНОМ ПОРЯДКЕ</h2>
+<h3 class="text-left">Опубликованные тесты</h3>
+    {% for test in published_user_tests %}
+<div>№ {{ forloop.counter }}. <a href="{% url 'test_detail' pk=test.pk %}" class="test">{{ test }}</a></div>
+    {% empty %}
+        У вас еще нет тестов — вы еще не добавили ни один тест.
+    {% endfor %}
+<hr>
+<h3 class="text-left">Неопубликованные тесты</h3>
+    {% for test in unpublished_user_tests %}
+<div>№ {{ forloop.counter }}. <a href="{% url 'test_detail' pk=test.pk %}" class="test">{{ test }}</a></div>
+    {% empty %}
+        У вас еще нет тестов — вы еще не добавили ни один тест.
+    {% endfor %}
+{% endblock %}

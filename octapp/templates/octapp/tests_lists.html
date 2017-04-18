@@ -10,18 +10,38 @@
     <!--div.col-md-6.col-sm-12.col-xs-12.col-lg-3.tests_list*4>h2+div.list+div.paginator-->
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>НОВЫЕ ТЕСТЫ</h2></a>
+    {% if left_number_of_new_tests_list and right_number_of_new_tests_list %}
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-                    <div><a class="test">Тест на тип темперамента</a></div>
-                    <div><a class="test">Парадигмы программирования</a></div>
+                    {% for test in left_number_of_new_tests_list %}
+                    <div><a href="{% url 'test_detail' pk=test.pk %}" class="test">{{ test }}</a></div>
+                    {% endfor %}
                 </div>
                 <div class="table_cell">
-                    <div><a class="test">Сети и телекоммуникации</a></div>
-                    <div><a class="test">Информационные системы и технологии</a></div>
+                    {% for test in right_number_of_new_tests_list %}
+                    <div><a href="{% url 'test_detail' pk=test.pk %}" class="test">{{ test }}</a></div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
+    {% else %}
+        <!-- Если правого ряда новых тестов нет, то помещать тесты в 1 ячейку таблицы -->
+        {% if left_number_of_new_tests_list and not right_number_of_new_tests_list %}
+        <div class="table">
+            <div class="table_row">
+                <div class="table_cell">
+                    {% for test in left_number_of_new_tests_list %}
+                    <div><a href="{% url 'test_detail' pk=test.pk %}" class="test">{{ test }}</a></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Если даже левого ряда нет -->        
+        <h4>Нет тестов</h4>
+        {% endif %}        
+    {% endif %}
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>ПОПУЛЯРНЫЕ ТЕСТЫ</h2></a>

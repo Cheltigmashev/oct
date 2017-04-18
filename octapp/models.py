@@ -20,7 +20,7 @@ class Test(models.Model):
     created_date = models.DateTimeField("Дата создания", default=timezone.now, editable=False)
     published_date = models.DateTimeField("Дата публикации", blank=True, null=True, editable=False)
 
-    def publish_test(self):
+    def publish(self):
         self.published_date = timezone.now()
         self.save()
 
