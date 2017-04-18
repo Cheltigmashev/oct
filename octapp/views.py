@@ -18,11 +18,10 @@ def test_new(request):
             # видимо, это происходит по причине того, что модель Tag либо промежуточная модель многие-ко-многим
             # тоже не сохраняется.
             test = form.save()
-            test.author = request.user
             if form.cleaned_data['publish_after_adding']:
                 test.published_date = timezone.now()
             if not form.cleaned_data['anonymous_loader']:
-                test.author = auth.User.objects.create()
+                test.author = request.user
             test.save()
             return redirect('test_detail', pk=test.pk)
     else:

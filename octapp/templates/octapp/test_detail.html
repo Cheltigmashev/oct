@@ -6,41 +6,62 @@
 {% endblock %}
 
 {% block content %}
-<h2>ТЕСТ «{{ test.name|upper }}»</h2>
+<h2>ТЕСТ <q>{{ test.name|upper }}</q></h2>
 
-<h3 class="text-left">Данный тест загрузил {{ test.author }}</h4>
+    {% if test.author %}
+<h3 class="text-left">Данный тест загрузил пользователь {{ test.author }}</h3>
+    {% else %}
+<h3 class="text-left">Данный тест добавлен в систему анонимно</h3>
+    {% endif %}
 
-<h3 class="text-left">Описание теста</h4>
+    {% if test.category %}
+<h3 class="text-left">Категория теста — <q>{{ test.category }}</q></h3>
+    {% else %}
+<h3 class="text-left">Данному тесту не присвоена категория</h3>
+    {% endif %}
+
+<h3 class="text-left">Описание теста</h3>
 {{ test.description|safe }}
 
     {% if test.controlling %}
-<h3 class="text-left">Для данного теста задано использование контроля прохождения</h4>
+<h3 class="text-left">Для данного теста задано использование контроля прохождения</h3>
     {% else %}
-<h3 class="text-left">Для данного теста не задано использование контроля прохождения</h4>    
+<h3 class="text-left">Для данного теста не задано использование контроля прохождения</h3>    
     {% endif %}
 
     {% if test.time_restricting %}
-<h3 class="text-left">Для данного теста установлено ограничение времени прохождения</h4>
+<h3 class="text-left">Для данного теста установлено ограничение времени прохождения</h3>
     {% else %}
-<h3 class="text-left">Данный тест — без ограничения на время прохождения</h4>    
+<h3 class="text-left">Это тест без ограничения на время прохождения</h3>    
     {% endif %}
 
-<h3 class="text-left">Рейтинг теста: {{ test.rating }}</h4>
+<h3 class="text-left">Рейтинг теста: {{ test.rating }}</h3>
 
-<h3 class="text-left">Дата добавления теста в систему</h4>
+<h3 class="text-left">Дата добавления теста в систему</h3>
 {{ test.created_date }}<br>
 
     {% if test.published_date %}
-<h3 class="text-left">Дата публикации — {{ test.published_date }}</h4>
+<h3 class="text-left">Дата публикации — {{ test.published_date }}</h3>
     {% else %}
-    <h3 class="text-left">Данный тест еще не опубликован пользователем {{ test.author }}</h4>
+    <h3 class="text-left">Данный тест еще не опубликован 
+        {% if test.author %}
+        пользователем {{ test.author }}</h3>
+        {% else %}
+        анонимным пользователем</h3>
+        {% endif %}
     {% endif %}
 
-<h3 class="text-left">Теги теста</h4>
+<h3 class="text-left">Теги теста</h3>
     {% for tag in test.tags.all %}
 <span>|{{ tag }}</span>
     {% empty %}
-<p>Для данного теста какие-либо теги не назначены пользователем {{ test.author }} :(</p>
+<p>Для данного теста какие-либо теги не назначены 
+        {% if test.author %}
+    пользователем {{ test.author }}
+        {% else %}
+    анонимным пользователем
+        {% endif %}
+    , который добавил данный тест :(</p>
     {% endfor %}
 
     {% if is_author or request.user.is_staff %}
