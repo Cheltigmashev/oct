@@ -4,18 +4,19 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from ckeditor.fields import RichTextField
 
 class Test(models.Model):
-    author = models.ForeignKey('auth.User', related_name='tests', on_delete=models.CASCADE)
-    category = models.ForeignKey('octapp.Category', related_name='tests', on_delete=models.CASCADE)
-    scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE)
-    tag = models.ManyToManyField('octapp.Tag')
+    author = models.ForeignKey('auth.User', related_name='tests', on_delete=models.CASCADE, verbose_name="Пользователь, загрузивший тест")
+    category = models.ForeignKey('octapp.Category', related_name='tests', on_delete=models.CASCADE, verbose_name="Категория теста")
+    scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE, verbose_name="Оценочная шкала теста")
+    # id est test may contain many tags, and tags may be related to different tests
+    tag = models.ManyToManyField('octapp.Tag', verbose_name="Тег или теги теста")
 
-    name = models.CharField("Наименование теста", max_length=200, blank=False)
+    name = models.CharField("Наименование теста", max_length=200, blank=False, unique=True)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
     controlling = models.BooleanField("Использование контроля прохождения теста", default=False)
     time_restricting = models.BooleanField("Ограничение времени прохождения теста", default=False)
-    rating = models.IntegerField("Рейтинг теста", default=0)
-    created_date = models.DateTimeField("Дата создания", default=timezone.now)
-    published_date = models.DateTimeField("Дата публикации", blank=True, null=True)
+    rating = models.IntegerField("Рейтинг теста", default=0, editable=False)
+    created_date = models.DateTimeField("Дата создания", default=timezone.now, editable=False)
+    published_date = models.DateTimeField("Дата публикации", blank=True, null=True, editable=False)
 
     def publish_test(self):
         self.published_date = timezone.now()
@@ -29,10 +30,11 @@ class Test(models.Model):
         verbose_name_plural = "Тесты"
 
 class Comment(models.Model):
-    test = models.ForeignKey('octapp.test', related_name='comments', on_delete=models.CASCADE)
-    author = models.ForeignKey('auth.User', related_name='comments')
+    test = models.ForeignKey('octapp.Test', related_name='comments', on_delete=models.CASCADE, verbose_name="Тест, к которому относится комментарий")
+    author = models.ForeignKey('auth.User', related_name='comments', verbose_name="Пользователь-автор комментария")
+
     content = RichTextField("Содержимое комментария", blank=False)
-    created_date = models.DateTimeField(default=timezone.now)
+    created_date = models.DateTimeField("Дата создания комментария", default=timezone.now)
 
     def __str__(self):
         self.content
@@ -59,11 +61,10 @@ class Category(models.Model):
 class ResultScale(models.Model):
     name = models.CharField("Наименование шкалы", max_length=70, blank=False)
     scale_divisions_amount = models.IntegerField("Количество делений оценочной шкалы", default=0)
-    # Доля в процентах каждого деления через запятую без пробелов, например, для 2-бальной шкалы (зачтено, незачтено)
-    # разметка делений может быть "40,60"
+    
     divisions_layout = models.CharField(
         "Разметка делений шкалы -- процентные доли каждого деления через запятую",
-    max_length=20, blank=False)
+    max_length=20, blank=False, help_text="например, для 2-бальной шкалы (зачтено, незачтено) разметка делений может быть <q>'40,60'</q>")
 
     def __str__(self):
         return self.name
