@@ -6,9 +6,10 @@ from ckeditor.fields import RichTextField
 class Test(models.Model):
     author = models.ForeignKey('auth.User', related_name='tests', on_delete=models.CASCADE, verbose_name="Пользователь, загрузивший тест")
     category = models.ForeignKey('octapp.Category', related_name='tests', on_delete=models.CASCADE, verbose_name="Категория теста")
-    scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE, verbose_name="Оценочная шкала теста")
+    result_scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE, verbose_name="Оценочная шкала теста")
     # id est test may contain many tags, and tags may be related to different tests
-    tag = models.ManyToManyField('octapp.Tag', verbose_name="Тег или теги теста")
+    # tagS name prefered by Django docs
+    tags = models.ManyToManyField('octapp.Tag', verbose_name="Тег или теги теста")
 
     name = models.CharField("Наименование теста", max_length=200, blank=False, unique=True)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')

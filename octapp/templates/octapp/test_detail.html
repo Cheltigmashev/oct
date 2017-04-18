@@ -37,7 +37,7 @@
     {% endif %}
 
 <h3 class="text-left">Теги теста</h4>
-    {% for tag in test.tag.all %}
+    {% for tag in test.tags.all %}
 <span>|{{ tag }}</span>
     {% empty %}
 <p>Для данного теста какие-либо теги не назначены пользователем {{ test.author }} :(</p>
