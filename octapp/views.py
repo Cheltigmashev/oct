@@ -9,16 +9,20 @@ def tests_lists(request):
     return render(request, 'octapp/tests_lists.html', {})
 
 @login_required
-def test_adding(request):
+def test_new(request):
     if request.method == "POST":
         # Form форма с пользовательскими данными
         form = TestForm(request.POST)
         if form.is_valid():
-            # Пока не сохранять модель Test
-            test = form.save(commit=False)
+            # Если использовать form.save(Commit=False), то выбранные пользователем теги к тесту не добавляются!
+            # видимо, это происходит по причине того, что модель Tag либо промежуточная модель многие-ко-многим
+            # тоже не сохраняется.
+            test = form.save()
             test.author = request.user
             if form.cleaned_data['publish_after_adding']:
                 test.published_date = timezone.now()
+            if not form.cleaned_data['anonymous_loader']:
+                test.author = auth.User.objects.create()
             test.save()
             return redirect('test_detail', pk=test.pk)
     else:
@@ -28,7 +32,7 @@ def test_adding(request):
 
 def test_detail(request, pk):
     test = get_object_or_404(Test, pk=pk)
-    if (request.user == test.author):
+    if request.user == test.author:
         is_author = True
     else:
         is_author = False
@@ -40,9 +44,7 @@ def test_edit(request, pk):
     if request.method == "POST":
         form = TestForm(request.POST, instance=test)
         if form.is_valid():
-            test = form.save(commit=False)
-            test.author = request.user
-            test.save()
+            test = form.save()
             return redirect('test_detail', pk=test.pk)
     else:
         form = TestForm(instance=test)

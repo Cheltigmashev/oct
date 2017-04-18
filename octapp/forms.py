@@ -28,6 +28,11 @@ class TestForm(forms.ModelForm):
         label=(u'Опубликовать тест сразу после отправки (загрузки) теста'),
         required=False
     )
+    anonymous_loader = forms.BooleanField(
+        widget=forms.CheckboxInput,
+        label=(u'Загрузить тест анонимно. На странице теста не будет указан пользователь, который загрузил тест.'),
+        required=False
+    )
     class Meta:
         model = Test
         fields = ('category', 'result_scale', 'tags', 'name',
