@@ -13,8 +13,13 @@
       width: 50%
     .test
       margin-left: 8px
-  .test, .category
-    border-bottom: 1px dashed #bbbbbb
+      border-bottom: 1px dashed #bbbbbb
+    .badge
+      margin: 2px
+      color: black
+      background-color: #ffef80
+      cursor: pointer
+      font-weight: normal
   a
     color: black
     cursor: pointer
@@ -22,11 +27,12 @@
     transition: all ease 0.2s
     text-decoration: underline
     color: orange
-  a.test:hover, a.category:hover
+  a.test:hover
     border-bottom: 1px dashed orange
-  a.test:hover span, a.category:hover span
+  a.tag:hover .badge, a.category:hover .badge
     transition: all ease 0.2s
     background-color: orange
+    font-weight: bold
 
 /*============    	АДАПТИВ    ===========*/
 
