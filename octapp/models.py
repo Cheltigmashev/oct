@@ -12,6 +12,7 @@ class Test(models.Model):
     # tagS name prefered by Django docs
     tags = models.ManyToManyField('octapp.Tag', verbose_name="Тег или теги теста", blank=True)
 
+    anonymous_loader = models.BooleanField("Анонимный тест. На странице теста не будет указан пользователь, который загрузил тест.", default=False, blank=True)
     name = models.CharField("Наименование теста", max_length=200, blank=False)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
     controlling = models.BooleanField("Использование контроля прохождения теста", default=False)

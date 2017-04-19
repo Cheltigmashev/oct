@@ -42,8 +42,7 @@ def test_new(request):
             test = form.save()
             if form.cleaned_data['publish_after_adding']:
                 test.published_date = timezone.now()
-            if not form.cleaned_data['anonymous_loader']:
-                test.author = request.user
+            test.author = request.user
             test.save()
             return redirect('test_detail', pk=test.pk)
     else:
@@ -69,7 +68,7 @@ def test_edit(request, pk):
             return redirect('test_detail', pk=test.pk)
     else:
         form = TestForm(instance=test)
-    return render(request, 'octapp/test_edit.html', {'form': form})
+    return render(request, 'octapp/test_edit.html', {'form': form, 'test': test})
 
 @login_required
 def test_publish(request, pk):
@@ -82,6 +81,12 @@ def test_remove(request, pk):
     test = get_object_or_404(Test, pk=pk)
     test.delete()
     return redirect('tests_lists')
+
+@login_required
+def test_remove_from_user_tests(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    test.delete()
+    return redirect('user_tests')
 
 @login_required
 def comment_remove(request, pk):

@@ -8,7 +8,7 @@
 {% block content %}
 <h2>ТЕСТ <q>{{ test.name|upper }}</q></h2>
 
-    {% if test.author %}
+    {% if not test.anonymous_loader %}
 <h3 class="text-left">Данный тест загрузил пользователь {{ test.author }}</h3>
     {% else %}
 <h3 class="text-left">Данный тест добавлен в систему анонимно</h3>
@@ -50,10 +50,10 @@
         {% endif %}
     {% endif %}
 
-<h3 class="text-left">Теги теста: </h3>
+<h3 class="text-left">Теги теста:
     {% for tag in test.tags.all %}
         {% if forloop.last %}
-{{ tag }}</span>
+{{ tag }}</span></h3>
         {% else %}
 {{ tag }}, </span>
         {% endif %}
