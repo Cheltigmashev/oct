@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^test/(?P<pk>\d+)/edit/$', views.test_edit, name='test_edit'),
     url(r'^user/(?P<pk>\d+)/tests/$', views.user_tests, name='user_tests'),
     url(r'^test/(?P<pk>\d+)/publish/$', views.test_publish, name='test_publish'),
+    url(r'^test/(?P<pk>\d+)/make_ready/$', views.test_make_ready_for_passing, name='test_make_ready_for_passing'),
     url(r'^test/(?P<pk>\d+)/remove/$', views.test_remove, name='test_remove'),
     url(r'^test/(?P<pk>\d+)/remove_from_user_tests/$', views.test_remove_from_user_tests, name='test_remove_from_user_tests'),
 

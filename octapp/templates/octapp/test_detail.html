@@ -42,7 +42,7 @@
     {% if test.published_date %}
 <h3 class="text-left">Дата публикации — {{ test.published_date }}</h3>
     {% else %}
-    <h3 class="text-left">Данный тест еще не опубликован 
+<h3 class="text-left">Данный тест еще не опубликован 
         {% if test.author %}
         пользователем {{ test.author }}</h3>
         {% else %}
@@ -66,16 +66,26 @@
         {% endif %}
     , который добавил данный тест :(</p>
     {% endfor %}
-    <br>
-    <a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default btn-lg">Приступить к прохождению теста</a>
+<br>
+
+    {% if test.ready_for_passing %}
+<h3 class="text-left">Готовность теста для его прохождения пользователями подтверждена</h3>
+<a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default btn-lg">Приступить к прохождению теста</a>
+    {% else %}
+<h3 class="text-left">Готовность теста для его прохождения пользователями еще не подтверждена</h3>
+    {% endif %}
 
     {% if is_author or request.user.is_superuser or perms.octapp.test.can_change %}
 <hr><h2>Управление тестом</h2>
-
+    <p>NB! После того, как вы закончите добавление вопросов к тесту и вариантов ответа к ним, подтвердите готовность теста, используя кнопку ниже. Только после подтверждения готовности будет доступна возможность прохождения вашего тест вами и другими пользователями.</p>
+        
         {% if is_author %}
     Вам, как тому, кто загрузил данный тест, доступны возможности:<br>
             {% if not test.published_date %}
     <a href="{% url 'test_publish' pk=test.pk %}" class="btn btn-default btn-lg">Опубликовать тест</a>
+            {% endif %}
+            {% if not test.ready_for_passing %}
+    <a href="{% url 'test_make_ready_for_passing' pk=test.pk %}" class="btn btn-default btn-lg">Подтвердить готовность теста</a>
             {% endif %}
     <a href="{% url 'test_remove' pk=test.pk %}" class="btn btn-danger btn-lg">Удалить тест</a>
     <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-info btn-lg">Изменить вышепредставленные данные теста</a>
@@ -101,5 +111,7 @@
 
     {% endif %}
 
+<hr><h2>Комментарии к тесту</h2>
+Функционал еще не реализован
 
 {% endblock %}

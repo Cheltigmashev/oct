@@ -77,6 +77,12 @@ def test_publish(request, pk):
     return redirect('test_detail', pk=pk)
 
 @login_required
+def test_make_ready_for_passing(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    test.make_ready_for_passing()
+    return redirect('test_detail', pk=pk)
+
+@login_required
 def test_remove(request, pk):
     test = get_object_or_404(Test, pk=pk)
     test.delete()

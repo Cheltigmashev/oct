@@ -20,9 +20,14 @@ class Test(models.Model):
     rating = models.IntegerField("Рейтинг теста", default=0, editable=False)
     created_date = models.DateTimeField("Дата создания", default=timezone.now, editable=False)
     published_date = models.DateTimeField("Дата публикации", blank=True, null=True, editable=False)
+    ready_for_passing = models.BooleanField("Готовность теста для прохождения другими пользователями", default=False, blank=True, editable=False)
 
     def publish(self):
         self.published_date = timezone.now()
+        self.save()
+
+    def make_ready_for_passing(self):
+        self.ready_for_passing = True
         self.save()
 
     def __str__(self):

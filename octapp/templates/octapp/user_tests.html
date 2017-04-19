@@ -11,7 +11,11 @@
     {% for test in published_user_tests %}
 <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test" title="Открыть страницу теста">
     <div class="test_div">№ {{ forloop.counter }}.
-        <span class="name_of_test">{{ test }}</span>
+        <span class="name_of_test">{{ test }}
+            {% if test.ready_for_passing %} — <strong>готов</strong> для прохождения пользователями
+            {% else %} — <strong>не готов</strong> для прохождения пользователями
+            {% endif %}
+        </span>
         <a href="{% url 'test_edit' pk=test.pk %}" title="Редактировать тест" class="edit_test_icon glyphicon glyphicon-pencil"></a>
         <a href="{% url 'test_remove_from_user_tests' pk=test.pk %}" title="Удалить тест" class="edit_test_icon glyphicon glyphicon-remove"></a>    
     </div>
