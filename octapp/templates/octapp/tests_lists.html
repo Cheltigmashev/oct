@@ -42,12 +42,12 @@
             <div class="table_row">
                 <div class="table_cell">
                     {% for test in left_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}</span></div></a>
                     {% endfor %}
                 </div>
                 <div class="table_cell">
                     {% for test in right_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}</span></div></a>
                     {% endfor %}
                 </div>
             </div>
@@ -59,7 +59,7 @@
             <div class="table_row">
                 <div class="table_cell">
                     {% for test in left_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}</span></div></a>
                     {% endfor %}
                 </div>
             </div>
@@ -71,23 +71,39 @@
     {% endif %}
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href=""><h2>ПОПУЛЯРНЫЕ ТЕСТЫ</h2></a>
+        <a href=""><h2>РЕЙТИНГОВЫЕ ТЕСТЫ</h2></a>
+    {% if left_number_of_popular_tests and right_number_of_popular_tests %}
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Анатомия человека</span></div></a>
-                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Тест по географии</span></div></a>
-                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Тест на тип темперамента</span></div></a>
-                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Парадигмы программирования</span></div></a>
+                    {% for test in left_number_of_popular_tests %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}, рейтинг - {{ test.rating }}</span></div></a>
+                    {% endfor %}
                 </div>
                 <div class="table_cell">
-                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Философия буддизма</span></div></a>
-                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Тест по кулинарии</span></div></a>
-                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Сети и телекоммуникации</span></div></a>
-                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Информационные системы и технологии</span></div></a>
+                    {% for test in right_number_of_popular_tests %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}, рейтинг - {{ test.rating }}</span></div></a>
+                    {% endfor %}
                 </div>
             </div>
         </div>
+    {% else %}
+        <!-- Если правого ряда новых тестов нет, то помещать тесты в 1 ячейку таблицы -->
+        {% if left_number_of_popular_tests and not right_number_of_popular_tests %}
+        <div class="table">
+            <div class="table_row">
+                <div class="table_cell">
+                    {% for test in left_number_of_popular_tests %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}, рейтинг - {{ test.rating }}</span></div></a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Если даже левого ряда нет -->        
+        <h4>Нет тестов</h4>
+        {% endif %}        
+    {% endif %}
     </div>
 </div>
 {% endblock %}

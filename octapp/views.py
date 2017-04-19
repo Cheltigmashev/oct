@@ -10,12 +10,19 @@ User = get_user_model()
 
 # Представление главной страницы
 def tests_lists(request):
-    # левый ряд тестов для списка новых тестов, диапазон от 0го до 9го
+    # левый ряд тестов для списка новых тестов, диапазон от 0го до 19го
     left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:20]
-    # левый ряд тестов для списка новых тестов, диапазон от 10го до 19го
+    # левый ряд тестов для списка новых тестов, диапазон от 20го до 40го
     right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[20:41]
-    return render(request, 'octapp/tests_lists.html', {'left_number_of_new_tests_list': left_number_of_new_tests_list,
-            'right_number_of_new_tests_list': right_number_of_new_tests_list})
+    # левый ряд тестов для списка популярных тестов, диапазон от 0го до 19го
+    left_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('rating', 'name')[:20]
+    # левый ряд тестов для списка популярных тестов, диапазон от 20го до 40го
+    right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('rating', 'name')[20:41]
+    return render(request, 'octapp/tests_lists.html',
+    {'left_number_of_new_tests_list': left_number_of_new_tests_list,
+    'right_number_of_new_tests_list': right_number_of_new_tests_list,
+    'left_number_of_popular_tests': left_number_of_popular_tests,
+    'right_number_of_popular_tests': right_number_of_popular_tests})
 
 def user_tests(request, pk):
     published_user_tests = Test.objects.filter(author=request.user).order_by('name').filter(published_date__isnull=False)
@@ -69,6 +76,12 @@ def test_publish(request, pk):
     test = get_object_or_404(Test, pk=pk)
     test.publish()
     return redirect('test_detail', pk=pk)
+
+@login_required
+def test_remove(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    test.delete()
+    return redirect('tests_lists')
 
 @login_required
 def comment_remove(request, pk):
