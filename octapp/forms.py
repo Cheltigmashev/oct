@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.forms import CheckboxSelectMultiple
 
 from registration import validators
 from registration.forms import RegistrationFormTermsOfService
@@ -33,3 +34,7 @@ class TestForm(forms.ModelForm):
         model = Test
         fields = ('category', 'result_scale', 'tags', 'name',
                   'description', 'controlling', 'time_restricting', 'anonymous_loader')
+        # Переопределение стандартного виджета, подробнее на https://djbook.ru/rel1.9/topics/forms/modelforms.html#overriding-the-default-fields
+        widgets = {
+            'tags': CheckboxSelectMultiple,
+        }

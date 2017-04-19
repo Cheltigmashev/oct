@@ -37,8 +37,8 @@ def test_new(request):
         form = TestForm(request.POST)
         if form.is_valid():
             # Если использовать form.save(Commit=False), то выбранные пользователем теги к тесту не добавляются!
-            # видимо, это происходит по причине того, что модель Tag либо промежуточная модель многие-ко-многим
-            # тоже не сохраняется.
+            # Это происходит потому невозможно создать связи для объекта, который не сохранен в базе данных.
+            # Подробнее см. https://djbook.ru/rel1.9/topics/forms/modelforms.html#the-save-method
             test = form.save()
             if form.cleaned_data['publish_after_adding']:
                 test.published_date = timezone.now()
