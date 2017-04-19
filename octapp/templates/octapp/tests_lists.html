@@ -42,12 +42,12 @@
             <div class="table_row">
                 <div class="table_cell">
                     {% for test in left_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}"><div><span class="test">{{ test }}</span><hr></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test }}</span></div></a>
                     {% endfor %}
                 </div>
                 <div class="table_cell">
                     {% for test in right_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}"><div><span class="test">{{ test }}</span><hr></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test }}</span></div></a>
                     {% endfor %}
                 </div>
             </div>
@@ -59,7 +59,7 @@
             <div class="table_row">
                 <div class="table_cell">
                     {% for test in left_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}"><div><span class="test">{{ test }}</span><hr></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test }}</span></div></a>
                     {% endfor %}
                 </div>
             </div>
@@ -75,16 +75,16 @@
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-                    <a><div><span class="test">Анатомия человека</span><hr></div></a>
-                    <a><div><span class="test">Тест по географии</span><hr></div></a>
-                    <a><div><span class="test">Тест на тип темперамента</span><hr></div></a>
-                    <a><div><span class="test">Парадигмы программирования</span><hr></div></a>
+                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Анатомия человека</span></div></a>
+                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Тест по географии</span></div></a>
+                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Тест на тип темперамента</span></div></a>
+                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Парадигмы программирования</span></div></a>
                 </div>
                 <div class="table_cell">
-                    <a><div><span class="test">Философия буддизма</span><hr></div></a>
-                    <a><div><span class="test">Тест по кулинарии</span><hr></div></a>
-                    <a><div><span class="test">Сети и телекоммуникации</span><hr></div></a>
-                    <a><div><span class="test">Информационные системы и технологии</span><hr></div></a>
+                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Философия буддизма</span></div></a>
+                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Тест по кулинарии</span></div></a>
+                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Сети и телекоммуникации</span></div></a>
+                    <a class="link_to_test"><div class="test_div"><span class="name_of_test">Информационные системы и технологии</span></div></a>
                 </div>
             </div>
         </div>

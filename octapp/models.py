@@ -10,7 +10,7 @@ class Test(models.Model):
     result_scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE, verbose_name="Оценочная шкала теста")
     # id est test may contain many tags, and tags may be related to different tests
     # tagS name prefered by Django docs
-    tags = models.ManyToManyField('octapp.Tag', verbose_name="Тег или теги теста", null=True, blank=True)
+    tags = models.ManyToManyField('octapp.Tag', verbose_name="Тег или теги теста", blank=True)
 
     name = models.CharField("Наименование теста", max_length=200, blank=False)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
@@ -46,7 +46,7 @@ class Comment(models.Model):
         verbose_name_plural = "Комментарии"
 
 class Category(models.Model):
-    name = models.CharField("Наименование категории", max_length=120, blank=False)
+    name = models.CharField("Наименование категории", max_length=120, blank=False, unique=True)
     confirmed = models.BooleanField("Категория подтверждена", default=False)
 
     def confirm(self):
@@ -79,7 +79,7 @@ class ResultScale(models.Model):
         verbose_name_plural = "Оценочные шкалы"
 
 class Tag(models.Model):
-    name = models.CharField("Наименование тега", max_length=40, blank=False)
+    name = models.CharField("Наименование тега", max_length=40, blank=False, unique=True)
 
     def __str__(self):
         return self.name
