@@ -25,6 +25,7 @@ def tests_lists(request):
     'left_number_of_popular_tests': left_number_of_popular_tests,
     'right_number_of_popular_tests': right_number_of_popular_tests})
 
+@login_required
 def user_tests(request, pk):
     published_user_tests = Test.objects.filter(author=request.user).order_by('name').filter(published_date__isnull=False)
     unpublished_user_tests = Test.objects.filter(author=request.user).order_by('name').filter(published_date__isnull=True)
@@ -99,7 +100,7 @@ def test_remove(request, pk):
 def test_remove_through_user_tests(request, pk):
     test = get_object_or_404(Test, pk=pk)
     test.delete()
-    return redirect('user_tests')
+    return redirect('user_tests', pk=pk)
 
 @login_required
 def review(request, test_id, user_rate, user_id):
