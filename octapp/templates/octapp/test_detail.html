@@ -88,18 +88,18 @@
     <a href="{% url 'test_make_ready_for_passing' pk=test.pk %}" class="btn btn-default btn-lg">Подтвердить готовность теста</a>
             {% endif %}
     <a href="{% url 'test_remove' pk=test.pk %}" class="btn btn-danger btn-lg">Удалить тест</a>
-    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-info btn-lg">Изменить вышепредставленные данные теста</a>
+    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-info btn-lg">Изменить тест</a>
     <a href="" class="btn btn-default btn-lg">Добавить к тесту новый вопрос</a>
         {% endif %}
     
         {% if not is_author and perms.octapp.test.can_change and not request.user.is_superuser %}
     Вы не автор теста, но вы относитесь к модераторам, поэтому вам доступен данный функционал:<br>
-    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить вышепредставленные данные теста</a>
+    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить тест</a>
         {% endif %}
 
         {% if not is_author and request.user.is_superuser %}
     Вы не автор теста, но являетесь суперпользователем, поэтому вам также доступен данный функционал:<br>
-    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить вышепредставленные данные теста</a>
+    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить тест</a>
     <a href="{% url 'test_remove' pk=test.pk %}" class="btn btn-danger btn-lg">Удалить тест</a>
         {% endif %}
 
