@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.forms import CheckboxSelectMultiple
+from django.forms import NumberInput
+from django.forms import TextInput
 
 from registration import validators
 from registration.forms import RegistrationFormTermsOfService
@@ -26,12 +28,13 @@ class TestForm(forms.ModelForm):
     new_category = forms.CharField(
         label=(u'Можете указать новую категорию'),
         required=False,
-        help_text=(u'Учтите, что новая категория не будет использована, пока не будет подтверждена администратором или модератором')
+        help_text=(u'Учтите, что новая категория не будет использована, пока не будет подтверждена администратором или модератором'),
     )
 
     new_tags = forms.CharField(
         label=(u'Если требуется, укажите через запятую и без пробелов новые теги'),
-        required=False
+        required=False,
+        widget=TextInput(attrs={'placeholder': 'Допустимо использовать строчные буквы и цифры', 'pattern': '[a-zа-я0-9]*'})
     )
     
     publish_after_adding = forms.BooleanField(
@@ -47,4 +50,11 @@ class TestForm(forms.ModelForm):
         # Переопределение стандартного виджета, подробнее на https://djbook.ru/rel1.9/topics/forms/modelforms.html#overriding-the-default-fields
         widgets = {
             'tags': CheckboxSelectMultiple,
+            'time_restricting': NumberInput(attrs={'min': 1, 'placeholder': 'Не менее 1 минуты'}),
+            'name': TextInput(attrs={'title': 'Первая буква названия будет преобразована в заглавную, остальные — в строчные', 'placeholder': 'Доступны: буквы, цифры, пробелы, запятые, -/«»():;', 'pattern': '[a-zA-Zа-яА-Я0-9 -/,«»();:]*'}),
+        }
+        error_messages = {
+            'name': {
+                'unique': "Тест с таким именем уже присутствует в системе. Пожалуйста, придумайте другое название.",
+            },
         }

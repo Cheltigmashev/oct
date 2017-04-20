@@ -13,10 +13,10 @@ class Test(models.Model):
     tags = models.ManyToManyField('octapp.Tag', verbose_name="Тег или теги теста", blank=True)
 
     anonymous_loader = models.BooleanField("Анонимный тест. На странице теста не будет указан пользователь, который загрузил тест.", default=False, blank=True)
-    name = models.CharField("Наименование теста", max_length=200, blank=False)
+    name = models.CharField("Наименование теста", max_length=200, blank=False, unique=True)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
     controlling = models.BooleanField("Использование контроля прохождения теста", default=False)
-    time_restricting = models.DateTimeField("Ограничение времени прохождения теста в минутах", null=True)
+    time_restricting = models.IntegerField("Ограничение времени прохождения теста в минутах", null=True, blank=True)
     rating = models.IntegerField("Рейтинг теста", default=0, editable=False)
     created_date = models.DateTimeField("Дата создания", default=timezone.now, editable=False)
     published_date = models.DateTimeField("Дата публикации", blank=True, null=True, editable=False)
@@ -42,6 +42,7 @@ class Test(models.Model):
         return self.name
 
     class Meta:
+        ordering = ["name"]        
         verbose_name = "Тест"
         verbose_name_plural = "Тесты"
 
@@ -56,6 +57,7 @@ class Comment(models.Model):
         self.content
 
     class Meta:
+        ordering = ["created_date"]    
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"
 
@@ -71,6 +73,7 @@ class Category(models.Model):
         return self.name
 
     class Meta:
+        ordering = ["name"]
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
         permissions = (
@@ -89,6 +92,7 @@ class ResultScale(models.Model):
         return self.name
 
     class Meta:
+        ordering = ["name"]        
         verbose_name = "Оценочная шкала"
         verbose_name_plural = "Оценочные шкалы"
 
@@ -99,6 +103,7 @@ class Tag(models.Model):
         return self.name
 
     class Meta:
+        ordering = ["name"]
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
         
@@ -119,7 +124,7 @@ class Test_rate(models.Model):
             rate = "+1"
         else:
             rate = "-1"
-        return rate + " пользователь - " + self.reviewer.username
+        return rate + ", пользователь - " + self.reviewer.username
 
     class Meta:
         verbose_name = "Оценка тестов"

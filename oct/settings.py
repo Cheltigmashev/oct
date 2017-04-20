@@ -144,3 +144,9 @@ CKEDITOR_CONFIGS = {
         'extraPlugins': 'codesnippet',
     }
 }
+
+TIME_INPUT_FORMATS = (
+    '%H:%M:%S',
+    '%H:%M:%S.%f',
+    '%M:%S',
+)

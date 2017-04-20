@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import TestForm
 from .models import Test, Comment, Test_rate
 from django.contrib.auth import get_user_model
+from django.contrib.auth import views as auth_views
 
 # Модель пользователя
 User = get_user_model()
@@ -43,6 +44,7 @@ def test_new(request):
             if form.cleaned_data['publish_after_adding']:
                 test.published_date = timezone.now()
             test.author = request.user
+            test.name = test.name.capitalize()
             test.save()
             return redirect('test_detail', pk=test.pk)
     else:

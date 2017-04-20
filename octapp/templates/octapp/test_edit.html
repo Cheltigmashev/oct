@@ -13,7 +13,7 @@
 <h2>ДОБАВЛЕНИЕ НОВОГО ТЕСТА</h2>
 {% endif %}
 <p>NB! Выберите категорию и тесты из уже предложенных либо добавьте новые. Если вы сделаете и то, и другое, то система не добавит новые, а будет использовать выбранное вами!</p>
-<form method="POST">
+<form method="POST" action="">
     {% csrf_token %}
     {{ form.media }}
     
@@ -23,7 +23,7 @@
             <div class="form_field_div">
     {{ form.name.label_tag }}
     {{ form.name }}
-    {% if form.name.field_with_error %}<p class="error">Ошибка: {{ form.name.field_with_error }}</p>{% endif %}
+    {% if form.name.errors %}<p class="field_with_error">Ошибка: {{ form.name.errors }}</p>{% endif %}
             </div>
         </div>
     
@@ -31,7 +31,7 @@
             <div class="form_field_div">
     {{ form.result_scale.label_tag }}
     {{ form.result_scale }}
-    {% if form.category.field_with_error %}<p class="error">Ошибка: {{ form.category.field_with_error }}</p>{% endif %}    
+    {% if form.category.errors %}<p class="field_with_error">Ошибка: {{ form.category.errors }}</p>{% endif %}    
             </div>
         </div>
         
@@ -39,7 +39,7 @@
             <div class="form_field_div">  
     {{ form.category.label_tag }}
     {{ form.category }}
-    {% if form.category.field_with_error %}<p class="error">Ошибка: {{ form.category.field_with_error }}</p>{% endif %}
+    {% if form.category.errors %}<p class="field_with_error">Ошибка: {{ form.category.errors }}</p>{% endif %}
             </div>
         </div>
 
@@ -54,7 +54,7 @@
 
         <div class="form_row col-md-12 col-xs-12 col-lg-12 col-sm-12">
     {% if form.new_category.help_text %}<p>Пояснение: {% filter lower %}{{ form.new_category.help_text|safe }}{% endfilter %}</p>{% endif %}
-    {% if form.new_category.field_with_error %}<p class="error">Ошибка: {{ form.new_category.field_with_error }}</p>{% endif %}
+    {% if form.new_category.errors %}<p class="field_with_error">Ошибка: {{ form.new_category.errors }}</p>{% endif %}
         </div>
 
     
@@ -63,7 +63,7 @@
                 <div class="tag">
     {{ form.tags.label_tag }}
     {{ form.tags }}
-    {% if form.tags.field_with_error %}<p class="error">Ошибка: {{ form.tags.field_with_error }}</p>{% endif %}
+    {% if form.tags.errors %}<p class="field_with_error">Ошибка: {{ form.tags.errors }}</p>{% endif %}
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@
             <div class="form_field_div">
     {{ form.new_tags.label_tag }}
     {{ form.new_tags }}
-    {% if form.new_tags.field_with_error %}<p class="error">Ошибка: {{ form.new_tags.field_with_error }}</p>{% endif %}
+    {% if form.new_tags.errors %}<p class="field_with_error">Ошибка: {{ form.new_tags.errors }}</p>{% endif %}
             </div>
         </div>
 
@@ -80,7 +80,7 @@
             <div class="form_field_div">
     {{ form.time_restricting.label_tag }}
     {{ form.time_restricting }}
-    {% if form.time_restricting.field_with_error %}<p class="error">Ошибка: {{ form.time_restricting.field_with_error }}</p>{% endif %}
+    {% if form.time_restricting.errors %}<p class="field_with_error">Ошибка: {{ form.time_restricting.errors }}</p>{% endif %}
             </div>
         </div>
 
@@ -91,7 +91,7 @@
                 <div class="field_with_checkbox form_field_div">
     {{ form.anonymous_loader }}
                 <span for="id_anonymous_loader">Анонимный тест. На странице теста не будет указан пользователь, который загрузил тест.</span>
-    {% if form.anonymous_loader.field_with_error %}<p class="error">Ошибка: {{ form.anonymous_loader.field_with_error }}</p>{% endif %}
+    {% if form.anonymous_loader.errors %}<p class="field_with_error">Ошибка: {{ form.anonymous_loader.errors }}</p>{% endif %}
                 </div>
             </label>
         </div>
@@ -101,7 +101,7 @@
                 <div class="field_with_checkbox form_field_div">
                 <span>Опубликовать тест сразу после отправки (загрузки) либо редактирования теста.</span>
     {{ form.publish_after_adding }}
-    {% if form.publish_after_adding.field_with_error %}<p class="error">Ошибка: {{ form.publish_after_adding.field_with_error }}</p>{% endif %}
+    {% if form.publish_after_adding.errors %}<p class="field_with_error">Ошибка: {{ form.publish_after_adding.errors }}</p>{% endif %}
                 </div>
             </label>
         </div>
@@ -111,7 +111,7 @@
                 <div class="field_with_checkbox form_field_div">
     {{ form.controlling }}
                 <span>Использование контроля прохождения теста.</span>
-    {% if form.controlling.field_with_error %}<p class="error">Ошибка: {{ form.controlling.field_with_error }}</p>{% endif %}
+    {% if form.controlling.errors %}<p class="field_with_error">Ошибка: {{ form.controlling.errors }}</p>{% endif %}
                 </div>
             </label>
         </div>
@@ -120,7 +120,7 @@
             <div class="form_field_div">
     {{ form.description.label_tag }}
     {{ form.description }}
-    {% if form.description.field_with_error %}<p class="error">Ошибка: {{ form.description.field_with_error }}</p>{% endif %}
+    {% if form.description.errors %}<p class="field_with_error">Ошибка: {{ form.description.errors }}</p>{% endif %}
             </div>
         </div>
 

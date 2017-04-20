@@ -8,30 +8,30 @@
 {% block content %}
 <h1>Регистрация нового пользователя</h1>
 <p></p>
-<form method="post" action="">
+<form method="post" action="{% url 'registration_register' %}">
 {% csrf_token %}
     <div class="form_row">
         <p>{{ form.username.label_tag }} {{ form.username }}</p>
         {% if form.username.help_text %}<p>Пояснение: {% filter lower %}{{ form.username.help_text|safe }}{% endfilter %}</p>{% endif %}
-        {% if form.username.field_with_error %}<p class="error">Ошибка: {{ form.username.field_with_error }}</p>{% endif %}
+        {% if form.username.errors %}<p class="error">Ошибка/ошибки: {{ form.username.errors }}</p>{% endif %}
     </div>
 
     <div class="form_row">
         <p>{{ form.email.label_tag }} {{ form.email }}</p>
         {% if form.email.help_text %}<p>Пояснение: {% filter lower %}{{ form.email.help_text|safe }}{% endfilter %}</p>{% endif %}
-        {% if form.email.field_with_error %}<p class="error">Ошибка: {{ form.email.field_with_error }}</p>{% endif %}
+        {% if form.email.errors %}<p class="error">Ошибка/ошибки: {{ form.email.errors }}</p>{% endif %}
     </div>
 
     <div class="form_row">
         <p>{{ form.password1.label_tag }} {{ form.password1 }}</p>
         {% if form.password1.help_text %}<p>Пояснения: {{ form.password1.help_text|safe }}</p>{% endif %}
-        {% if form.password1.field_with_error %}<p class="error">Ошибка: {{ form.password1.field_with_error }}</p>{% endif %}
+        {% if form.password1.errors %}<p class="error">Ошибка/ошибки: {{ form.password1.errors }}</p>{% endif %}
     </div>
 
     <div class="form_row">
         <p>{{ form.password2.label_tag }} {{ form.password2 }}</p>
         {% if form.password2.help_text %}<p>Пояснение: {% filter lower %}{{ form.password2.help_text|safe }}{% endfilter %}</p>{% endif %}
-        {% if form.password2.field_with_error %}<p class="error">Ошибка: {{ form.password2.field_with_error }}</p>{% endif %}
+        {% if form.password2.errors %}<p class="error">Ошибка/ошибки: {{ form.password2.errors }}</p>{% endif %}
     </div>
 <h3>Пользовательское соглашение и правила работы с системой</h3>
 <p>Регистрируясь, вы даете своё согласие на обработку своих персональных данных, в соответствии с Федеральным законом от 27.07.2006 года №152-ФЗ «О персональных данных», которые будут использоваться системой лишь в целях ее функционирования.</p>
@@ -41,7 +41,7 @@
     <div class="form_row">
         <p>{{ form.tos }}<label for="id_tos">Я прочитал(а) и принимаю пользовательское соглашение и правила работы с системой.</label></p>
         {% if form.tos.help_text %}<p>Пояснение: {% filter lower %}{{ form.tos.help_text|safe }}{% endfilter %}</p>{% endif %}
-        {% if form.tos.field_with_error %}<p class="error">Ошибка: {{ form.tos.field_with_error }}</p>{% endif %}
+        {% if form.tos.errors %}<p class="error">Ошибка/ошибки: {{ form.tos.errors }}</p>{% endif %}
     </div>
 
 <h3>Инструкция пользователя</h3>
@@ -92,10 +92,10 @@
     <div class="form_row">
         <p>{{ form.user_manual }}<label for="id_user_manual">Я прочитал(а) инструкцию пользователя.</label></p>
         {% if form.user_manual.help_text %}<p>Пояснение: {% filter lower %}{{ form.user_manual.help_text|safe }}{% endfilter %}</p>{% endif %}
-        {% if form.user_manual.field_with_error %}<p class="error">Ошибка: {{ form.user_manual.field_with_error }}</p>{% endif %}
+        {% if form.user_manual.errors %}<p class="error">Ошибка/ошибки: {{ form.user_manual.errors }}</p>{% endif %}
     </div>
 
-    <input type="submit" class="btn btn-block btn-default btn-lg" value="Зарегистрироваться" / class="clearfix">
+    <input type="submit" class="btn btn-block btn-default btn-lg" value="Зарегистрироваться" class="clearfix">
 </form>
 {% endblock %}
 

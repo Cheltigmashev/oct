@@ -15,7 +15,11 @@
     {% endif %}
 
     {% if test.category %}
+        {% if test.category.confirmed %}
 <h3 class="text-left">Категория теста — <q>{{ test.category }}</q></h3>
+        {% else %}
+<h3 class="text-left">Категория теста — <q>{{ test.category }} (еще не подтверждена)</q></h3>
+        {% endif %}
     {% else %}
 <h3 class="text-left">Данному тесту не присвоена категория</h3>
     {% endif %}
@@ -118,7 +122,7 @@
             {% endif %}
         {% endif %}
 
-        {% if test.rates %}
+        {% if test.rates.all %}
     <p>Этот тест оценили:</p>
             {% for rate in test.rates.all %}
     <p>{{ rate }}</p>
