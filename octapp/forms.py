@@ -6,7 +6,6 @@ from django.forms import CheckboxSelectMultiple
 
 from registration import validators
 from registration.forms import RegistrationFormTermsOfService
-from ckeditor.widgets import CKEditorWidget
 from .models import Test, Comment
 
 User = get_user_model()
@@ -25,8 +24,9 @@ class RegistrationFormTermOfServiceUniqueEmail(RegistrationFormTermsOfService):
 
 class TestForm(forms.ModelForm):
     new_category = forms.CharField(
-        label=(u'Если требуется, укажите новую категорию. Учтите, что она не будет использована, пока не будет подтверждена администратором или модератором.'),
-        required=False
+        label=(u'Можете указать новую категорию'),
+        required=False,
+        help_text=(u'Учтите, что новая категория не будет использована, пока не будет подтверждена администратором или модератором')
     )
 
     new_tags = forms.CharField(

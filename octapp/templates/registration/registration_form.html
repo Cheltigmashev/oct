@@ -10,25 +10,25 @@
 <p></p>
 <form method="post" action="">
 {% csrf_token %}
-    <div class="form_field">
+    <div class="form_row">
         <p>{{ form.username.label_tag }} {{ form.username }}</p>
         {% if form.username.help_text %}<p>Пояснение: {% filter lower %}{{ form.username.help_text|safe }}{% endfilter %}</p>{% endif %}
         {% if form.username.field_with_error %}<p class="error">Ошибка: {{ form.username.field_with_error }}</p>{% endif %}
     </div>
 
-    <div class="form_field">
+    <div class="form_row">
         <p>{{ form.email.label_tag }} {{ form.email }}</p>
         {% if form.email.help_text %}<p>Пояснение: {% filter lower %}{{ form.email.help_text|safe }}{% endfilter %}</p>{% endif %}
         {% if form.email.field_with_error %}<p class="error">Ошибка: {{ form.email.field_with_error }}</p>{% endif %}
     </div>
 
-    <div class="form_field">
+    <div class="form_row">
         <p>{{ form.password1.label_tag }} {{ form.password1 }}</p>
         {% if form.password1.help_text %}<p>Пояснения: {{ form.password1.help_text|safe }}</p>{% endif %}
         {% if form.password1.field_with_error %}<p class="error">Ошибка: {{ form.password1.field_with_error }}</p>{% endif %}
     </div>
 
-    <div class="form_field">
+    <div class="form_row">
         <p>{{ form.password2.label_tag }} {{ form.password2 }}</p>
         {% if form.password2.help_text %}<p>Пояснение: {% filter lower %}{{ form.password2.help_text|safe }}{% endfilter %}</p>{% endif %}
         {% if form.password2.field_with_error %}<p class="error">Ошибка: {{ form.password2.field_with_error }}</p>{% endif %}
@@ -38,8 +38,8 @@
 <p>Разработчики сайта не несут никакой ответственности за размещение пользователями материалов экстремистского характера, материалов, разжигающих межнациональную и межрелигиозную ненависть, оскорбляющих чувства верующих.</p>
 <p>Разработчики сайта не дают никаких гарантий сохранности загружаемых пользователями материалов.</p>
 <p>Если при добавлении нового теста в систему вы не являетесь его непосредственным автором-составителем, то укажите об этом в описании к тесту. Вы берете на себя всю ответственность при нарушении вами каких-либо авторских прав на загружаемые вами материалы, если они вам не принадлежат.</p>
-    <div class="form_field field_with_checkbox">
-        <p><label for="id_tos">Я прочитал(а) и принимаю пользовательское соглашение и правила работы с системой:</label>{{ form.tos }}</p>
+    <div class="form_row">
+        <p>{{ form.tos }}<label for="id_tos">Я прочитал(а) и принимаю пользовательское соглашение и правила работы с системой.</label></p>
         {% if form.tos.help_text %}<p>Пояснение: {% filter lower %}{{ form.tos.help_text|safe }}{% endfilter %}</p>{% endif %}
         {% if form.tos.field_with_error %}<p class="error">Ошибка: {{ form.tos.field_with_error }}</p>{% endif %}
     </div>
@@ -89,8 +89,8 @@
 <li>Ларин С.Н., Малков У.Х. Современные подходы к моделированию тестов: система требований, преимущества и  недостатки, основные этапы разработки [Электронный ресурс] // С.Н. Ларин, У.Х. Малков // Интернет-журнал «Мир науки» 2016, Том 4, номер 1. – Режим доступа: http://mir-nauki.com/PDF/04PDMN116.pdf (доступ свободный). – Загл. с экрана. – (дата обращения: 08.02.2017).</li>
 </small>
 </ol>
-    <div class="form_field field_with_checkbox">
-        <p>{{ form.user_manual.label_tag }}{{ form.user_manual }}</p>
+    <div class="form_row">
+        <p>{{ form.user_manual }}<label for="id_user_manual">Я прочитал(а) инструкцию пользователя.</label></p>
         {% if form.user_manual.help_text %}<p>Пояснение: {% filter lower %}{{ form.user_manual.help_text|safe }}{% endfilter %}</p>{% endif %}
         {% if form.user_manual.field_with_error %}<p class="error">Ошибка: {{ form.user_manual.field_with_error }}</p>{% endif %}
     </div>

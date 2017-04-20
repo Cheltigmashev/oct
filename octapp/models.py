@@ -16,7 +16,7 @@ class Test(models.Model):
     name = models.CharField("Наименование теста", max_length=200, blank=False)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
     controlling = models.BooleanField("Использование контроля прохождения теста", default=False)
-    time_restricting = models.DateTimeField("Ограничение времени прохождения теста", null=True)
+    time_restricting = models.DateTimeField("Ограничение времени прохождения теста в минутах", null=True)
     rating = models.IntegerField("Рейтинг теста", default=0, editable=False)
     created_date = models.DateTimeField("Дата создания", default=timezone.now, editable=False)
     published_date = models.DateTimeField("Дата публикации", blank=True, null=True, editable=False)

@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block page_style %}
-<link rel="stylesheet" href="">
+<link rel="stylesheet" href="{% static 'octapp/css/test_edit.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,124 @@
 <form method="POST">
     {% csrf_token %}
     {{ form.media }}
-    {{ form.as_p }}
-    <input type="submit" class="btn btn-default btn-lg">
+    
+    <div class="container flex">
+        
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-6">
+            <div class="form_field_div">
+    {{ form.name.label_tag }}
+    {{ form.name }}
+    {% if form.name.field_with_error %}<p class="error">Ошибка: {{ form.name.field_with_error }}</p>{% endif %}
+            </div>
+        </div>
+    
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-6">
+            <div class="form_field_div">
+    {{ form.result_scale.label_tag }}
+    {{ form.result_scale }}
+    {% if form.category.field_with_error %}<p class="error">Ошибка: {{ form.category.field_with_error }}</p>{% endif %}    
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-6">
+            <div class="form_field_div">  
+    {{ form.category.label_tag }}
+    {{ form.category }}
+    {% if form.category.field_with_error %}<p class="error">Ошибка: {{ form.category.field_with_error }}</p>{% endif %}
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-6">
+            <div class="form_field_div">
+    {{ form.new_category.label_tag }}
+    {{ form.new_category }}
+            </div>
+        </div>
+
+
+        <div class="form_row col-md-12 col-xs-12 col-lg-12 col-sm-12">
+    {% if form.new_category.help_text %}<p>Пояснение: {% filter lower %}{{ form.new_category.help_text|safe }}{% endfilter %}</p>{% endif %}
+    {% if form.new_category.field_with_error %}<p class="error">Ошибка: {{ form.new_category.field_with_error }}</p>{% endif %}
+        </div>
+
+    
+        <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
+            <div class="form_field_div">
+                <div class="tag">
+    {{ form.tags.label_tag }}
+    {{ form.tags }}
+    {% if form.tags.field_with_error %}<p class="error">Ошибка: {{ form.tags.field_with_error }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
+            <div class="form_field_div">
+    {{ form.new_tags.label_tag }}
+    {{ form.new_tags }}
+    {% if form.new_tags.field_with_error %}<p class="error">Ошибка: {{ form.new_tags.field_with_error }}</p>{% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
+            <div class="form_field_div">
+    {{ form.time_restricting.label_tag }}
+    {{ form.time_restricting }}
+    {% if form.time_restricting.field_with_error %}<p class="error">Ошибка: {{ form.time_restricting.field_with_error }}</p>{% endif %}
+            </div>
+        </div>
+
+
+
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
+            <label for="id_anonymous_loader">
+                <div class="field_with_checkbox form_field_div">
+    {{ form.anonymous_loader }}
+                <span for="id_anonymous_loader">Анонимный тест. На странице теста не будет указан пользователь, который загрузил тест.</span>
+    {% if form.anonymous_loader.field_with_error %}<p class="error">Ошибка: {{ form.anonymous_loader.field_with_error }}</p>{% endif %}
+                </div>
+            </label>
+        </div>
+
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
+            <label for="id_publish_after_adding">
+                <div class="field_with_checkbox form_field_div">
+                <span>Опубликовать тест сразу после отправки (загрузки) либо редактирования теста.</span>
+    {{ form.publish_after_adding }}
+    {% if form.publish_after_adding.field_with_error %}<p class="error">Ошибка: {{ form.publish_after_adding.field_with_error }}</p>{% endif %}
+                </div>
+            </label>
+        </div>
+
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
+            <label for="id_controlling">
+                <div class="field_with_checkbox form_field_div">
+    {{ form.controlling }}
+                <span>Использование контроля прохождения теста.</span>
+    {% if form.controlling.field_with_error %}<p class="error">Ошибка: {{ form.controlling.field_with_error }}</p>{% endif %}
+                </div>
+            </label>
+        </div>
+
+        <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
+            <div class="form_field_div">
+    {{ form.description.label_tag }}
+    {{ form.description }}
+    {% if form.description.field_with_error %}<p class="error">Ошибка: {{ form.description.field_with_error }}</p>{% endif %}
+            </div>
+        </div>
+
+        <input type="submit" class="btn btn-block btn-default btn-lg">
+    </div>
+
 </form>
+
+<script>
+    $(document).ready (function() {
+        $(".django-ckeditor-widget").css({"width" : "100%"});
+    });
+</script>
+
+
 {% endblock %}

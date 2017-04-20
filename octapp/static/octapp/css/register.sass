@@ -1,27 +1,22 @@
 @charset "utf-8"
+@import common_form_elements
+
 .content
   label
     margin: 0
     display: inline
     padding: 4px
-  input[type="checkbox"], .field_with_checkbox label
-    cursor: pointer
-  .form_field:not(:last-of-type)
-    border-bottom: 1px dashed orange
-    margin-bottom: 4px
   input:not([type="submit"]):not([type="checkbox"])
     width: 100%
   input[type="checkbox"]
     line-height: 100%
-    vertical-align: top
-    margin-left: 4px
-  .field_with_error
-    color: red
-    font-weight: bold
-  ol, ul
+    vertical-align: middle
+    margin: 0 2px
+    margin-bottom: 4px
+  form ol, form ul
     padding-left: 25px
     border-left: 1px dashed gray
-  ol li
+  form ol li
     list-style-type: decimal
-  li
+  form ul li
     list-style-type: disc
