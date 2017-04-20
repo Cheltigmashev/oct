@@ -6,11 +6,14 @@
 .link_to_test
   cursor: pointer
 
-.link_to_test:hover .name_of_test
+.link_to_test:hover .name_of_test, .link_to_test:hover *
   transition: all ease 0.2s
   text-decoration: underline
   color: orange
   border-bottom: 1px dashed orange
+
+.remove_test_icon:hover, .edit_test_icon:hover
+  color: orange
 
 .test_div::after
   content: ""

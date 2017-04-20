@@ -26,7 +26,7 @@ class RegistrationFormTermOfServiceUniqueEmail(RegistrationFormTermsOfService):
 class TestForm(forms.ModelForm):
     publish_after_adding = forms.BooleanField(
         widget=forms.CheckboxInput,
-        label=(u'Опубликовать тест сразу после отправки (загрузки) теста'),
+        label=(u'Опубликовать тест сразу после отправки (загрузки) либо редактирования теста'),
         required=False
     )
     
