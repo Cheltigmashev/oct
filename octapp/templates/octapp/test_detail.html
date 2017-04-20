@@ -89,7 +89,7 @@
             {% endif %}
     <a href="{% url 'test_remove' pk=test.pk %}" class="btn btn-danger btn-lg">Удалить тест</a>
     <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-info btn-lg">Изменить тест</a>
-    <a href="" class="btn btn-default btn-lg">Добавить к тесту новый вопрос</a>
+    <a href="" class="btn btn-default btn-sm">Просмотреть/редактировать<br> вопросы теста и/или добавить новый</a>
         {% endif %}
     
         {% if not is_author and perms.octapp.test.can_change and not request.user.is_superuser %}
@@ -103,10 +103,28 @@
     <a href="{% url 'test_remove' pk=test.pk %}" class="btn btn-danger btn-lg">Удалить тест</a>
         {% endif %}
 
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and not user_review %}
     <br>Если вам понравился тест, то вы можете:<br>
-    <a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default btn-lg">Уменьшить рейтинг теста на 1</a>
-    <a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default btn-lg">Увеличить рейтинг теста на 1</a>
+    <a href="{% url 'review' user_id=request.user.id test_id=test.id user_rate='dislike' %}" class="btn btn-default btn-lg">Уменьшить рейтинг теста на 1</a>
+    <a href="{% url 'review' user_id=request.user.id test_id=test.id user_rate='like' %}" class="btn btn-default btn-lg">Увеличить рейтинг теста на 1</a>
+        {% endif %}
+
+        {% if user_review %}
+    <br>Вы уже поставили оценку данному тесту, оценив его
+            {% if user_review.like %}
+                положительно<br>
+            {% else %}
+                отрицательно<br>
+            {% endif %}
+        {% endif %}
+
+        {% if test.rates %}
+    <p>Этот тест оценили:</p>
+            {% for rate in test.rates.all %}
+    <p>{{ rate }}</p>
+            {% endfor %}
+        {% else %}
+    <p>Данный тест еще никто не оценил</p>    
         {% endif %}
 
     {% endif %}

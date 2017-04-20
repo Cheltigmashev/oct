@@ -16,7 +16,7 @@ class Test(models.Model):
     name = models.CharField("Наименование теста", max_length=200, blank=False)
     description = RichTextUploadingField("Описание теста", default='Описание теста отсутствует...')
     controlling = models.BooleanField("Использование контроля прохождения теста", default=False)
-    time_restricting = models.BooleanField("Ограничение времени прохождения теста", default=False)
+    time_restricting = models.DateTimeField("Ограничение времени прохождения теста", null=True)
     rating = models.IntegerField("Рейтинг теста", default=0, editable=False)
     created_date = models.DateTimeField("Дата создания", default=timezone.now, editable=False)
     published_date = models.DateTimeField("Дата публикации", blank=True, null=True, editable=False)
@@ -28,6 +28,14 @@ class Test(models.Model):
 
     def make_ready_for_passing(self):
         self.ready_for_passing = True
+        self.save()
+
+    def review_positively(self):
+        self.rating += 1
+        self.save()
+
+    def review_negatively(self):
+        self.rating -= 1
         self.save()
 
     def __str__(self):
@@ -52,7 +60,7 @@ class Comment(models.Model):
         verbose_name_plural = "Комментарии"
 
 class Category(models.Model):
-    name = models.CharField("Наименование категории", max_length=120, blank=False, unique=True)
+    name = models.CharField("Наименование категории", max_length=100, blank=False, unique=True)
     confirmed = models.BooleanField("Категория подтверждена", default=False)
 
     def confirm(self):
@@ -94,3 +102,25 @@ class Tag(models.Model):
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
         
+class Test_rate(models.Model):
+    test = models.ForeignKey('octapp.Test',
+            related_name='rates',
+            on_delete=models.CASCADE,
+            verbose_name="Тест, к которому относится данная пользовательская оценка (рейтинг)",
+            null=False, blank=False)
+    reviewer = models.ForeignKey('auth.User', related_name='rates', 
+            verbose_name="Пользователь, к которому относится данная пользовательская оценка (рейтинг)",
+            null=False, blank=False)
+    like = models.BooleanField("Тест понравился? Если True — +1 к рейтингу, иначе — -1 к рейтингу",
+            null=False, blank=False)
+
+    def __str__(self):
+        if self.like:
+            rate = "+1"
+        else:
+            rate = "-1"
+        return rate + " пользователь - " + self.reviewer.username
+
+    class Meta:
+        verbose_name = "Оценка тестов"
+        verbose_name_plural = "Оценки тестов"

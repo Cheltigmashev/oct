@@ -17,7 +17,7 @@
             {% endif %}
         </span>
         <a href="{% url 'test_edit' pk=test.pk %}" title="Редактировать тест" class="edit_test_icon glyphicon glyphicon-pencil"></a>
-        <a href="{% url 'test_remove_from_user_tests' pk=test.pk %}" title="Удалить тест" class="remove_test_icon glyphicon glyphicon-remove"></a>    
+        <a href="{% url 'test_remove_through_user_tests' pk=test.pk %}" title="Удалить тест" class="remove_test_icon glyphicon glyphicon-remove"></a>    
     </div>
 </a>
     {% empty %}
@@ -30,7 +30,7 @@
     <div class="test_div">№ {{ forloop.counter }}.
         <span class="name_of_test">{{ test }}</span>
         <a href="{% url 'test_edit' pk=test.pk %}" title="Открыть страницу теста" class="edit_test_icon glyphicon glyphicon-pencil"></a>
-        <a href="{% url 'test_remove_from_user_tests' pk=test.pk %}" title="Открыть страницу теста" class="remove_test_icon glyphicon glyphicon-remove"></a>   
+        <a href="{% url 'test_remove_through_user_tests' pk=test.pk %}" title="Открыть страницу теста" class="remove_test_icon glyphicon glyphicon-remove"></a>   
     </div>
 </a>
     {% empty %}

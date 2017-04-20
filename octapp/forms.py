@@ -24,6 +24,16 @@ class RegistrationFormTermOfServiceUniqueEmail(RegistrationFormTermsOfService):
         return self.cleaned_data['email']
 
 class TestForm(forms.ModelForm):
+    new_category = forms.CharField(
+        label=(u'Если требуется, укажите новую категорию. Учтите, что она не будет использована, пока не будет подтверждена администратором или модератором.'),
+        required=False
+    )
+
+    new_tags = forms.CharField(
+        label=(u'Если требуется, укажите через запятую и без пробелов новые теги'),
+        required=False
+    )
+    
     publish_after_adding = forms.BooleanField(
         widget=forms.CheckboxInput,
         label=(u'Опубликовать тест сразу после отправки (загрузки) либо редактирования теста'),
