@@ -54,7 +54,7 @@ class Comment(models.Model):
     created_date = models.DateTimeField("Дата создания комментария", default=timezone.now)
 
     def __str__(self):
-        self.content
+        return "Комментарий пользователя «" + self.author.username + "» к тесту " + self.test.name
 
     class Meta:
         ordering = ["created_date"]    

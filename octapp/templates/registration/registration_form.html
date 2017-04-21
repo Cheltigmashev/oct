@@ -7,7 +7,6 @@
 
 {% block content %}
 <h1>Регистрация нового пользователя</h1>
-<p></p>
 <form method="post" action="{% url 'registration_register' %}">
 {% csrf_token %}
     <div class="form_row">
