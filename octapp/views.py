@@ -53,13 +53,13 @@ def test_new(request):
             if form.cleaned_data['new_tags']:
                 new_tags = form.cleaned_data['new_tags'].split(',')
                 for item in new_tags:
-                    # Если такого тега еще нет в базе                    
-                    if not Tag.objects.filter(name=item.strip(' \t\n\r')):
+                    # Если такого тега еще нет в базе
+                    if not Tag.objects.filter(name__iexact=item.strip(' \t\n\r')):
                         new_tag_object = Tag.objects.create(name=item.strip(' \t\n\r'))
                         test.tags.add(new_tag_object)
                     # Если такой тег уже есть в базе
                     else:
-                        test.tags.add(Tag.objects.filter(name=item.strip(' \t\n\r')))
+                        test.tags.add(Tag.objects.filter(name__iexact=item.strip(' \t\n\r')))
             if form.cleaned_data['publish_after_adding']:
                 test.published_date = timezone.now()
             test.save()
