@@ -106,10 +106,22 @@ def test_edit(request, pk):
     return render(request, 'octapp/test_edit.html', {'form': form, 'test': test})
 
 @login_required
-def test_publish(request, pk):
+def test_publish(request, pk, through_user_tests):
     test = get_object_or_404(Test, pk=pk)
     test.publish()
-    return redirect('test_detail', pk=pk)
+    if through_user_tests == 'True':
+        return redirect('user_tests', pk=pk)
+    else:
+        return redirect('test_detail', pk=pk)
+
+@login_required
+def test_unpublish(request, pk, through_user_tests):
+    test = get_object_or_404(Test, pk=pk)
+    test.unpublish()
+    if through_user_tests == 'True':
+        return redirect('user_tests', pk=pk)
+    else:
+        return redirect('test_detail', pk=pk)
 
 @login_required
 def test_make_ready_for_passing(request, pk):
@@ -118,16 +130,13 @@ def test_make_ready_for_passing(request, pk):
     return redirect('test_detail', pk=pk)
 
 @login_required
-def test_remove(request, pk):
+def test_remove(request, pk, through_user_tests):
     test = get_object_or_404(Test, pk=pk)
     test.delete()
-    return redirect('tests_lists')
-
-@login_required
-def test_remove_through_user_tests(request, pk):
-    test = get_object_or_404(Test, pk=pk)
-    test.delete()
-    return redirect('user_tests', pk=pk)
+    if through_user_tests == 'True':
+        return redirect('user_tests', pk=pk)
+    else:
+        return redirect('tests_lists')
 
 @login_required
 def review(request, test_id, user_rate, user_id):

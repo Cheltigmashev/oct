@@ -86,14 +86,17 @@
         {% if is_author %}
     Вам, как тому, кто загрузил данный тест, доступны возможности:<br>
             {% if not test.published_date %}
-    <a href="{% url 'test_publish' pk=test.pk %}" class="btn btn-default btn-lg">Опубликовать тест</a>
+    <a href="{% url 'test_publish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Опубликовать тест</a>
+            {% else %}
+    <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Снять тест с публикации</a>            
             {% endif %}
             {% if not test.ready_for_passing %}
     <a href="{% url 'test_make_ready_for_passing' pk=test.pk %}" class="btn btn-default btn-lg">Подтвердить готовность теста</a>
             {% endif %}
-    <a href="{% url 'test_remove' pk=test.pk %}" class="btn btn-danger btn-lg">Удалить тест</a>
+    <a href="{% url 'test_remove' pk=test.pk through_user_tests='False' %}" class="btn btn-danger btn-lg">Удалить тест</a>
     <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-info btn-lg">Изменить тест</a>
     <a href="" class="btn btn-default btn-sm">Просмотреть/редактировать<br> вопросы теста и/или добавить новый</a>
+    <a href="" class="btn btn-default btn-lg">Поделиться ссылкой на тест в соцсетях</a>    
         {% endif %}
     
         {% if not is_author and perms.octapp.test.can_change and not request.user.is_superuser %}
@@ -104,7 +107,8 @@
         {% if not is_author and request.user.is_superuser %}
     Вы не автор теста, но являетесь суперпользователем, поэтому вам также доступен данный функционал:<br>
     <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить тест</a>
-    <a href="{% url 'test_remove' pk=test.pk %}" class="btn btn-danger btn-lg">Удалить тест</a>
+    <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Снять тест с публикации</a>
+    <a href="{% url 'test_remove' pk=test.pk through_user_tests='False' %}" class="btn btn-danger btn-lg">Удалить тест</a>
         {% endif %}
 
         {% if user.is_authenticated and not user_review %}

@@ -8,10 +8,10 @@ urlpatterns = [
     url(r'^test/new/$', views.test_new, name='test_new'),
     url(r'^test/(?P<pk>\d+)/edit/$', views.test_edit, name='test_edit'),
     url(r'^user/(?P<pk>\d+)/tests/$', views.user_tests, name='user_tests'),
-    url(r'^test/(?P<pk>\d+)/publish/$', views.test_publish, name='test_publish'),
+    url(r'^test/(?P<pk>\d+)/publish/(?P<through_user_tests>(True)|(False))/$', views.test_publish, name='test_publish'),
+    url(r'^test/(?P<pk>\d+)/test_unpublish/(?P<through_user_tests>(True)|(False))/$', views.test_unpublish, name='test_unpublish'),
     url(r'^test/(?P<pk>\d+)/make_ready/$', views.test_make_ready_for_passing, name='test_make_ready_for_passing'),
-    url(r'^test/(?P<pk>\d+)/remove/$', views.test_remove, name='test_remove'),
-    url(r'^test/(?P<pk>\d+)/test_remove_through_user_tests/$', views.test_remove_through_user_tests, name='test_remove_through_user_tests'),
+    url(r'^test/(?P<pk>\d+)/remove/(?P<through_user_tests>(True)|(False))/$', views.test_remove, name='test_remove'),
 
     #url(r'^categories_confirming/(?P<pk>\d+)/publish/$', permission_required("octapp.can_confirm")
     # (views.categories_confirming, name='categories_confirming')),

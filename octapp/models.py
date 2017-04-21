@@ -26,6 +26,10 @@ class Test(models.Model):
         self.published_date = timezone.now()
         self.save()
 
+    def unpublish(self):
+        self.published_date = None
+        self.save()
+
     def make_ready_for_passing(self):
         self.ready_for_passing = True
         self.save()

@@ -1,4 +1,5 @@
 @charset "utf-8"
+
 .name_of_test
   margin-left: 8px
   border-bottom: 1px dashed #bbbbbb
@@ -6,13 +7,18 @@
 .link_to_test
   cursor: pointer
 
-.link_to_test:hover .name_of_test, .link_to_test:hover *
+.link_to_test:hover .name_of_test
   transition: all ease 0.2s
-  text-decoration: underline
   color: orange
   border-bottom: 1px dashed orange
 
+.link_to_test:hover strong, .link_to_test:hover q
+  transition: all ease 0.2s
+  color: orange
+  border-color: orange  
+
 .remove_test_icon:hover, .edit_test_icon:hover
+  transition: all ease 0.2s  
   color: orange
 
 .test_div::after
