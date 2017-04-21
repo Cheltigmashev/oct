@@ -59,7 +59,7 @@ def test_new(request):
                         test.tags.add(new_tag_object)
                     # Если такой тег уже есть в базе
                     else:
-                        test.tags.add(Tag.objects.filter(name__iexact=item.strip(' \t\n\r')))
+                        test.tags.add(Tag.objects.get(name__iexact=item.strip(' \t\n\r')))
             if form.cleaned_data['publish_after_adding']:
                 test.published_date = timezone.now()
             test.save()
