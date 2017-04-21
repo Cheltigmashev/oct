@@ -10,7 +10,7 @@ class Test(models.Model):
     result_scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE, verbose_name="Оценочная шкала теста")
     # id est test may contain many tags, and tags may be related to different tests
     # tagS name prefered by Django docs
-    tags = models.ManyToManyField('octapp.Tag', verbose_name="Тег или теги теста", blank=True)
+    tags = models.ManyToManyField('octapp.Tag', related_name='tests', verbose_name="Тег или теги теста", blank=True)
 
     anonymous_loader = models.BooleanField("Анонимный тест. На странице теста не будет указан пользователь, который загрузил тест.", default=False, blank=True)
     name = models.CharField("Наименование теста", max_length=200, blank=False, unique=True)
