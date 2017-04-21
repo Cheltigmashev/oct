@@ -10,28 +10,22 @@
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>ТЕСТЫ ПО КАТЕГОРИЯМИ</h2></a>
         <div>
-        <a href="" class="category"><span class="badge">Обществознание (XXX штук)</span></a>
-        <a href="" class="category"><span class="badge">Базы данных(XXX штук)</span></a>
-        <a href="" class="category"><span class="badge">Психология (XXX штук)</span></a>
-        <a href="" class="category"><span class="badge">Биология (XXX штук)</span></a>
-        <a href="" class="category"><span class="badge">Иностранные языки(XXX штук)</span></a>
-        <a href="" class="category"><span class="badge">История (XXX штук)</span></a>
+            <a href="" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ tests_count_of_unconf_cat }} шт.)</span></a>            
+    {% for category in categories %}
+            <a href="" class="category"><span class="badge">{{ category }} ({{ category.tests.count }} шт.)</span></a>
+    {% empty %}
+        <h4>Нет таких тестов</h4>
+    {% endfor %}
         </div>
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>ТЕСТЫ ПО ТЕГАМ</h2></a>
         <div>
-        <a href="" class="tag"><span class="badge">Образовательные (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">Небольшие (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">Большие (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">Отношения (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">Для школьников (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">Для студентов (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">Развлекательные (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">На 10-15 минут (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">На 20-30 минут (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">С лимитом времени (XXX штук)</span></a>
-        <a href="" class="tag"><span class="badge">Без лимита времени (XXX штук)</span></a>
+    {% for tag in tags %}
+            <a href="" class="tag"><span class="badge">{{ tag }} ({{ tag.tests.count }} шт.)</span></a>
+    {% empty %}
+        <h4>Нет таких тестов</h4>
+    {% endfor %}
         </div>
     </div>
 
@@ -41,14 +35,14 @@
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-                    {% for test in left_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}</span></div></a>
-                    {% endfor %}
+        {% for test in left_number_of_new_tests_list %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+        {% endfor %}
                 </div>
                 <div class="table_cell">
-                    {% for test in right_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}</span></div></a>
-                    {% endfor %}
+        {% for test in right_number_of_new_tests_list %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+        {% endfor %}
                 </div>
             </div>
         </div>
@@ -58,9 +52,9 @@
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-                    {% for test in left_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}</span></div></a>
-                    {% endfor %}
+            {% for test in left_number_of_new_tests_list %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+            {% endfor %}
                 </div>
             </div>
         </div>
@@ -76,14 +70,14 @@
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-                    {% for test in left_number_of_popular_tests %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}, рейтинг - {{ test.rating }}</span></div></a>
-                    {% endfor %}
+        {% for test in left_number_of_popular_tests %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+        {% endfor %}
                 </div>
                 <div class="table_cell">
-                    {% for test in right_number_of_popular_tests %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}, рейтинг - {{ test.rating }}</span></div></a>
-                    {% endfor %}
+        {% for test in right_number_of_popular_tests %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+        {% endfor %}
                 </div>
             </div>
         </div>
@@ -93,15 +87,15 @@
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-                    {% for test in left_number_of_popular_tests %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:70 }}, рейтинг - {{ test.rating }}</span></div></a>
-                    {% endfor %}
+            {% for test in left_number_of_popular_tests %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+            {% endfor %}
                 </div>
             </div>
         </div>
         {% else %}
         <!-- Если даже левого ряда нет -->        
-        <h4>Нет тестов</h4>
+        <h4>Нет таких тестов</h4>
         {% endif %}        
     {% endif %}
     </div>

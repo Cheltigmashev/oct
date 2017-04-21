@@ -139,7 +139,7 @@ CKEDITOR_IMAGE_BACKEND = 'pillow'
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'height': 400,
+        'height': 200,
         'width': '100%',
         'extraPlugins': 'codesnippet',
     }

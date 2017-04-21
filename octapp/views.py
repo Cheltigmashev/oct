@@ -18,10 +18,19 @@ def get_tests_lists_context():
     left_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:20]
     # левый ряд тестов для списка рейтинговых тестов, диапазон от 20го до 40го
     right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[20:41]
+    tags = Tag.objects.order_by('pk')[:40]
+    categories = Category.objects.order_by('pk')[:40]
+    unconfirmed_categories = Category.objects.filter(confirmed=False)
+    tests_count_of_unconf_cat = 0
+    for unconf_cat in unconfirmed_categories:
+        tests_count_of_unconf_cat += unconf_cat.tests.count()
     tests_lists_context = {'left_number_of_new_tests_list': left_number_of_new_tests_list,
-        'right_number_of_new_tests_list': right_number_of_new_tests_list,
-        'left_number_of_popular_tests': left_number_of_popular_tests,
-        'right_number_of_popular_tests': right_number_of_popular_tests}
+                           'right_number_of_new_tests_list': right_number_of_new_tests_list,
+                           'left_number_of_popular_tests': left_number_of_popular_tests,
+                           'right_number_of_popular_tests': right_number_of_popular_tests,
+                           'tags': tags,
+                           'categories': categories,
+                           'tests_count_of_unconf_cat': tests_count_of_unconf_cat}
     return tests_lists_context
 
 # Представление главной страницы
@@ -47,6 +56,8 @@ def test_new(request):
             test = form.save()
             test.author = request.user
             test.name = test.name.capitalize()
+            # Если пользователь выберет какую-либо категорию и, при этом, введет новую, то новая добавляться не будет,
+            # а тесту присвоится выбранная им категория
             if form.cleaned_data['new_category'] and not form.cleaned_data['category']:
                 some_new_category = Category.objects.create(name=form.cleaned_data['new_category'].capitalize())
                 test.category = some_new_category
