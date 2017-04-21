@@ -19,7 +19,7 @@ def get_tests_lists_context():
     # левый ряд тестов для списка рейтинговых тестов, диапазон от 20го до 40го
     right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[20:41]
     tags = Tag.objects.order_by('pk')[:40]
-    categories = Category.objects.order_by('pk')[:40]
+    categories = Category.objects.filter(confirmed=True).order_by('pk')[:40]
     unconfirmed_categories = Category.objects.filter(confirmed=False)
     tests_count_of_unconf_cat = 0
     for unconf_cat in unconfirmed_categories:

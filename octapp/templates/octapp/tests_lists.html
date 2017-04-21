@@ -12,7 +12,7 @@
         <div>
             <a href="" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ tests_count_of_unconf_cat }} шт.)</span></a>            
     {% for category in categories %}
-            <a href="" class="category"><span class="badge">{{ category }} ({{ category.tests.count }} шт.)</span></a>
+            <a href="" class="category"><span class="badge">{{ category|truncatechars:40 }} ({{ category.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет таких тестов</h4>
     {% endfor %}
@@ -22,7 +22,7 @@
         <a href=""><h2>ТЕСТЫ ПО ТЕГАМ</h2></a>
         <div>
     {% for tag in tags %}
-            <a href="" class="tag"><span class="badge">{{ tag }} ({{ tag.tests.count }} шт.)</span></a>
+            <a href="" class="tag"><span class="badge">{{ tag|truncatechars:40 }} ({{ tag.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет таких тестов</h4>
     {% endfor %}
