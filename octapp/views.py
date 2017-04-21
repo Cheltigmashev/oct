@@ -2,15 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import TestForm
-from .models import Test, Comment, Test_rate
+from .models import Test, Comment, Test_rate, Tag, Category
 from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
 
 # Модель пользователя
 User = get_user_model()
 
-# Представление главной страницы
-def tests_lists(request):
+def get_tests_lists_context():
     # левый ряд тестов для списка новых тестов, диапазон от 0го до 19го
     left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:20]
     # левый ряд тестов для списка новых тестов, диапазон от 20го до 40го
@@ -19,11 +18,15 @@ def tests_lists(request):
     left_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:20]
     # левый ряд тестов для списка рейтинговых тестов, диапазон от 20го до 40го
     right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[20:41]
-    return render(request, 'octapp/tests_lists.html',
-    {'left_number_of_new_tests_list': left_number_of_new_tests_list,
-    'right_number_of_new_tests_list': right_number_of_new_tests_list,
-    'left_number_of_popular_tests': left_number_of_popular_tests,
-    'right_number_of_popular_tests': right_number_of_popular_tests})
+    tests_lists_context = {'left_number_of_new_tests_list': left_number_of_new_tests_list,
+        'right_number_of_new_tests_list': right_number_of_new_tests_list,
+        'left_number_of_popular_tests': left_number_of_popular_tests,
+        'right_number_of_popular_tests': right_number_of_popular_tests}
+    return tests_lists_context
+
+# Представление главной страницы
+def tests_lists(request):
+    return render(request, 'octapp/tests_lists.html', get_tests_lists_context())
 
 @login_required
 def user_tests(request, pk):
@@ -42,10 +45,23 @@ def test_new(request):
             # Это происходит потому невозможно создать связи для объекта, который не сохранен в базе данных.
             # Подробнее см. https://djbook.ru/rel1.9/topics/forms/modelforms.html#the-save-method
             test = form.save()
-            if form.cleaned_data['publish_after_adding']:
-                test.published_date = timezone.now()
             test.author = request.user
             test.name = test.name.capitalize()
+            if form.cleaned_data['new_category'] and not form.cleaned_data['category']:
+                some_new_category = Category.objects.create(name=form.cleaned_data['new_category'].capitalize())
+                test.category = some_new_category
+            if form.cleaned_data['new_tags']:
+                new_tags = form.cleaned_data['new_tags'].split(',')
+                for item in new_tags:
+                    # Если такого тега еще нет в базе                    
+                    if not Tag.objects.filter(name=item.strip(' \t\n\r')):
+                        new_tag_object = Tag.objects.create(name=item.strip(' \t\n\r'))
+                        test.tags.add(new_tag_object)
+                    # Если такой тег уже есть в базе
+                    else:
+                        test.tags.add(Tag.objects.filter(name=item.strip(' \t\n\r')))
+            if form.cleaned_data['publish_after_adding']:
+                test.published_date = timezone.now()
             test.save()
             return redirect('test_detail', pk=test.pk)
     else:
