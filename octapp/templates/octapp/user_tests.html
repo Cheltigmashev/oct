@@ -18,8 +18,9 @@
         </div>
         <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test" title="Открыть страницу теста">
             <div class="test_div_on_user_tests">
-                № {{ forloop.counter }}.
-                <span class="name_of_test">{{ test }}
+                <div class="blank_for_indent inline_block"></div>                
+                <span class="name_of_test">
+                № {{ forloop.counter }}. {{ test }}
             {% if test.ready_for_passing %} — <strong>готов</strong> для прохождения пользователями
             {% else %} — <strong>не готов</strong> для прохождения пользователями
             {% endif %}
@@ -43,8 +44,9 @@
         </div>
         <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test" title="Открыть страницу теста">
             <div class="test_div_on_user_tests">
-                № {{ forloop.counter }}.
-                <span class="name_of_test">{{ test }}</span>
+                <div class="blank_for_indent inline_block"></div>
+                <span class="name_of_test">
+                № {{ forloop.counter }}. {{ test }}</span>
             </div>
         </a>
     </div>

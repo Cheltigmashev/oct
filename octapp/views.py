@@ -86,12 +86,15 @@ def test_detail(request, pk):
         is_author = True
     else:
         is_author = False
-    try:
-        user_review = Test_rate.objects.get(test=test, reviewer=request.user)
-        return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author, 'user_review': user_review })
-    # Пользователь еще не ставил оценку данному тесту
-    except Test_rate.DoesNotExist:
-        return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author })
+    if not request.user.is_authenticated:
+        return render(request, 'octapp/test_detail.html', {'test': test })
+    else:
+        try:
+            rate_of_current_user = Test_rate.objects.get(test=test, reviewer=request.user)
+            return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author, 'rate_of_current_user': rate_of_current_user })
+        # Пользователь еще не ставил оценку данному тесту
+        except Test_rate.DoesNotExist:
+            return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author })
 
 @login_required
 def test_edit(request, pk):
@@ -139,9 +142,9 @@ def test_remove(request, pk, through_user_tests):
         return redirect('tests_lists')
 
 @login_required
-def review(request, test_id, user_rate, user_id):
+def review(request, test_id, user_rate):
     test = get_object_or_404(Test, pk=test_id)
-    user = get_object_or_404(User, pk=user_id)
+    user = request.user
     # Устранение возможности голосовать за других пользователей с помощью ввода URL
     if user == request.user:
         if user_rate == "like":

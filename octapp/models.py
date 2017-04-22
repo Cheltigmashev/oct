@@ -128,7 +128,7 @@ class Test_rate(models.Model):
             rate = "+1"
         else:
             rate = "-1"
-        return rate + ", пользователь - " + self.reviewer.username
+        return rate + " от пользователя " + self.reviewer.username
 
     class Meta:
         verbose_name = "Оценка тестов"

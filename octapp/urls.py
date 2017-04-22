@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.tests_lists, name='tests_lists'),
     url(r'^test/(?P<pk>\d+)/$', views.test_detail, name='test_detail'),
-    url(r'^test/(?P<test_id>\d+)/user/(?P<user_id>\d+)/review/(?P<user_rate>(like)|(dislike))/$', views.review, name='review'),
+    url(r'^test/(?P<test_id>\d+)/review/(?P<user_rate>(like)|(dislike))/$', views.review, name='review'),
     url(r'^test/new/$', views.test_new, name='test_new'),
     url(r'^test/(?P<pk>\d+)/edit/$', views.test_edit, name='test_edit'),
     url(r'^user/(?P<pk>\d+)/tests/$', views.user_tests, name='user_tests'),

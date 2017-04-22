@@ -70,7 +70,6 @@
         {% endif %}
     , который добавил данный тест :(</p>
     {% endfor %}
-<br>
 
     {% if test.ready_for_passing %}
 <h3 class="text-left">Готовность теста для его прохождения пользователями подтверждена</h3>
@@ -106,35 +105,40 @@
 
         {% if not is_author and request.user.is_superuser %}
     Вы не автор теста, но являетесь суперпользователем, поэтому вам также доступен данный функционал:<br>
-    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить тест</a>
+    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-info btn-lg">Изменить тест</a>
     <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Снять тест с публикации</a>
     <a href="{% url 'test_remove' pk=test.pk through_user_tests='False' %}" class="btn btn-danger btn-lg">Удалить тест</a>
         {% endif %}
 
-        {% if user.is_authenticated and not user_review %}
+
+    {% endif %}
+
+    {% if user.is_authenticated and not rate_of_current_user %}
     <br>Если вам понравился тест, то вы можете:<br>
-    <a href="{% url 'review' user_id=request.user.id test_id=test.id user_rate='dislike' %}" class="btn btn-default btn-lg">Уменьшить рейтинг теста на 1</a>
-    <a href="{% url 'review' user_id=request.user.id test_id=test.id user_rate='like' %}" class="btn btn-default btn-lg">Увеличить рейтинг теста на 1</a>
-        {% endif %}
+    <a href="{% url 'review' test_id=test.id user_rate='dislike' %}" class="btn btn-default btn-lg">Уменьшить рейтинг теста на 1</a>
+    <a href="{% url 'review' test_id=test.id user_rate='like' %}" class="btn btn-default btn-lg">Увеличить рейтинг теста на 1</a>
+    {% endif %}
 
-        {% if user_review %}
+    {% if rate_of_current_user %}
     <br>Вы уже поставили оценку данному тесту, оценив его
-            {% if user_review.like %}
+        {% if rate_of_current_user.like %}
                 положительно<br>
-            {% else %}
-                отрицательно<br>
-            {% endif %}
-        {% endif %}
-
-        {% if test.rates.all %}
-    <p>Этот тест оценили:</p>
-            {% for rate in test.rates.all %}
-    <p>{{ rate }}</p>
-            {% endfor %}
         {% else %}
-    <p>Данный тест еще никто не оценил</p>    
+                отрицательно<br>
         {% endif %}
+    {% endif %}
 
+    {% if test.rates.all %}
+    <p>Этот тест оценили:</p>
+        {% for rate in test.rates.all %}
+            {% if forloop.last and forloop.first or forloop.last %}
+    <p class="inline_block">{{ rate }}.</p>
+            {% elif not forloop.last %}
+    <p class="inline_block">{{ rate }}, </p>        
+            {% endif %}
+        {% endfor %}
+    {% else %}
+    <p>Данный тест еще никто не оценил</p>    
     {% endif %}
 
 <hr><h2>Комментарии к тесту</h2>
