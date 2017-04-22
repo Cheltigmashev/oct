@@ -10,27 +10,39 @@ from django.contrib.auth import views as auth_views
 User = get_user_model()
 
 def get_tests_lists_context():
+    showing_tests_amount = 20
+    showing_tag_and_categories_amount = 40
     # левый ряд тестов для списка новых тестов, диапазон от 0го до 19го
-    left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:20]
+    left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:showing_tests_amount]
     # левый ряд тестов для списка новых тестов, диапазон от 20го до 40го
-    right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[20:41]
+    right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[showing_tests_amount:showing_tests_amount*2+1]
     # левый ряд тестов для списка рейтинговых тестов, диапазон от 0го до 19го
-    left_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:20]
+    left_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:showing_tests_amount]
     # левый ряд тестов для списка рейтинговых тестов, диапазон от 20го до 40го
-    right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[20:41]
-    tags = Tag.objects.order_by('pk')[:40]
-    categories = Category.objects.filter(confirmed=True).order_by('pk')[:40]
+    right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_amount:showing_tests_amount*2+1]
+    tags = Tag.objects.order_by('pk')[:showing_tag_and_categories_amount]
+    categories = Category.objects.filter(confirmed=True).order_by('pk')[:showing_tag_and_categories_amount]
+    if len(tags) > showing_tag_and_categories_amount:
+        show_elision_marks_for_tag_or_categories = True
+    else:
+        show_elision_marks_for_tag_or_categories = None
+    if len(left_number_of_new_tests_list) > showing_tests_amount:
+        show_elision_marks_for_tests = True
+    else:
+        show_elision_marks_for_tests = None
     unconfirmed_categories = Category.objects.filter(confirmed=False)
-    tests_count_of_unconf_cat = 0
+    count_of_tests_with_unconf_cat = 0
     for unconf_cat in unconfirmed_categories:
-        tests_count_of_unconf_cat += unconf_cat.tests.count()
+        count_of_tests_with_unconf_cat += unconf_cat.tests.count()
     tests_lists_context = {'left_number_of_new_tests_list': left_number_of_new_tests_list,
                            'right_number_of_new_tests_list': right_number_of_new_tests_list,
                            'left_number_of_popular_tests': left_number_of_popular_tests,
                            'right_number_of_popular_tests': right_number_of_popular_tests,
                            'tags': tags,
                            'categories': categories,
-                           'tests_count_of_unconf_cat': tests_count_of_unconf_cat}
+                           'count_of_tests_with_unconf_cat': count_of_tests_with_unconf_cat,
+                           'show_elision_marks_for_tag_or_categories': show_elision_marks_for_tag_or_categories,
+                           'show_elision_marks_for_tests': show_elision_marks_for_tests}
     return tests_lists_context
 
 # Представление главной страницы

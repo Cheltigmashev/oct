@@ -59,5 +59,5 @@ class TestForm(forms.ModelForm):
         error_messages = {
             'name': {
                 'unique': "Тест с таким именем уже присутствует в системе. Пожалуйста, придумайте другое название.",
-            },
+            }
         }

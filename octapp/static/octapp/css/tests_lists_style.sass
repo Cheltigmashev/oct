@@ -12,11 +12,20 @@
     .table_cell:not(:only-of-type)
       width: 50%
     .badge
-      margin: 2px
+      margin: 2px 0
       color: black
       background-color: #ffef80
       cursor: pointer
       font-weight: normal
+    .badge:last-child:not(:only-child)
+      display: block
+      cursor: default
+      padding: 0 4px
+      margin-left: 70px
+      margin-right: 70px
+      font-size: 18px
+      text-align: center
+      background-color: #ffff90
   a.category:hover, a:hover h2
     transition: all ease 0.2s
     color: orange
