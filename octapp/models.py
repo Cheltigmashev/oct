@@ -66,7 +66,7 @@ class Comment(models.Model):
         verbose_name_plural = "Комментарии"
 
 class Category(models.Model):
-    name = models.CharField("Наименование категории", max_length=100, blank=False, unique=True)
+    name = models.CharField("Наименование категории", max_length=80, blank=False, unique=True)
     confirmed = models.BooleanField("Категория подтверждена", default=False)
 
     def confirm(self):

@@ -5,6 +5,7 @@ from .forms import TestForm
 from .models import Test, Comment, Test_rate, Tag, Category
 from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
+import re
 
 # Модель пользователя
 User = get_user_model()
@@ -68,21 +69,25 @@ def test_new(request):
             test = form.save()
             test.author = request.user
             test.name = test.name.capitalize()
+            stripped_category_name = form.cleaned_data['new_category'].strip(' ')
             # Если пользователь выберет какую-либо категорию и, при этом, введет новую, то новая добавляться не будет,
             # а тесту присвоится выбранная им категория
             if form.cleaned_data['new_category'] and not form.cleaned_data['category']:
-                some_new_category = Category.objects.create(name=form.cleaned_data['new_category'].capitalize())
-                test.category = some_new_category
+                if not Category.objects.filter(name__iexact=stripped_category_name):
+                    test.category = Category.objects.create(name=form.cleaned_data['new_category'].capitalize())
+                else:
+                    test.category = Category.objects.get(name__iexact=stripped_category_name)
             if form.cleaned_data['new_tags']:
-                new_tags = form.cleaned_data['new_tags'].split(',')
+                pattern = r'[\w/\-\d]+'
+                new_tags = re.findall(pattern, form.cleaned_data['new_tags'])
                 for item in new_tags:
                     # Если такого тега еще нет в базе
-                    if not Tag.objects.filter(name__iexact=item.strip(' \t\n\r')):
-                        new_tag_object = Tag.objects.create(name=item.strip(' \t\n\r'))
+                    if not Tag.objects.filter(name__iexact=item):
+                        new_tag_object = Tag.objects.create(name=item)
                         test.tags.add(new_tag_object)
                     # Если такой тег уже есть в базе
                     else:
-                        test.tags.add(Tag.objects.get(name__iexact=item.strip(' \t\n\r')))
+                        test.tags.add(Tag.objects.get(name__iexact=item))
             if form.cleaned_data['publish_after_adding']:
                 test.published_date = timezone.now()
             test.save()
