@@ -11,27 +11,39 @@ import re
 User = get_user_model()
 
 def get_tests_lists_context():
-    showing_tests_amount = 20
-    showing_tag_and_categories_amount = 40
-    # левый ряд тестов для списка новых тестов, диапазон от 0го до 19го
-    left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:showing_tests_amount]
-    # левый ряд тестов для списка новых тестов, диапазон от 20го до 40го
-    right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[showing_tests_amount:showing_tests_amount*2+1]
-    # левый ряд тестов для списка рейтинговых тестов, диапазон от 0го до 19го
-    left_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:showing_tests_amount]
-    # левый ряд тестов для списка рейтинговых тестов, диапазон от 20го до 40го
-    right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_amount:showing_tests_amount*2+1]
-    tags = Tag.objects.order_by('pk')[:showing_tag_and_categories_amount]
-    categories = Category.objects.filter(confirmed=True).order_by('pk')[:showing_tag_and_categories_amount]
-    if len(tags) > showing_tag_and_categories_amount:
-        show_elision_marks_for_tag_or_categories = True
+    showing_tests_per_one_column = 14
+    showing_tags_and_categories_amount = 58
+    showing_tags = Tag.objects.order_by('pk')[:showing_tags_and_categories_amount]
+    showing_categories = Category.objects.filter(confirmed=True).order_by('pk')[:showing_tags_and_categories_amount]
+
+    # левый ряд тестов для списка новых тестов, диапазон от 0го до showing_tests_per_one_column - 1
+    left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date', 'name')[:showing_tests_per_one_column]
+    # левый ряд тестов для списка новых тестов
+    right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
+    # левый ряд тестов для списка рейтинговых тестов, диапазон от 0го до showing_tests_per_one_column - 1
+    left_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:showing_tests_per_one_column]
+    # левый ряд тестов для списка рейтинговых тестов
+    right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
+    
+    all_tags_count = Tag.objects.order_by('pk').count()
+    all_published_test_count = Test.objects.filter(published_date__isnull=False).count()
+    all_confirmed_categories_count = Category.objects.filter(confirmed=True).count()
+    
+    if all_tags_count > showing_tags_and_categories_amount:
+        show_elision_marks_for_tags = True
     else:
-        show_elision_marks_for_tag_or_categories = None
-    if len(left_number_of_new_tests_list) > showing_tests_amount:
+        show_elision_marks_for_tags = None
+    if all_confirmed_categories_count > showing_tags_and_categories_amount:
+        show_elision_marks_for_categories = True
+    else:
+        show_elision_marks_for_categories = None
+    if all_published_test_count > left_number_of_new_tests_list.count() + right_number_of_new_tests_list.count():
         show_elision_marks_for_tests = True
     else:
         show_elision_marks_for_tests = None
+
     unconfirmed_categories = Category.objects.filter(confirmed=False)
+    count_of_tests_without_category = Test.objects.filter(category=None).count()
     count_of_tests_with_unconf_cat = 0
     for unconf_cat in unconfirmed_categories:
         count_of_tests_with_unconf_cat += unconf_cat.tests.count()
@@ -39,11 +51,13 @@ def get_tests_lists_context():
                            'right_number_of_new_tests_list': right_number_of_new_tests_list,
                            'left_number_of_popular_tests': left_number_of_popular_tests,
                            'right_number_of_popular_tests': right_number_of_popular_tests,
-                           'tags': tags,
-                           'categories': categories,
+                           'showing_tags': showing_tags,
+                           'showing_categories': showing_categories,
                            'count_of_tests_with_unconf_cat': count_of_tests_with_unconf_cat,
-                           'show_elision_marks_for_tag_or_categories': show_elision_marks_for_tag_or_categories,
-                           'show_elision_marks_for_tests': show_elision_marks_for_tests}
+                           'show_elision_marks_for_tags': show_elision_marks_for_tags,
+                           'show_elision_marks_for_categories': show_elision_marks_for_categories,
+                           'show_elision_marks_for_tests': show_elision_marks_for_tests,
+                           'count_of_tests_without_category': count_of_tests_without_category}
     return tests_lists_context
 
 # Представление главной страницы
@@ -183,7 +197,6 @@ def review(request, test_id, user_rate):
             return redirect('tests_lists')            
     else:
         return redirect('user_tests')
-        
 
 @login_required
 def comment_remove(request, pk):

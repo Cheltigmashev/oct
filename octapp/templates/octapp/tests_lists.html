@@ -10,13 +10,15 @@
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>КАТЕГОРИИ ТЕСТОВ</h2></a>
         <div>
-            <a href="" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>            
-    {% for category in categories %}
-            <a href="" class="category"><span class="badge">{{ category|truncatechars:40 }} ({{ category.tests.count }} шт.)</span></a>
+            <a href="" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>
+            <a href="" class="category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
+    {% for category in showing_categories %}
+            <a href="" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет таких тестов</h4>
     {% endfor %}
-        {% if show_elision_marks_for_tag_or_categories %}
+        {% if show_elision_marks_for_categories %}
+            <hr>
             <span title="Здесь перечислены не все категории. Откройте ссылку-заголовок выше, чтобы посмотреть все." class="badge">...</span>
         {% endif %}
         </div>
@@ -24,12 +26,13 @@
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>ТЕГИ</h2></a>
         <div>
-    {% for tag in tags %}
-            <a href="" class="tag"><span class="badge">{{ tag|truncatechars:40 }} ({{ tag.tests.count }} шт.)</span></a>
+    {% for tag in showing_tags %}
+            <a href="" class="tag"><span class="badge">{{ tag|truncatechars:35 }} ({{ tag.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет таких тестов</h4>
     {% endfor %}
-        {% if show_elision_marks_for_tests %}
+        {% if show_elision_marks_for_tags %}
+            <hr>
             <span title="Здесь перечислены не все теги. Откройте ссылку-заголовок выше, чтобы посмотреть все." class="badge">...</span>
         {% endif %}
         </div>
@@ -42,16 +45,20 @@
             <div class="table_row">
                 <div class="table_cell">
         {% for test in left_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
         {% endfor %}
                 </div>
                 <div class="table_cell">
         {% for test in right_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
         {% endfor %}
                 </div>
             </div>
         </div>
+        {% if show_elision_marks_for_tests %}
+            <hr>
+            <span title="Здесь перечислены не все тесты. Откройте ссылку-заголовок выше, чтобы посмотреть все." class="badge">...</span>
+        {% endif %}
     {% else %}
         <!-- Если правого ряда новых тестов нет, то помещать тесты в 1 ячейку таблицы -->
         {% if left_number_of_new_tests_list and not right_number_of_new_tests_list %}
@@ -59,7 +66,7 @@
             <div class="table_row">
                 <div class="table_cell">
             {% for test in left_number_of_new_tests_list %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
             {% endfor %}
                 </div>
             </div>
@@ -77,16 +84,20 @@
             <div class="table_row">
                 <div class="table_cell">
         {% for test in left_number_of_popular_tests %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
         {% endfor %}
                 </div>
                 <div class="table_cell">
         {% for test in right_number_of_popular_tests %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
         {% endfor %}
                 </div>
             </div>
         </div>
+        {% if show_elision_marks_for_tests %}
+            <hr>
+            <span title="Здесь перечислены не все тесты. Откройте ссылку-заголовок выше, чтобы посмотреть все." class="badge">...</span>
+        {% endif %}
     {% else %}
         <!-- Если правого ряда новых тестов нет, то помещать тесты в 1 ячейку таблицы -->
         {% if left_number_of_popular_tests and not right_number_of_popular_tests %}
@@ -94,7 +105,7 @@
             <div class="table_row">
                 <div class="table_cell">
             {% for test in left_number_of_popular_tests %}
-                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:60 }}</span></div></a>
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
             {% endfor %}
                 </div>
             </div>
