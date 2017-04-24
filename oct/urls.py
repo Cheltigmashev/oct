@@ -21,7 +21,7 @@ class RegistrationViewTermOfServiceUniqueEmail(RegistrationView):
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'', include('octapp.urls')),
+    #url(r'', include('octapp.urls')),
     url(r'^avatar/', include('avatar.urls')),
     url(r'^accounts/logout/$', views.logout, name='auth_logout', kwargs={'next_page': '/'}),
     # Отправляем переменные из представления главной страницы (tests_lists) в дополнительный контекст представления login
