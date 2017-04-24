@@ -2,6 +2,7 @@
 __pycache__
 octenv
 local_settings.py
+local_urls.py
 node_modules
 db.sqlite3
 .DS_Store
