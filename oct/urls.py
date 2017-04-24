@@ -14,19 +14,19 @@ from django.utils import timezone
 from octapp.models import Test
 # Эта функция, также используемая для представления главной страницы, 
 # будет передавать данные в контекст (в extra_context) стандартного представления для авторизации
-# from octapp.views import get_tests_lists_context
+from octapp.views import get_tests_lists_context
 
 class RegistrationViewTermOfServiceUniqueEmail(RegistrationView):
     form_class = RegistrationFormTermOfServiceUniqueEmail
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    #url(r'', include('octapp.urls')),
+    url(r'', include('octapp.urls')),
     url(r'^avatar/', include('avatar.urls')),
     url(r'^accounts/logout/$', views.logout, name='auth_logout', kwargs={'next_page': '/'}),
     # Отправляем переменные из представления главной страницы (tests_lists) в дополнительный контекст представления login
-    # url(r'^accounts/login/$', views.login, {'template_name': 'octapp/tests_lists.html',
-    # 'extra_context': get_tests_lists_context()}, name='auth_login'),
+    url(r'^accounts/login/$', views.login, {'template_name': 'octapp/tests_lists.html',
+    'extra_context': get_tests_lists_context()}, name='auth_login'),
     url(r'^accounts/register/$', RegistrationViewTermOfServiceUniqueEmail.as_view(), name='registration_register'),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^accounts/', include('registration.auth_urls')),

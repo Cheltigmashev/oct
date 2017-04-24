@@ -38,15 +38,15 @@ class TestForm(forms.ModelForm):
         error_messages={'unique': "Такая категория уже существует, выберите ее из предложенных."}
     )
 
-    # new_tags = forms.CharField(
-    #     label=(u'Если требуется, укажите через запятую новые теги'),
-    #     required=False,
-    #     widget=TextInput(attrs={'maxlength': 250,
-    #                             'title': 'Допускается использовать строчные и заглавные буквы, цифры, запятые, дефис и /',
-    #                             'placeholder': 'Допускается использовать строчные и заглавные буквы, цифры, запятые, дефис и /',
-    #                             'pattern': '[a-zA-Zа-яёА-ЯЁ0-9 -/,]+'}),
-    #     error_messages={'unique': "Такой тег уже существует, выберите его из предложенных."}
-    # )
+    new_tags = forms.CharField(
+        label=(u'Если требуется, укажите через запятую новые теги'),
+        required=False,
+        widget=TextInput(attrs={'maxlength': 250,
+                                'title': 'Допускается использовать строчные и заглавные буквы, цифры, запятые, дефис и /',
+                                'placeholder': 'Допускается использовать строчные и заглавные буквы, цифры, запятые, дефис и /',
+                                'pattern': '[a-zA-Zа-яёА-ЯЁ0-9 -/,]+'}),
+        error_messages={'unique': "Такой тег уже существует, выберите его из предложенных."}
+    )
     
     publish_after_adding = forms.BooleanField(
         widget=forms.CheckboxInput,
@@ -56,9 +56,7 @@ class TestForm(forms.ModelForm):
     
     class Meta:
         model = Test
-        fields = ('category', 'result_scale', 
-        # 'tags',
-         'name',
+        fields = ('category', 'result_scale', 'tags', 'name',
                   'description', 'controlling', 'time_restricting', 'anonymous_loader')
         # Переопределение стандартного виджета, подробнее на https://djbook.ru/rel1.9/topics/forms/modelforms.html#overriding-the-default-fields
         widgets = {
