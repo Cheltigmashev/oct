@@ -90,7 +90,7 @@ class ResultScale(models.Model):
     
     divisions_layout = models.CharField(
         "Разметка делений шкалы -- процентные доли каждого деления через запятую",
-    max_length=20, blank=False, help_text="например, для 2-бальной шкалы (зачтено, незачтено) разметка делений может быть <q>'40,60'</q>")
+    max_length=80, blank=False, help_text="например, для 2-бальной шкалы (зачтено, незачтено) разметка делений может быть <q>'40,60'</q>")
 
     def __str__(self):
         return self.name
