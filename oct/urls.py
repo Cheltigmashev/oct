@@ -19,6 +19,7 @@ from octapp.views import get_tests_lists_context
 class RegistrationViewTermOfServiceUniqueEmail(RegistrationView):
     form_class = RegistrationFormTermOfServiceUniqueEmail
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('octapp.urls')),
@@ -32,5 +33,10 @@ urlpatterns = [
     url(r'^accounts/', include('registration.auth_urls')),
     url(r'^ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
     url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-# ! only for developing
+]
+
+try:
+    from .local_urls import statics
+    urlpatterns += statics
+except ImportError:
+    pass

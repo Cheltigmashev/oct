@@ -86,7 +86,7 @@ class Category(models.Model):
 
 class ResultScale(models.Model):
     name = models.CharField("Наименование шкалы", max_length=70, blank=False)
-    scale_divisions_amount = models.IntegerField("Количество делений оценочной шкалы", default=0)
+    scale_divisions_amount = models.IntegerField("Количество возможных оценок", default=0)
     
     divisions_layout = models.CharField(
         "Разметка делений шкалы -- процентные доли каждого деления через запятую",
