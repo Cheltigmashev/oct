@@ -15,7 +15,7 @@
     {% for category in showing_categories %}
             <a href="" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
     {% empty %}
-        <h4>Нет таких тестов</h4>
+        <h4>Нет категорий</h4>
     {% endfor %}
         {% if show_elision_marks_for_categories %}
             <hr>
@@ -29,7 +29,7 @@
     {% for tag in showing_tags %}
             <a href="" class="tag"><span class="badge">{{ tag|truncatechars:35 }} ({{ tag.tests.count }} шт.)</span></a>
     {% empty %}
-        <h4>Нет таких тестов</h4>
+        <h4>Нет тегов</h4>
     {% endfor %}
         {% if show_elision_marks_for_tags %}
             <hr>

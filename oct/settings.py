@@ -23,9 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'pj@9m&)8+8nez#(8%v+(in4f-3&6(t=q#%or4vyn+z2k9rs9se'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['127.0.0.1', 'customtesting.pythonanywhere.com', '127.0.0.1:8000', 'localhost']
+DEBUG = False
 
 
 # Application definition
@@ -80,8 +78,12 @@ WSGI_APPLICATION = 'oct.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'octdb',
+        'USER': 'octuser',
+        'PASSWORD': 'yadanil12345',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -150,3 +152,16 @@ TIME_INPUT_FORMATS = (
     '%H:%M:%S.%f',
     '%M:%S',
 )
+
+import dj_database_url
+DATABASES['default'] = dj_database_url.config()
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+ALLOWED_HOSTS = ['*']
+
+# Импортируем файл локальных настроек, если он существует
+try:
+    from .local_settings import *
+except ImportError:
+    pass

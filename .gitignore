@@ -1,7 +1,11 @@
 *.pyc
 __pycache__
 octenv
+local_settings.py
 node_modules
 db.sqlite3
 .DS_Store
-media
+./media
+./.idea
+./.vscode
+.pylintrc

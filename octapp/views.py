@@ -92,7 +92,7 @@ def test_new(request):
                 else:
                     test.category = Category.objects.get(name__iexact=stripped_category_name)
             if form.cleaned_data['new_tags']:
-                pattern = r'[\w/\-\d]+'
+                pattern = r'[\w/\-\d ]+'
                 new_tags = re.findall(pattern, form.cleaned_data['new_tags'])
                 for item in new_tags:
                     # Если такого тега еще нет в базе
