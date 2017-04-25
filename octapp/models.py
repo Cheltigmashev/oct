@@ -10,7 +10,7 @@ class Test(models.Model):
     result_scale = models.ForeignKey('octapp.ResultScale', related_name='tests', on_delete=models.CASCADE, verbose_name="Оценочная шкала теста")
     # id est test may contain many tags, and tags may be related to different tests
     # tagS name prefered by Django docs
-    tags = models.ManyToManyField('octapp.Tag', related_name='tests', verbose_name="Тег или теги теста", blank=True)
+    # tags = models.ManyToManyField('octapp.Tag', related_name='tests', verbose_name="Тег или теги теста", blank=True)
 
     anonymous_loader = models.BooleanField("Анонимный тест. На странице теста не будет указан пользователь, который загрузил тест.", default=False, blank=True)
     name = models.CharField("Наименование теста", max_length=200, blank=False, unique=True)
@@ -100,16 +100,16 @@ class ResultScale(models.Model):
         verbose_name = "Оценочная шкала"
         verbose_name_plural = "Оценочные шкалы"
 
-class Tag(models.Model):
-    name = models.CharField("Наименование тега", max_length=40, blank=False, unique=True)
+# class Tag(models.Model):
+#     name = models.CharField("Наименование тега", max_length=40, blank=False, unique=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
-    class Meta:
-        ordering = ["name"]
-        verbose_name = "Тег"
-        verbose_name_plural = "Теги"
+#     class Meta:
+#         ordering = ["name"]
+#         verbose_name = "Тег"
+#         verbose_name_plural = "Теги"
         
 class Test_rate(models.Model):
     test = models.ForeignKey('octapp.Test',

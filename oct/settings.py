@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'avatar',
     'ckeditor',
     'ckeditor_uploader',
-    'storages',
 ]
 
 MIDDLEWARE = [
