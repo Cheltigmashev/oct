@@ -10,10 +10,10 @@
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>КАТЕГОРИИ ТЕСТОВ</h2></a>
         <div>
-            <a href="" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>
-            <a href="" class="category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
+            <a href="{% url 'tests_of_category' category_id='unconfirmed' %}" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>
+            <a href="{% url 'tests_of_category' category_id='null' %}" class="category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
     {% for category in showing_categories %}
-            <a href="" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
+            <a href="{% url 'tests_of_category' category_id=category.pk %}" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет категорий</h4>
     {% endfor %}

@@ -1,0 +1,38 @@
+@charset "utf-8"
+@import single_test
+
+.test_wrapper
+  padding: 4px
+  text-align: center
+
+/*============    	АДАПТИВ    ===========*/
+
+@media(min-width:0px) and (max-width:767px)
+  .test_wrapper
+    width: 100%
+    margin: 0
+
+@media(min-width:768px) and (max-width:991px)
+  .test_wrapper
+    width: 50%
+    margin: 0
+
+  .test_wrapper:nth-of-type(2n)
+    margin-left: -5px
+
+@media(min-width:992px) and (max-width:1199px)
+  .test_wrapper
+    width: 32%
+    margin: 0
+
+  .test_wrapper:nth-of-type(3n)
+    margin-left: -5px
+
+
+@media(min-width:1200px)
+  .test_wrapper
+    width: 25%
+    margin: 0
+
+  .test_wrapper:nth-of-type(4n)
+    margin-left: -10px

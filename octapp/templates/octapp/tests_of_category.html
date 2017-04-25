@@ -1,0 +1,31 @@
+{% extends 'octapp/base.html' %}
+{% load staticfiles %}
+
+{% block page_style %}
+<link rel="stylesheet" href="{% static 'octapp/css/tests_of_category.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if category_null %}
+<h2 class="text-center">Тесты без категории</h2>
+    {% endif %}
+
+    {% if category_unconfirmed %}
+<h2 class="text-center">Тесты с неподтвержденными категориями</h2>
+    {% endif %}
+
+    {% if category %}
+<h2 class="text-center">Тесты категории <q>{{ category }}</q></h2>
+    {% endif %}
+
+    {% for test in tests %}
+    <div class="test_wrapper inline_block">
+        <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test">
+            <div class="test_div">
+                <span class="name_of_test">{{ forloop.counter }}. {{ test|truncatechars:50 }}</span>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+
+{% endblock %}

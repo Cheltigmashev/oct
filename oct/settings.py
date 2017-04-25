@@ -83,6 +83,7 @@ DATABASES = {
         'TEST': {
             'NAME': 'customtesting$test_octdb',
         },
+        # Активируем строгий режим работы MySQL
         'OPTIONS': {
             'sql_mode': 'STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE',
         },

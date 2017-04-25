@@ -26,7 +26,7 @@ def get_tests_lists_context():
     right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
     
     all_tags_count = Tag.objects.order_by('pk').count()
-    all_published_test_count = Test.objects.filter(published_date__isnull=False).count()
+    all_published_test_count = Test.objects.filter(published_date__lte=timezone.now()).count()
     all_confirmed_categories_count = Category.objects.filter(confirmed=True).count()
     
     if all_tags_count > showing_tags_and_categories_amount:
@@ -63,6 +63,22 @@ def get_tests_lists_context():
 # Представление главной страницы
 def tests_lists(request):
     return render(request, 'octapp/tests_lists.html', get_tests_lists_context())
+
+def tests_of_category(request, category_id):
+    if category_id == 'null':
+        # Отбираем тесты без категории
+        tests = Test.objects.filter(category__isnull=True).order_by('name')
+        return render(request, 'octapp/tests_of_category.html', {'tests': tests, 'category_null': 'category_null'})    
+    elif category_id == 'unconfirmed':
+        # Отбираем тесты с неподтвержденной категорией
+        tests = Test.objects.filter(category__confirmed=False).order_by('name')
+        return render(request, 'octapp/tests_of_category.html', {'tests': tests, 'category_unconfirmed': 'category_unconfirmed'})    
+    else:
+        category = get_object_or_404(Category, pk=category_id)
+        # Отбираем тесты с определенной категорией
+        tests = category.tests.all().order_by('name')
+        # Для заголовка в шаблоне
+        return render(request, 'octapp/tests_of_category.html', {'tests': tests, 'category': category})
 
 @login_required
 def user_tests(request, pk):

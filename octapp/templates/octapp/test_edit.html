@@ -101,6 +101,7 @@
             </label>
         </div>
 
+    {% if not test.published_date %}
         <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
             <label for="id_publish_after_adding">
                 <div class="field_with_checkbox form_field_div">
@@ -110,6 +111,7 @@
                 </div>
             </label>
         </div>
+    {% endif %}
 
         <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
             <label for="id_controlling">
