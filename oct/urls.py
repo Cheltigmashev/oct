@@ -35,9 +35,6 @@ urlpatterns = [
     url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
 ]
 
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-urlpatterns += staticfiles_urlpatterns()
-
 try:
     from .local_urls import statics
     urlpatterns += statics
