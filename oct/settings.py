@@ -76,12 +76,11 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'customtesting.mysql.pythonanywhere-services.com',
         'TEST': {
             'NAME': 'customtesting$test_octdb',
         },
         'OPTIONS': {
-            'read_default_file': '../../my.cnf',
+            'read_default_file': '../../.my.cnf',
         },
     },
 }
