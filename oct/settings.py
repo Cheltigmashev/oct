@@ -45,7 +45,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,13 +79,15 @@ WSGI_APPLICATION = 'oct.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'octdb',
-        'USER': 'octuser',
-        'PASSWORD': 'yadanil12345',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'customtesting$octdb',
+        'USER': 'customtesting',
+        'PASSWORD': 'ldi87dLdhs65sdkKdgsasoe83',
+        'HOST': 'customtesting.mysql.pythonanywhere-services.com',
+        'TEST': {
+            'NAME': 'customtesting$test_octdb',
+        },
+    },
 }
 
 
@@ -108,6 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+ALLOWED_HOSTS = ['127.0.0.1', 'customtesting.pythonanywhere.com', '127.0.0.1:8000', 'localhost']
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -154,13 +156,6 @@ TIME_INPUT_FORMATS = (
     '%H:%M:%S.%f',
     '%M:%S',
 )
-
-import dj_database_url
-DATABASES['default'] = dj_database_url.config()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-ALLOWED_HOSTS = ['*']
 
 # Импортируем файл локальных настроек, если он существует
 try:
