@@ -12,7 +12,6 @@
     {% avatar user class="scaled_custom_thumbnail_with_def_cur center-block" %}
     {% if not avatars %}
             <p>Вы еще не загружали аватарки.<br>Пожалуйста, загрузите одну или несколько.</br>
-            {{ upload_avatar_form.avatar.errors }}
     {% endif %}
             </p>
         </div>
@@ -29,15 +28,24 @@
     {% endif %}
 
         <div>
-        <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+        <form id="load_form" enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
 {% csrf_token %}
             <p>Загрузить новое изображение для новой аватарки:</p>
-            <p>NB! После выбора файла, используйте кнопку <q>Загрузить выбранный файл</q>!</p>
 {{ upload_avatar_form.avatar }}
             <label class="btn btn-block btn-default" for="id_avatar">Выбрать файл</label>
+            {% if upload_avatar_form.avatar.errors %}
+            <p class="field_with_error">{{ upload_avatar_form.avatar.errors }}</p>
+            {% endif %}
             <input type="submit" class="btn btn-block btn-default" value="Загрузить выбранный файл">
             <a href="{% url 'avatar_delete' %}" class="btn btn-block btn-default">Удаление аватарок</a>
         </form>
         </div>
     </div>
+
+    <script>
+        var input = document.querySelector("input[type='file']");
+        input.onchange = function() {
+            document.querySelector("#load_form").submit();
+        }
+    </script>
 {% endblock %}
