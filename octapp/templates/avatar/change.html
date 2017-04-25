@@ -12,6 +12,7 @@
     {% avatar user class="scaled_custom_thumbnail_with_def_cur center-block" %}
     {% if not avatars %}
             <p>Вы еще не загружали аватарки.<br>Пожалуйста, загрузите одну или несколько.</br>
+            {{ upload_avatar_form.avatar.errors }}
     {% endif %}
             </p>
         </div>

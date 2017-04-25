@@ -135,10 +135,13 @@ MEDIA_URL = '/media/'
 # django-avatar settings
 AVATAR_CHANGE_TEMPLATE = 'avatar/change.html'
 AVATAR_DELETE_TEMPLATE = 'avatar/delete.html'
+AVATAR_ADD_TEMPLATE = 'avatar/change.html'
+AVATAR_GRAVATAR_DEFAULT = 'wavatar'
+# В байтах, 150КБ
+AVATAR_MAX_SIZE = 153600
 
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
-
 CKEDITOR_CONFIGS = {
     'default': {
         'height': 200,
