@@ -1,3 +1,0 @@
-.name_of_test{margin-left:8px;border-bottom:1px dashed #bbb}.link_to_test{cursor:pointer}.link_to_test:hover .name_of_test{-webkit-transition:all ease 0.2s;transition:all ease 0.2s;color:orange;border-bottom:1px dashed orange}.link_to_test:hover strong,.link_to_test:hover q{-webkit-transition:all ease 0.2s;transition:all ease 0.2s;color:orange;border-color:orange}.remove_test_icon:hover,.edit_test_icon:hover{-webkit-transition:all ease 0.2s;transition:all ease 0.2s;color:orange}.test_div::after{content:"";height:2px;display:block;border-bottom:1px solid #555;margin:4px 6px 4px 0;box-shadow:1px 1px 2px 1px gray}
-
-/*# sourceMappingURL=single_test.css.map */

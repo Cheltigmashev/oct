@@ -1,0 +1,45 @@
+{% extends 'octapp/base.html' %}
+{% load staticfiles %}
+
+{% block page_style %}
+{% endblock %}
+
+{% block content %}
+
+    {% block before_pagination %}
+    {% endblock %}
+
+    <div class="text-center hundred_percentages_width">
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-lg">
+
+    {% if some_page.has_previous %}
+        {% if previous %}
+                <li><a href="/tests/?page={{ previous }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span></a></li>
+        {% endif %}
+        {% for prev_link in pages_before_current %}
+                <li><a href="/tests/?page={{ prev_link }}">
+                {{ prev_link }}
+                </a></li>
+        {% endfor %}
+    {% endif %}
+
+                <li class="active"><a href="">{{ some_page.number }}</a></li>
+
+    {% if some_page.has_next %}
+        {% for next_link in pages_after_current %}
+                <li><a href="/tests/?page={{ next_link }}">
+                {{ next_link }}
+                </a></li>
+        {% endfor %}
+        {% if next %}
+                <li><a href="/tests/?page={{ next }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span></a></li>
+        {% endif %}
+    {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+{% endblock %}

@@ -5,6 +5,8 @@ from .forms import TestForm
 from .models import Test, Comment, Test_rate, Tag, Category
 from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
+from django.template import RequestContext
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import re
 
 # Модель пользователя
@@ -44,6 +46,7 @@ def get_tests_lists_context():
 
     unconfirmed_categories = Category.objects.filter(confirmed=False)
     count_of_tests_without_category = Test.objects.filter(category=None).count()
+    count_of_tests_without_tags = Test.objects.filter(tags=None).count()
     count_of_tests_with_unconf_cat = 0
     for unconf_cat in unconfirmed_categories:
         count_of_tests_with_unconf_cat += unconf_cat.tests.count()
@@ -57,28 +60,80 @@ def get_tests_lists_context():
                            'show_elision_marks_for_tags': show_elision_marks_for_tags,
                            'show_elision_marks_for_categories': show_elision_marks_for_categories,
                            'show_elision_marks_for_tests': show_elision_marks_for_tests,
-                           'count_of_tests_without_category': count_of_tests_without_category}
+                           'count_of_tests_without_category': count_of_tests_without_category,
+                           'count_of_tests_without_tags': count_of_tests_without_tags}
     return tests_lists_context
+
+# Получает данные и возвращает контекст, связанный с постраничным выводом
+def get_pagination(page, some_page, on_one_page, max_pages_before_or_after_current):
+    paginator = Paginator(some_page, on_one_page)
+    try:
+        some_page = paginator.page(page)
+    except PageNotAnInteger:
+        some_page = paginator.page(1)
+    except EmptyPage:
+        some_page = paginator.page(paginator.num_pages)
+    # Все страницы меньше текущей будут отображены
+    if page - max_pages_before_or_after_current <= 1:
+        # Диапазон номеров страниц, которые меньше текущей
+        pages_before_current = range(1, paginator.num_pages if page > paginator.num_pages else page)
+        previous = None
+    # Не все страницы меньше текущей будут отображены
+    else:
+        pages_before_current = range(page - max_pages_before_or_after_current, paginator.num_pages if page > paginator.num_pages else page)
+        previous = pages_before_current[0] - 1
+    # Если правый отображаемый диапазон номеров страниц выходит за границы возможных номеров
+    if page + max_pages_before_or_after_current >= paginator.num_pages:
+        # Диапазон номеров страниц, которые больше текущей        
+        pages_after_current = range(page + 1, paginator.num_pages + 1)
+        next = None
+    else:
+        pages_after_current = range(page + 1, page + max_pages_before_or_after_current + 1)
+        next = pages_after_current[-1] + 1
+    context = {'pages_before_current': pages_before_current,
+            'pages_after_current': pages_after_current,
+            'previous': previous,
+            'next': next,
+            'some_page': some_page}
+    return context
 
 # Представление главной страницы
 def tests_lists(request):
     return render(request, 'octapp/tests_lists.html', get_tests_lists_context())
 
-def tests_of_category(request, category_id):
-    if category_id == 'null':
+# 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
+def tests(request):
+    selected_category = request.GET.get('selected_category', '')
+    all_published_tests = Test.objects.filter(published_date__lte=timezone.now())
+    if selected_category == 'null':
         # Отбираем тесты без категории
-        tests = Test.objects.filter(category__isnull=True).order_by('name')
-        return render(request, 'octapp/tests_of_category.html', {'tests': tests, 'category_null': 'category_null'})    
-    elif category_id == 'unconfirmed':
+        tests = all_published_tests.filter(category__isnull=True).filter(published_date__lte=timezone.now()).order_by('name')
+        context = {'null_category': 'null_category'}
+    elif selected_category == 'unconfirmed':
         # Отбираем тесты с неподтвержденной категорией
-        tests = Test.objects.filter(category__confirmed=False).order_by('name')
-        return render(request, 'octapp/tests_of_category.html', {'tests': tests, 'category_unconfirmed': 'category_unconfirmed'})    
-    else:
-        category = get_object_or_404(Category, pk=category_id)
+        tests = all_published_tests.filter(category__confirmed=False).filter(published_date__lte=timezone.now()).order_by('name')
+        context = {'unconfirmed_category': 'unconfirmed_category'}
+    elif selected_category == 'any':
+        sorting = request.GET.get('sorting', '')
+        if sorting == 'rating_asc':
+            tests = all_published_tests.filter(published_date__lte=timezone.now()).order_by('rating', 'name')
+            context = {'sorting': 'rating_asc'}
+        elif sorting == 'published_date_desc':
+            tests = all_published_tests.filter(published_date__lte=timezone.now()).order_by('-published_date')
+            context = {'sorting': 'published_date_desc'}
+    elif selected_category:
+        category_object = get_object_or_404(Category, pk=selected_category)
         # Отбираем тесты с определенной категорией
-        tests = category.tests.all().order_by('name')
-        # Для заголовка в шаблоне
-        return render(request, 'octapp/tests_of_category.html', {'tests': tests, 'category': category})
+        tests = category_object.tests.all().filter(published_date__lte=timezone.now()).order_by('name')
+        context = {'category_object': category_object}
+    else:
+        tests = all_published_tests
+        context = {'sorting': 'published_date_desc'}
+    page = request.GET.get('page', '')
+    page = int(page)
+    pag_context = get_pagination(page, tests, 4, 2)
+    context.update(pag_context)
+    return render(request, 'octapp/tests.html', context)
 
 @login_required
 def user_tests(request, pk):

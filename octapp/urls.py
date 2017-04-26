@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^test/(?P<pk>\d+)/test_unpublish/(?P<through_user_tests>(True)|(False))/$', views.test_unpublish, name='test_unpublish'),
     url(r'^test/(?P<pk>\d+)/make_ready/$', views.test_make_ready_for_passing, name='test_make_ready_for_passing'),
     url(r'^test/(?P<pk>\d+)/remove/(?P<through_user_tests>(True)|(False))/$', views.test_remove, name='test_remove'),
-    url(r'^tests_of_category/(?P<category_id>(\d+)|(null)|(unconfirmed))/$', views.tests_of_category, name='tests_of_category'),
+    url(r'^tests/$', views.tests, name='tests'),
 
     #url(r'^categories_confirming/(?P<pk>\d+)/publish/$', permission_required("octapp.can_confirm")
     # (views.categories_confirming, name='categories_confirming')),

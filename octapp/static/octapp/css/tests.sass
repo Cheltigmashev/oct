@@ -1,9 +1,33 @@
 @charset "utf-8"
+// НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В common_form_elements.sass или single_test.sass
+@import common_form_elements
 @import single_test
 
 .test_wrapper
   padding: 4px
   text-align: center
+
+.name_of_test
+  margin: 0
+
+form.sort_filter_form
+  width: 100%
+  padding: 8px
+  label.relative
+    padding-left: 20px
+    input[type="checkbox"]
+      position: absolute
+      top: 3px
+      left: 4px
+  input[type="submit"]
+    width: 100%
+    margin: 0
+    white-space: normal
+
+.dropdown
+  padding-right: 8px
+  button
+    width: 100%
 
 /*============    	АДАПТИВ    ===========*/
 
@@ -11,11 +35,15 @@
   .test_wrapper
     width: 100%
     margin: 0
+  .dropdown
+    width: 100%
 
 @media(min-width:768px) and (max-width:991px)
   .test_wrapper
     width: 50%
     margin: 0
+  .dropdown
+    width: 50%
 
   .test_wrapper:nth-of-type(2n)
     margin-left: -5px
@@ -24,15 +52,18 @@
   .test_wrapper
     width: 32%
     margin: 0
+  .dropdown
+    width: 32%
 
   .test_wrapper:nth-of-type(3n)
     margin-left: -5px
-
 
 @media(min-width:1200px)
   .test_wrapper
     width: 25%
     margin: 0
+  .dropdown
+    width: 25%
 
   .test_wrapper:nth-of-type(4n)
     margin-left: -10px

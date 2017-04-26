@@ -58,7 +58,7 @@
 
 
         <div class="form_row col-md-12 col-xs-12 col-lg-12 col-sm-12">
-    {% if form.new_category.help_text %}<p>Пояснение: {% filter lower %}{{ form.new_category.help_text|safe }}{% endfilter %}</p>{% endif %}
+    {% if form.new_category.help_text %}<small><p>NB!: {% filter lower %}{{ form.new_category.help_text|safe }}{% endfilter %}</p></small>{% endif %}
     {% if form.new_category.errors %}<p class="field_with_error">Ошибка: {{ form.new_category.errors }}</p>{% endif %}
         </div>
 
@@ -95,7 +95,7 @@
             <label for="id_anonymous_loader">
                 <div class="field_with_checkbox form_field_div">
     {{ form.anonymous_loader }}
-                <span for="id_anonymous_loader">Анонимный тест. На странице теста не будет указан пользователь, который загрузил тест.</span>
+                <span>Анонимный тест. На странице теста не будет указан пользователь, который загрузил тест.</span>
     {% if form.anonymous_loader.errors %}<p class="field_with_error">Ошибка: {{ form.anonymous_loader.errors }}</p>{% endif %}
                 </div>
             </label>

@@ -10,10 +10,10 @@
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>КАТЕГОРИИ ТЕСТОВ</h2></a>
         <div>
-            <a href="{% url 'tests_of_category' category_id='unconfirmed' %}" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>
-            <a href="{% url 'tests_of_category' category_id='null' %}" class="category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
+            <a href="{% url 'tests' %}?page=1&selected_category=unconfirmed" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>
+            <a href="{% url 'tests' %}?page=1&selected_category=null" class="category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
     {% for category in showing_categories %}
-            <a href="{% url 'tests_of_category' category_id=category.pk %}" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
+            <a href="{% url 'tests' %}?page=1&selected_category=category.pk" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет категорий</h4>
     {% endfor %}
@@ -26,6 +26,7 @@
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>ТЕГИ</h2></a>
         <div>
+            <a href="" class="category"><span class="badge">Тесты без тегов ({{ count_of_tests_without_tags }} шт.)</span></a>            
     {% for tag in showing_tags %}
             <a href="" class="tag"><span class="badge">{{ tag|truncatechars:35 }} ({{ tag.tests.count }} шт.)</span></a>
     {% empty %}
@@ -39,7 +40,7 @@
     </div>
 
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href=""><h2>НОВЫЕ ТЕСТЫ</h2></a>
+        <a href="{% url 'tests' %}?selected_category=any&page=1&sorting=published_date_desc"><h2>НОВЫЕ ТЕСТЫ</h2></a>
     {% if left_number_of_new_tests_list and right_number_of_new_tests_list %}
         <div class="table">
             <div class="table_row">
@@ -78,7 +79,7 @@
     {% endif %}
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href=""><h2>РЕЙТИНГОВЫЕ ТЕСТЫ</h2></a>
+        <a href="{% url 'tests' %}?selected_category=any&page=1&sorting=rating_asc"><h2>РЕЙТИНГОВЫЕ ТЕСТЫ</h2></a>
     {% if left_number_of_popular_tests and right_number_of_popular_tests %}
         <div class="table">
             <div class="table_row">
