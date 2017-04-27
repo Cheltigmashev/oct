@@ -7,3 +7,42 @@
   padding: 0
   li:not(.active) *
     color: #337ab7
+
+form.sort_filter_form
+  width: 100%
+  padding: 8px
+  label.relative
+    padding-left: 20px
+    input[type="checkbox"]
+      position: absolute
+      top: 3px
+      left: 4px
+  input[type="submit"]
+    width: 100%
+    margin: 0
+    white-space: normal
+  select
+    width: 100%
+
+.dropdown
+  padding-right: 8px
+  button
+    width: 100%
+
+/*============    	АДАПТИВ    ===========*/
+
+@media(min-width:0px) and (max-width:767px)
+  .dropdown
+    width: 100%
+
+@media(min-width:768px) and (max-width:991px)
+  .dropdown
+    width: 50%
+
+@media(min-width:992px) and (max-width:1199px)
+  .dropdown
+    width: 32%
+
+@media(min-width:1200px)
+  .dropdown
+    width: 25%

@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import QueryDict
 import re
 
 # Модель пользователя
@@ -23,9 +24,9 @@ def get_tests_lists_context():
     # левый ряд тестов для списка новых тестов
     right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
     # левый ряд тестов для списка рейтинговых тестов, диапазон от 0го до showing_tests_per_one_column - 1
-    left_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:showing_tests_per_one_column]
+    left_number_of_rating_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:showing_tests_per_one_column]
     # левый ряд тестов для списка рейтинговых тестов
-    right_number_of_popular_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
+    right_number_of_rating_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
     
     all_tags_count = Tag.objects.order_by('pk').count()
     all_published_test_count = Test.objects.filter(published_date__lte=timezone.now()).count()
@@ -52,8 +53,8 @@ def get_tests_lists_context():
         count_of_tests_with_unconf_cat += unconf_cat.tests.count()
     tests_lists_context = {'left_number_of_new_tests_list': left_number_of_new_tests_list,
                            'right_number_of_new_tests_list': right_number_of_new_tests_list,
-                           'left_number_of_popular_tests': left_number_of_popular_tests,
-                           'right_number_of_popular_tests': right_number_of_popular_tests,
+                           'left_number_of_rating_tests': left_number_of_rating_tests,
+                           'right_number_of_rating_tests': right_number_of_rating_tests,
                            'showing_tags': showing_tags,
                            'showing_categories': showing_categories,
                            'count_of_tests_with_unconf_cat': count_of_tests_with_unconf_cat,
@@ -104,35 +105,47 @@ def tests_lists(request):
 # 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
 def tests(request):
     selected_category = request.GET.get('selected_category', '')
+    sorting = request.GET.get('sorting', '')
     all_published_tests = Test.objects.filter(published_date__lte=timezone.now())
+    q_dict = request.GET.dict()
     if selected_category == 'null':
         # Отбираем тесты без категории
         tests = all_published_tests.filter(category__isnull=True).filter(published_date__lte=timezone.now()).order_by('name')
         context = {'null_category': 'null_category'}
+        q_dict['selected_category'] = 'null'
     elif selected_category == 'unconfirmed':
         # Отбираем тесты с неподтвержденной категорией
         tests = all_published_tests.filter(category__confirmed=False).filter(published_date__lte=timezone.now()).order_by('name')
         context = {'unconfirmed_category': 'unconfirmed_category'}
-    elif selected_category == 'any':
-        sorting = request.GET.get('sorting', '')
-        if sorting == 'rating_asc':
-            tests = all_published_tests.filter(published_date__lte=timezone.now()).order_by('rating', 'name')
-            context = {'sorting': 'rating_asc'}
-        elif sorting == 'published_date_desc':
-            tests = all_published_tests.filter(published_date__lte=timezone.now()).order_by('-published_date')
-            context = {'sorting': 'published_date_desc'}
+        q_dict['selected_category'] = 'unconfirmed'
     elif selected_category:
         category_object = get_object_or_404(Category, pk=selected_category)
         # Отбираем тесты с определенной категорией
         tests = category_object.tests.all().filter(published_date__lte=timezone.now()).order_by('name')
         context = {'category_object': category_object}
+        q_dict['selected_category'] = selected_category
+    # Без категории и без параметра selected_category
     else:
-        tests = all_published_tests
-        context = {'sorting': 'published_date_desc'}
-    page = request.GET.get('page', '')
+        if sorting == 'rating_desc':
+            tests = all_published_tests.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')
+            context = {'sorting': 'rating_desc'}
+        elif sorting == 'published_date_desc':
+            tests = all_published_tests.filter(published_date__lte=timezone.now()).order_by('-published_date')
+            context = {'sorting': 'published_date_desc'}
+        else:
+            tests = all_published_tests
+            context = {'sorting': 'published_date_desc'}
+    page = request.GET.get('page', '1')
     page = int(page)
-    pag_context = get_pagination(page, tests, 4, 2)
+    pag_context = get_pagination(page, tests, 35, 5)
     context.update(pag_context)
+    q = QueryDict(mutable=True)
+    # В навигационных ссылках добавляется &page=X, поэтому если в запросе уже есть page, 
+    # добавленный после перехода по страницам, то нужно его удалить
+    if 'page' in q_dict:
+        q_dict.pop('page')
+    q.update(q_dict)
+    context['HTTPparameters'] = '?' + q.urlencode()
     return render(request, 'octapp/tests.html', context)
 
 @login_required

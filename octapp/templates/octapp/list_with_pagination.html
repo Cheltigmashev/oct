@@ -6,6 +6,60 @@
 
 {% block content %}
 
+    {% block before_filtering_and_sorting %}
+    {% endblock %}
+
+    <div class="dropdown inline_block">
+
+        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown btn btn-block btn-default btn-lg" data-toggle="dropdown">
+            Фильтрация и сортировка
+            <span class="caret"></span>
+        </button>
+
+        <form aria-labelledby="dLabel" class="dropdown-menu sort_filter_form" method="GET" action="">
+            <label for="sorting">Сортировать по:</label>
+            <select id="sorting" name="sorting">
+        {% if sorting == 'rating_desc' %}
+                <option value="rating_desc" selected>Рейтингу (сначала рейтинговые)</option>
+        {% else %}
+                <option value="rating_desc">Рейтингу (сначала рейтинговые)</option>
+        {% endif %}
+
+        {% if sorting == 'published_date_desc' %}
+                <option value="published_date_desc" selected>Дате публикации (сначала новые)</option>
+        {% else %}
+                <option value="published_date_desc">Дате публикации (сначала новые)</option>
+        {% endif %}
+
+        {% if sorting == 'name_asc' %}
+                <option value="name_asc" selected>Наименованию (А-Я)</option>
+        {% else %}
+                <option value="name_asc">Наименованию (А-Я)</option>
+        {% endif %}
+
+        {% if sorting == 'questions_amount' %}
+                <option value="questions_amount" selected>Возрастанию количества вопросов</option>
+        {% else %}
+                <option value="questions_amount">Возрастанию количества вопросов</option>
+        {% endif %}
+            </select>
+
+            <br>
+            <label class="relative" for="filter_ready_for_passing">Готовность для прохождения
+            <input name="filter_ready_for_passing" id="filter_ready_for_passing" type="checkbox"></input>
+            </label>
+            
+            <label class="relative" for="filter_time_restriction">Ограничение времени прохождения
+            <input name="filter_time_restriction" id="filter_time_restriction" type="checkbox"></input>
+            </label>
+
+            <label class="relative" for="filter_passing_control">Контроль прохождения
+            <input name="filter_passing_control" id="filter_passing_control" type="checkbox"></input>
+            </label>
+            <div><input type="submit" value="Выполнить" class="btn btn-block btn-default btn-lg"></input></div>
+        </form>
+    </div>
+
     {% block before_pagination %}
     {% endblock %}
 
@@ -15,26 +69,26 @@
 
     {% if some_page.has_previous %}
         {% if previous %}
-                <li><a href="/tests/?page={{ previous }}" aria-label="Previous">
+                <li><a href="/tests/{{ HTTPparameters }}&page={{ previous }}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span></a></li>
         {% endif %}
         {% for prev_link in pages_before_current %}
-                <li><a href="/tests/?page={{ prev_link }}">
+                <li><a href="/tests/{{ HTTPparameters }}&page={{ prev_link }}">
                 {{ prev_link }}
                 </a></li>
         {% endfor %}
     {% endif %}
 
-                <li class="active"><a href="">{{ some_page.number }}</a></li>
+                <li class="active"><a href="#">{{ some_page.number }}</a></li>
 
     {% if some_page.has_next %}
         {% for next_link in pages_after_current %}
-                <li><a href="/tests/?page={{ next_link }}">
+                <li><a href="/tests/{{ HTTPparameters }}&page={{ next_link }}">
                 {{ next_link }}
                 </a></li>
         {% endfor %}
         {% if next %}
-                <li><a href="/tests/?page={{ next }}" aria-label="Next">
+                <li><a href="/tests/{{ HTTPparameters }}&page={{ next }}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span></a></li>
         {% endif %}
     {% endif %}

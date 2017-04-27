@@ -10,10 +10,10 @@
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
         <a href=""><h2>КАТЕГОРИИ ТЕСТОВ</h2></a>
         <div>
-            <a href="{% url 'tests' %}?page=1&selected_category=unconfirmed" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>
-            <a href="{% url 'tests' %}?page=1&selected_category=null" class="category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
+            <a href="{% url 'tests' %}?selected_category=unconfirmed" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>
+            <a href="{% url 'tests' %}?selected_category=null" class="category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
     {% for category in showing_categories %}
-            <a href="{% url 'tests' %}?page=1&selected_category=category.pk" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
+            <a href="{% url 'tests' %}?selected_category={{ category.pk }}" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет категорий</h4>
     {% endfor %}
@@ -40,7 +40,7 @@
     </div>
 
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href="{% url 'tests' %}?selected_category=any&page=1&sorting=published_date_desc"><h2>НОВЫЕ ТЕСТЫ</h2></a>
+        <a href="{% url 'tests' %}?sorting=published_date_desc"><h2>НОВЫЕ ТЕСТЫ</h2></a>
     {% if left_number_of_new_tests_list and right_number_of_new_tests_list %}
         <div class="table">
             <div class="table_row">
@@ -79,17 +79,17 @@
     {% endif %}
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href="{% url 'tests' %}?selected_category=any&page=1&sorting=rating_asc"><h2>РЕЙТИНГОВЫЕ ТЕСТЫ</h2></a>
-    {% if left_number_of_popular_tests and right_number_of_popular_tests %}
+        <a href="{% url 'tests' %}?sorting=rating_desc"><h2>РЕЙТИНГОВЫЕ ТЕСТЫ</h2></a>
+    {% if left_number_of_rating_tests and right_number_of_rating_tests %}
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-        {% for test in left_number_of_popular_tests %}
+        {% for test in left_number_of_rating_tests %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
         {% endfor %}
                 </div>
                 <div class="table_cell">
-        {% for test in right_number_of_popular_tests %}
+        {% for test in right_number_of_rating_tests %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
         {% endfor %}
                 </div>
@@ -101,11 +101,11 @@
         {% endif %}
     {% else %}
         <!-- Если правого ряда новых тестов нет, то помещать тесты в 1 ячейку таблицы -->
-        {% if left_number_of_popular_tests and not right_number_of_popular_tests %}
+        {% if left_number_of_rating_tests and not right_number_of_rating_tests %}
         <div class="table">
             <div class="table_row">
                 <div class="table_cell">
-            {% for test in left_number_of_popular_tests %}
+            {% for test in left_number_of_rating_tests %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
             {% endfor %}
                 </div>

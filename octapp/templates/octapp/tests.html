@@ -6,66 +6,28 @@
 <link rel="stylesheet" href="{% static 'octapp/css/tests.css' %}">
 {% endblock %}
 
-{% block before_pagination %}
-
-
-    {% if category_null %}
+{% block before_filtering_and_sorting %}
+    {% if null_category %}
 <h2 class="text-center">Тесты без категории</h2>
-    {% endif %}
 
-    {% if unconfirmed_category %}
+    {% elif unconfirmed_category %}
 <h2 class="text-center">Тесты с неподтвержденными категориями</h2>
-    {% endif %}
 
-    {% if category_object %}
+    {% elif category_object %}
 <h2 class="text-center">Тесты категории <q>{{ category_object }}</q></h2>
+
+    {% elif sorting == "rating_desc" %}
+<h2 class="text-center">Тесты с любыми тегами и категориями, отсортированные по убыванию рейтинга</h2>
+
+    {% elif sorting == "published_date_desc" %}
+<h2 class="text-center">Тесты с любыми тегами и категориями, отсортированные по дате публикации</h2>
+
+    {% else %}
+<h2 class="text-center">Тесты с любыми тегами и категориями</h2>
     {% endif %}
-    
-    {% if sorting %}
-<h2 class="text-center">Тесты с любыми тегами и категориями</q></h2>
-    {% endif %}
-    
-    <div class="dropdown inline_block">
-        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown btn btn-block btn-default btn-lg" data-toggle="dropdown">
-            Фильтрация и сортировка
-            <span class="caret"></span>
-        </button>
-        <form aria-labelledby="dLabel" class="dropdown-menu sort_filter_form" method="GET" action="url 'tests' selected_category='any'">
-            <label for="sorting">Сортировать по:</label>
-            <select id="sorting" name="sorting">
-                <option name="name">Наименованию</option>
-                <option name="questions_amount">Количеству вопросов</option>
+{% endblock %}
 
-        {% if sorting == 'rating_asc' %}
-                <option name="rating" selected>Рейтингу</option>
-        {% else %}
-                <option name="rating">Рейтингу</option>
-        {% endif %}
-
-        {% if sorting == 'published_date_desc' %}
-                <option name="rating" selected>Дате публикации (сначала новые)</option>
-        {% else %}
-                <option name="rating">Дате публикации (сначала новые)</option>
-        {% endif %}
-            </select>
-            
-            <br>
-            <label class="relative" for="filter_ready_for_passing">Готовность для прохождения
-            <input name="filter_ready_for_passing" id="filter_ready_for_passing" type="checkbox"></input>
-            </label>
-            
-            <label class="relative" for="filter_time_restriction">Ограничение времени прохождения
-            <input name="filter_time_restriction" id="filter_time_restriction" type="checkbox"></input>
-            </label>
-
-            <label class="relative" for="filter_passing_control">Контроль прохождения
-            <input name="filter_passing_control" id="filter_passing_control" type="checkbox"></input>
-            </label>
-            <div><input type="submit" value="Выполнить" class="btn btn-block btn-default btn-lg"></input></div>
-        </form>
-    </div>
-
-
+{% block before_pagination %}
     {% for test in some_page %}
     <div class="test_wrapper inline_block">
         <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test">
@@ -75,5 +37,4 @@
         </a>
     </div>
     {% endfor %}
-
 {% endblock %}
