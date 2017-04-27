@@ -7,24 +7,7 @@
 {% endblock %}
 
 {% block before_filtering_and_sorting %}
-    {% if null_category %}
-<h2 class="text-center">Тесты без категории</h2>
-
-    {% elif unconfirmed_category %}
-<h2 class="text-center">Тесты с неподтвержденными категориями</h2>
-
-    {% elif category_object %}
-<h2 class="text-center">Тесты категории <q>{{ category_object }}</q></h2>
-
-    {% elif sorting == "rating_desc" %}
-<h2 class="text-center">Тесты с любыми тегами и категориями, отсортированные по убыванию рейтинга</h2>
-
-    {% elif sorting == "published_date_desc" %}
-<h2 class="text-center">Тесты с любыми тегами и категориями, отсортированные по дате публикации</h2>
-
-    {% else %}
-<h2 class="text-center">Тесты с любыми тегами и категориями</h2>
-    {% endif %}
+<h2 class="text-center">Тесты</h2>
 {% endblock %}
 
 {% block before_pagination %}
@@ -32,9 +15,13 @@
     <div class="test_wrapper inline_block">
         <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test">
             <div class="test_div">
-                <span class="name_of_test">{{ some_page.start_index|add:forloop.counter|add:"-1" }}. {{ test|truncatechars:50 }}</span>
+                <span class="name_of_test">{{ some_page.start_index|add:forloop.counter|add:"-1" }}. {{ test|truncatechars:50 }}, рейтинг: {{ test.rating }}</span>
             </div>
         </a>
     </div>
+    {% empty %}
+    <hr>
+    <h3>Нет таких тестов</h3>
+    <hr>    
     {% endfor %}
 {% endblock %}

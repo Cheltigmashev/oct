@@ -6,8 +6,8 @@
 
 {% block content %}
 
-    {% block before_filtering_and_sorting %}
-    {% endblock %}
+        {% block before_filtering_and_sorting %}
+        {% endblock %}
 
     <div class="dropdown inline_block">
 
@@ -56,7 +56,63 @@
             <label class="relative" for="filter_passing_control">Контроль прохождения
             <input name="filter_passing_control" id="filter_passing_control" type="checkbox"></input>
             </label>
+
+            <!-- it works -->
+            <br>
+            <label for="selected_category">Категория теста:</label>
+            <select id="selected_category" name="selected_category">
+        {% if selected_category == 'any' %}
+                <option value="any" selected>_Любая категория_</option>
+        {% else %}
+                <option value="any">_Любая категория_</option>                
+        {% endif %}
+
+        {% if selected_category == 'null' %}
+                <option value="null" selected>_Без категории_</option>
+        {% else %}
+                <option value="null">_Без категории_</option>
+        {% endif %}
+
+        {% if selected_category == 'unconfirmed' %}
+                <option value="unconfirmed" selected>_Не подтверждена_</option>
+        {% else %}
+                <option value="unconfirmed">_Не подтверждена_</option>
+        {% endif %}
+
+        {% for category in categories_for_filtering_of_tests %}
+            {% if category.pk == selected_category_object.pk %}
+                <option value="{{ category.pk }}" selected>{{ category|truncatechars:50 }}</option>
+            {% else %}
+                <option value="{{ category.pk }}">{{ category|truncatechars:50 }}</option>
+            {% endif %}
+        {% endfor %}
+            </select>
+
+            <br>
+            <label for="selected_tag">Фильтр по тегу:</label>
+            <select id="selected_tag" name="selected_tag">
+        {% if selected_tag == 'any' %}
+                <option value="any" selected>_Любой тег/теги_</option>
+        {% else %}
+                <option value="any">_Любой тег/теги_</option>                
+        {% endif %}
+        {% if selected_tag == 'null' %}
+                <option value="null" selected>_Без тегов_</option>
+        {% else %}
+                <option value="null">_Без тегов_</option>
+        {% endif %}
+        {% for tag in tags %}
+            {% if tag.pk == selected_tag_object.pk %}
+                <option value="{{ tag.pk }}" selected>{{ tag|truncatechars:50 }}</option>
+            {% else %}
+                <option value="{{ tag.pk }}">{{ tag|truncatechars:50 }}</option>
+            {% endif %}
+        {% endfor %}
+            </select>
+            <hr>
             <div><input type="submit" value="Выполнить" class="btn btn-block btn-default btn-lg"></input></div>
+              
+
         </form>
     </div>
 
@@ -69,11 +125,11 @@
 
     {% if some_page.has_previous %}
         {% if previous %}
-                <li><a href="/tests/{{ HTTPparameters }}&page={{ previous }}" aria-label="Previous">
+                <li><a href="{{ HTTPparameters }}&page={{ previous }}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span></a></li>
         {% endif %}
         {% for prev_link in pages_before_current %}
-                <li><a href="/tests/{{ HTTPparameters }}&page={{ prev_link }}">
+                <li><a href="{{ HTTPparameters }}&page={{ prev_link }}">
                 {{ prev_link }}
                 </a></li>
         {% endfor %}
@@ -83,12 +139,12 @@
 
     {% if some_page.has_next %}
         {% for next_link in pages_after_current %}
-                <li><a href="/tests/{{ HTTPparameters }}&page={{ next_link }}">
+                <li><a href="{{ HTTPparameters }}&page={{ next_link }}">
                 {{ next_link }}
                 </a></li>
         {% endfor %}
         {% if next %}
-                <li><a href="/tests/{{ HTTPparameters }}&page={{ next }}" aria-label="Next">
+                <li><a href="{{ HTTPparameters }}&page={{ next }}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span></a></li>
         {% endif %}
     {% endif %}

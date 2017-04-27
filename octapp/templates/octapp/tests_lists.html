@@ -28,7 +28,7 @@
         <div>
             <a href="" class="category"><span class="badge">Тесты без тегов ({{ count_of_tests_without_tags }} шт.)</span></a>            
     {% for tag in showing_tags %}
-            <a href="" class="tag"><span class="badge">{{ tag|truncatechars:35 }} ({{ tag.tests.count }} шт.)</span></a>
+            <a href="{% url 'tests' %}?selected_tag={{ tag.pk }}" class="tag"><span class="badge">{{ tag|truncatechars:35 }} ({{ tag.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет тегов</h4>
     {% endfor %}

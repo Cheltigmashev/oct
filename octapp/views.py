@@ -104,41 +104,62 @@ def tests_lists(request):
 
 # 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
 def tests(request):
-    selected_category = request.GET.get('selected_category', '')
-    sorting = request.GET.get('sorting', '')
-    all_published_tests = Test.objects.filter(published_date__lte=timezone.now())
+    tests = Test.objects.filter(published_date__lte=timezone.now())
     q_dict = request.GET.dict()
-    if selected_category == 'null':
+    context = { }
+
+    if request.GET.get('selected_category', '') == 'null':
         # Отбираем тесты без категории
-        tests = all_published_tests.filter(category__isnull=True).filter(published_date__lte=timezone.now()).order_by('name')
-        context = {'null_category': 'null_category'}
-        q_dict['selected_category'] = 'null'
-    elif selected_category == 'unconfirmed':
+        tests = tests.filter(category__isnull=True).filter(published_date__lte=timezone.now()).order_by('name')
+        context['selected_category'] = 'null'
+    elif request.GET.get('selected_category', '') == 'unconfirmed':
         # Отбираем тесты с неподтвержденной категорией
-        tests = all_published_tests.filter(category__confirmed=False).filter(published_date__lte=timezone.now()).order_by('name')
-        context = {'unconfirmed_category': 'unconfirmed_category'}
-        q_dict['selected_category'] = 'unconfirmed'
-    elif selected_category:
-        category_object = get_object_or_404(Category, pk=selected_category)
+        tests = tests.filter(category__confirmed=False).filter(published_date__lte=timezone.now()).order_by('name')
+        context['selected_category'] = 'unconfirmed'
+    elif request.GET.get('selected_category', '') == 'any':
+        tests = tests;
+        context['selected_category'] = 'any'
+    elif 'selected_category' in request.GET:
+        selected_category_object = get_object_or_404(Category, pk=int(request.GET.get('selected_category')))
         # Отбираем тесты с определенной категорией
-        tests = category_object.tests.all().filter(published_date__lte=timezone.now()).order_by('name')
-        context = {'category_object': category_object}
-        q_dict['selected_category'] = selected_category
-    # Без категории и без параметра selected_category
-    else:
-        if sorting == 'rating_desc':
-            tests = all_published_tests.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')
-            context = {'sorting': 'rating_desc'}
-        elif sorting == 'published_date_desc':
-            tests = all_published_tests.filter(published_date__lte=timezone.now()).order_by('-published_date')
-            context = {'sorting': 'published_date_desc'}
-        else:
-            tests = all_published_tests
-            context = {'sorting': 'published_date_desc'}
+        tests = selected_category_object.tests.all().filter(published_date__lte=timezone.now()).order_by('name')
+        context['selected_category'] = request.GET.get('selected_category')
+        context['selected_category_object'] = selected_category_object
+
+    if request.GET.get('selected_tag', '') == 'null':
+        # Отбираем тесты без тегов
+        tests = tests.filter(tags__isnull=True)
+        context['selected_tag'] = request.GET.get('null')
+    elif request.GET.get('selected_tag', '') == 'any':
+        # Отбираем тесты с любыми тегами
+        context['selected_tag'] = request.GET.get('any')
+    elif 'selected_tag' in request.GET:
+        selected_tag_object = get_object_or_404(Tag, pk=int(request.GET.get('selected_tag')))
+        # Отбираем тесты с определенным тегом
+        tests = tests.filter(tags=selected_tag_object)
+        context['selected_tag'] = request.GET.get('selected_tag')
+        context['selected_tag_object'] = selected_tag_object
+
+    if request.GET.get('sorting', '') == 'rating_desc':
+        tests = tests.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')
+        context['sorting'] = 'rating_desc'
+    elif request.GET.get('sorting', '') == 'published_date_desc':
+        tests = tests.filter(published_date__lte=timezone.now()).order_by('-published_date')
+        context['sorting'] = 'published_date_desc'
+    elif request.GET.get('sorting', '') == 'name_asc':
+        tests = tests.filter(published_date__lte=timezone.now()).order_by('name')
+        context['sorting'] = 'name_asc'
+
     page = request.GET.get('page', '1')
     page = int(page)
+    # 35, 5 prod
     pag_context = get_pagination(page, tests, 35, 5)
     context.update(pag_context)
+
+    categories_for_filtering_of_tests = Category.objects.filter(confirmed=True).order_by('name')
+    tags = Tag.objects.order_by('name')
+    context.update({'categories_for_filtering_of_tests': categories_for_filtering_of_tests, 'tags': tags})
+
     q = QueryDict(mutable=True)
     # В навигационных ссылках добавляется &page=X, поэтому если в запросе уже есть page, 
     # добавленный после перехода по страницам, то нужно его удалить
@@ -166,7 +187,6 @@ def test_new(request):
             # Подробнее см. https://djbook.ru/rel1.9/topics/forms/modelforms.html#the-save-method
             test = form.save()
             test.author = request.user
-            test.name = test.name.capitalize()
             stripped_category_name = form.cleaned_data['new_category'].strip(' ')
             # Если пользователь выберет какую-либо категорию и, при этом, введет новую, то новая добавляться не будет,
             # а тесту присвоится выбранная им категория
