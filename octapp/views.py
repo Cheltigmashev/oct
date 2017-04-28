@@ -104,7 +104,7 @@ def tests_lists(request):
 
 # 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
 def tests(request):
-    tests = Test.objects.filter(published_date__lte=timezone.now())
+    tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('name')
     q_dict = request.GET.dict()
     context = { }
 
@@ -129,10 +129,10 @@ def tests(request):
     if request.GET.get('selected_tag', '') == 'null':
         # Отбираем тесты без тегов
         tests = tests.filter(tags__isnull=True)
-        context['selected_tag'] = request.GET.get('null')
+        context['selected_tag'] = 'null'
     elif request.GET.get('selected_tag', '') == 'any':
         # Отбираем тесты с любыми тегами
-        context['selected_tag'] = request.GET.get('any')
+        context['selected_tag'] = 'any'
     elif 'selected_tag' in request.GET:
         selected_tag_object = get_object_or_404(Tag, pk=int(request.GET.get('selected_tag')))
         # Отбираем тесты с определенным тегом

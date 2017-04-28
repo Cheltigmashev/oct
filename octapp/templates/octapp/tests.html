@@ -6,8 +6,37 @@
 <link rel="stylesheet" href="{% static 'octapp/css/tests.css' %}">
 {% endblock %}
 
-{% block before_filtering_and_sorting %}
-<h2 class="text-center">Тесты</h2>
+    {% block before_filtering_and_sorting %}
+    {% if sorting == "rating_desc"  %}
+<h2 class="text-center">Тесты по убыванию рейтинга</h2>
+    {% elif sorting == "published_date_desc"  %}
+<h2 class="text-center">Тесты по дате публикации (сначала новые)</h2>
+    {% elif sorting == "name_asc"  %}
+<h2 class="text-center">Тесты по алфавиту</h2>
+    {% else %}
+<!-- Т.к. без указания сортировки, тесты отсортированы по алфавиту.
+Данная тавтология будет убрана после добавления сортировки по количеству вопросов -->
+<h2 class="text-center">Тесты по алфавиту</h2>
+    {% endif %}
+
+    {% if selected_category == "unconfirmed"  %}
+<h3 class="text-center">С неподтвержденными категориями</h3>
+    {% elif selected_category == "null"  %}
+<h3 class="text-center">Без категории</h3>
+    {% elif selected_category == "any"  %}
+<h3 class="text-center">С любыми категориями</h3>
+    {% elif selected_category  %}
+<h3 class="text-center">Категория — <q>{{ selected_category_object }}</q></h3>
+    {% endif %}
+
+    {% if selected_tag == "null"  %}
+<h3 class="text-center">Без тегов</h3>
+    {% elif selected_tag == "any"  %}
+<h3 class="text-center">С любыми тегами</h3>
+    {% elif selected_tag  %}
+<h3 class="text-center">С тегом — <q>{{ selected_tag_object }}</q></h3>
+    {% endif %}
+
 {% endblock %}
 
 {% block before_pagination %}
@@ -22,6 +51,5 @@
     {% empty %}
     <hr>
     <h3>Нет таких тестов</h3>
-    <hr>    
     {% endfor %}
 {% endblock %}

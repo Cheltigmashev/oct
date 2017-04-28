@@ -37,12 +37,17 @@
                 <option value="name_asc">Наименованию (А-Я)</option>
         {% endif %}
 
+            </select>
+
+        {% comment %}
+        После добавления вопросов к тестам раскомментировать и протестировать
         {% if sorting == 'questions_amount' %}
                 <option value="questions_amount" selected>Возрастанию количества вопросов</option>
         {% else %}
                 <option value="questions_amount">Возрастанию количества вопросов</option>
         {% endif %}
             </select>
+        {% endcomment %}        
 
             <br>
             <label class="relative" for="filter_ready_for_passing">Готовность для прохождения
@@ -81,9 +86,9 @@
 
         {% for category in categories_for_filtering_of_tests %}
             {% if category.pk == selected_category_object.pk %}
-                <option value="{{ category.pk }}" selected>{{ category|truncatechars:50 }}</option>
+                <option value="{{ category.pk }}" selected>{{ category|truncatechars:50 }} — {{ category.tests.count }} шт.</option>
             {% else %}
-                <option value="{{ category.pk }}">{{ category|truncatechars:50 }}</option>
+                <option value="{{ category.pk }}">{{ category|truncatechars:50 }} — {{ category.tests.count }} шт.</option>
             {% endif %}
         {% endfor %}
             </select>
@@ -103,15 +108,14 @@
         {% endif %}
         {% for tag in tags %}
             {% if tag.pk == selected_tag_object.pk %}
-                <option value="{{ tag.pk }}" selected>{{ tag|truncatechars:50 }}</option>
+                <option value="{{ tag.pk }}" selected>{{ tag|truncatechars:50 }} — {{ tag.tests.count }} шт. (без учета категории)</option>
             {% else %}
-                <option value="{{ tag.pk }}">{{ tag|truncatechars:50 }}</option>
+                <option value="{{ tag.pk }}">{{ tag|truncatechars:50 }} — {{ tag.tests.count }} шт. (без учета категории)</option>
             {% endif %}
         {% endfor %}
             </select>
             <hr>
             <div><input type="submit" value="Выполнить" class="btn btn-block btn-default btn-lg"></input></div>
-              
 
         </form>
     </div>
@@ -119,6 +123,7 @@
     {% block before_pagination %}
     {% endblock %}
 
+    <hr>
     <div class="text-center hundred_percentages_width">
         <nav aria-label="Page navigation">
             <ul class="pagination pagination-lg">
