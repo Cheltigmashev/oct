@@ -28,19 +28,11 @@ def get_tests_lists_context():
     
     showing_tags_and_count_of_published_tests = []
     for tag in Tag.objects.order_by('-pk')[:showing_tags_and_categories_amount]:
-        for test in tag.tests.all():
-            count_of_published_tests = 0
-            if test.published_date:
-                count_of_published_tests += 1
-        showing_tags_and_count_of_published_tests.append([tag, count_of_published_tests])
+        showing_tags_and_count_of_published_tests.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count()])        
 
     showing_categories_and_count_of_published_tests = []
     for category in Category.objects.order_by('-pk')[:showing_tags_and_categories_amount]:
-        for test in category.tests.all():
-            count_of_published_tests = 0
-            if test.published_date:
-                count_of_published_tests += 1
-        showing_categories_and_count_of_published_tests.append([category, count_of_published_tests])
+        showing_categories_and_count_of_published_tests.append([category, category.tests.filter(published_date__lte=timezone.now()).count()])        
 
     all_tags_count = Tag.objects.count()
     
@@ -129,19 +121,18 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests):
     context = { }
     if request.GET.get('selected_category', '') == 'null':
         # Отбираем тесты без категории
-        tests = tests.filter(category__isnull=True).filter(published_date__lte=timezone.now()).order_by('name')
+        tests = tests.filter(category__isnull=True).order_by('name')
         context['selected_category'] = 'null'
     elif request.GET.get('selected_category', '') == 'unconfirmed':
         # Отбираем тесты с неподтвержденной категорией
-        tests = tests.filter(category__confirmed=False).filter(published_date__lte=timezone.now()).order_by('name')
+        tests = tests.filter(category__confirmed=False).order_by('name')
         context['selected_category'] = 'unconfirmed'
     elif request.GET.get('selected_category', '') == 'any':
-        tests = tests;
         context['selected_category'] = 'any'
     elif 'selected_category' in request.GET:
         selected_category_object = get_object_or_404(Category, pk=int(request.GET.get('selected_category')))
         # Отбираем тесты с определенной категорией
-        tests = selected_category_object.tests.all().filter(published_date__lte=timezone.now()).order_by('name')
+        tests = tests.filter(category=selected_category_object)
         context['selected_category'] = request.GET.get('selected_category')
         context['selected_category_object'] = selected_category_object
 
@@ -160,13 +151,13 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests):
         context['selected_tag_object'] = selected_tag_object
 
     if request.GET.get('sorting', '') == 'rating_desc':
-        tests = tests.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')
+        tests = tests.order_by('-rating', 'name')
         context['sorting'] = 'rating_desc'
     elif request.GET.get('sorting', '') == 'published_date_desc':
-        tests = tests.filter(published_date__lte=timezone.now()).order_by('-published_date')
+        tests = tests.order_by('-published_date')
         context['sorting'] = 'published_date_desc'
     elif request.GET.get('sorting', '') == 'name_asc':
-        tests = tests.filter(published_date__lte=timezone.now()).order_by('name')
+        tests = tests.order_by('name')
         context['sorting'] = 'name_asc'
 
     if request.GET.get('filter_ready_for_passing', '') == 'on':
@@ -229,9 +220,9 @@ def user_tests(request, pk):
     categories_and_count_of_user_tests_in_them = []
     tags_and_count_of_user_tests_in_them = []
     for category in context['categories_for_filtering_of_tests']:
-        categories_and_count_of_user_tests_in_them.append([category, category.tests.filter(author=request.user).count])
+        categories_and_count_of_user_tests_in_them.append([category, category.tests.filter(author=request.user).count()])
     for tag in context['tags_for_filtering_of_tests']:
-        tags_and_count_of_user_tests_in_them.append([tag, tag.tests.filter(author=request.user).count])
+        tags_and_count_of_user_tests_in_them.append([tag, tag.tests.filter(author=request.user).count()])
     context['categories_and_count_of_user_tests_in_them'] = categories_and_count_of_user_tests_in_them
     context['tags_and_count_of_user_tests_in_them'] = tags_and_count_of_user_tests_in_them
     return render(request, 'octapp/user_tests.html', context)

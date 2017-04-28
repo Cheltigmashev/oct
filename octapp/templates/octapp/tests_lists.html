@@ -13,7 +13,7 @@
             <a href="{% url 'tests' %}?selected_category=unconfirmed" class="tag_or_category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_published_tests_with_unconf_cat }} шт.)</span></a>
             <a href="{% url 'tests' %}?selected_category=null" class="tag_or_category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
     {% for category, count_of_published_tests in showing_categories_and_count_of_published_tests %}
-            <a href="{% url 'tests' %}?selected_category={{ category.pk }}" class="tag_or_category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
+            <a href="{% url 'tests' %}?selected_category={{ category.pk }}" class="tag_or_category"><span class="badge">{{ category|truncatechars:35 }} ({{ count_of_published_tests }} шт.)</span></a>
     {% empty %}
         <h4>Нет категорий</h4>
     {% endfor %}
