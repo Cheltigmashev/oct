@@ -1,0 +1,3 @@
+.content a:hover h2{-webkit-transition:all ease 0.2s;transition:all ease 0.2s;color:orange}.content a.tag_or_category:hover .badge{font-weight:bold;background-color:orange;-webkit-transition:all ease 0.2s;transition:all ease 0.2s}.content .badge{margin:2px 0;color:#000;background-color:#ffef80;cursor:pointer;font-weight:normal}.content .badge:last-child:not(:only-child){text-align:middle;display:block;cursor:default;padding:0 4px;border:1px solid gray;margin-top:-10px;margin-left:70px;margin-right:70px;font-size:18px;text-align:center}
+
+/*# sourceMappingURL=tags_and_categories.css.map */

@@ -1,0 +1,21 @@
+{% extends 'octapp/list_with_pagination.html' %}
+{% load staticfiles %}
+
+{% block page_style %}
+<link rel="stylesheet" href="{% static 'octapp/css/sorting_and_pagination.css' %}">
+<link rel="stylesheet" href="{% static 'octapp/css/tags_and_categories.css' %}">
+{% endblock %}
+
+{% block before_pagination %}
+<h3 class="text-center">Теги по алфавиту</h3>
+    {% for tag in some_page %}
+        <a href="{% url 'tests' %}?selected_tag={{ tag.pk }}" class="tag_or_category">
+            <span class="badge">
+            {{ some_page.start_index|add:forloop.counter|add:"-1" }}. {{ tag|truncatechars:50 }}, тестов — {{ tag.tests.count }} шт.
+            </span>
+        </a>
+    {% empty %}
+    <hr>
+    <h3>Нет категорий</h3>
+    {% endfor %}
+{% endblock %}

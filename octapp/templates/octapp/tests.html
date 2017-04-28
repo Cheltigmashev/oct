@@ -1,12 +1,14 @@
-{% extends 'octapp/list_with_pagination.html' %}
+{% extends 'octapp/list_with_filtering_and_pagination.html' %}
 {% load staticfiles %}
 
 {% block page_style %}
-<link rel="stylesheet" href="{% static 'octapp/css/list_with_pagination.css' %}">
+<link rel="stylesheet" href="{% static 'octapp/css/sorting_and_pagination.css' %}">
 <link rel="stylesheet" href="{% static 'octapp/css/tests.css' %}">
 {% endblock %}
 
-    {% block before_filtering_and_sorting %}
+
+{% block before_filtering_and_sorting %}
+
     {% if sorting == "rating_desc"  %}
 <h2 class="text-center">Тесты по убыванию рейтинга</h2>
     {% elif sorting == "published_date_desc"  %}
@@ -39,7 +41,30 @@
 
 {% endblock %}
 
-{% block before_pagination %}
+{% block categories_options_for_filtering %}
+    {% for category, count in categories_and_count_of_published_tests_in_them %}
+        {% if category.pk == selected_category_object.pk %}
+                <option value="{{ category.pk }}" selected>{{ category|truncatechars:50 }} — {{ count }} шт.</option>
+        {% else %}
+                <option value="{{ category.pk }}">{{ category|truncatechars:50 }} — {{ count }} шт.</option>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+
+{% block tags_options_for_filtering %}
+    {% for tag, count in tags_and_count_of_published_tests_in_them %}
+        {% if tag.pk == selected_tag_object.pk %}
+                <option value="{{ tag.pk }}" selected>{{ tag|truncatechars:50 }} — {{ count }} шт. (без учета категории)</option>
+        {% else %}
+                <option value="{{ tag.pk }}">{{ tag|truncatechars:50 }} — {{ count }} шт. (без учета категории)</option>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+
+{% block after_filtering_and_sorting %}
+
     {% for test in some_page %}
     <div class="test_wrapper inline_block">
         <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test">
@@ -52,4 +77,5 @@
     <hr>
     <h3>Нет таких тестов</h3>
     {% endfor %}
+
 {% endblock %}

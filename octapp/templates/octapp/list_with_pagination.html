@@ -1,124 +1,7 @@
 {% extends 'octapp/base.html' %}
 {% load staticfiles %}
 
-{% block page_style %}
-{% endblock %}
-
 {% block content %}
-
-        {% block before_filtering_and_sorting %}
-        {% endblock %}
-
-    <div class="dropdown inline_block">
-
-        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown btn btn-block btn-default btn-lg" data-toggle="dropdown">
-            Фильтрация и сортировка
-            <span class="caret"></span>
-        </button>
-
-        <form aria-labelledby="dLabel" class="dropdown-menu sort_filter_form" method="GET" action="">
-            <label for="sorting">Сортировать по:</label>
-            <select id="sorting" name="sorting">
-        {% if sorting == 'rating_desc' %}
-                <option value="rating_desc" selected>Рейтингу (сначала рейтинговые)</option>
-        {% else %}
-                <option value="rating_desc">Рейтингу (сначала рейтинговые)</option>
-        {% endif %}
-
-        {% if sorting == 'published_date_desc' %}
-                <option value="published_date_desc" selected>Дате публикации (сначала новые)</option>
-        {% else %}
-                <option value="published_date_desc">Дате публикации (сначала новые)</option>
-        {% endif %}
-
-        {% if sorting == 'name_asc' %}
-                <option value="name_asc" selected>Наименованию (А-Я)</option>
-        {% else %}
-                <option value="name_asc">Наименованию (А-Я)</option>
-        {% endif %}
-
-            </select>
-
-        {% comment %}
-        После добавления вопросов к тестам раскомментировать и протестировать
-        {% if sorting == 'questions_amount' %}
-                <option value="questions_amount" selected>Возрастанию количества вопросов</option>
-        {% else %}
-                <option value="questions_amount">Возрастанию количества вопросов</option>
-        {% endif %}
-            </select>
-        {% endcomment %}        
-
-            <br>
-            <label class="relative" for="filter_ready_for_passing">Готовность для прохождения
-            <input name="filter_ready_for_passing" id="filter_ready_for_passing" type="checkbox"></input>
-            </label>
-            
-            <label class="relative" for="filter_time_restriction">Ограничение времени прохождения
-            <input name="filter_time_restriction" id="filter_time_restriction" type="checkbox"></input>
-            </label>
-
-            <label class="relative" for="filter_passing_control">Контроль прохождения
-            <input name="filter_passing_control" id="filter_passing_control" type="checkbox"></input>
-            </label>
-
-            <!-- it works -->
-            <br>
-            <label for="selected_category">Категория теста:</label>
-            <select id="selected_category" name="selected_category">
-        {% if selected_category == 'any' %}
-                <option value="any" selected>_Любая категория_</option>
-        {% else %}
-                <option value="any">_Любая категория_</option>                
-        {% endif %}
-
-        {% if selected_category == 'null' %}
-                <option value="null" selected>_Без категории_</option>
-        {% else %}
-                <option value="null">_Без категории_</option>
-        {% endif %}
-
-        {% if selected_category == 'unconfirmed' %}
-                <option value="unconfirmed" selected>_Не подтверждена_</option>
-        {% else %}
-                <option value="unconfirmed">_Не подтверждена_</option>
-        {% endif %}
-
-        {% for category in categories_for_filtering_of_tests %}
-            {% if category.pk == selected_category_object.pk %}
-                <option value="{{ category.pk }}" selected>{{ category|truncatechars:50 }} — {{ category.tests.count }} шт.</option>
-            {% else %}
-                <option value="{{ category.pk }}">{{ category|truncatechars:50 }} — {{ category.tests.count }} шт.</option>
-            {% endif %}
-        {% endfor %}
-            </select>
-
-            <br>
-            <label for="selected_tag">Фильтр по тегу:</label>
-            <select id="selected_tag" name="selected_tag">
-        {% if selected_tag == 'any' %}
-                <option value="any" selected>_Любой тег/теги_</option>
-        {% else %}
-                <option value="any">_Любой тег/теги_</option>                
-        {% endif %}
-        {% if selected_tag == 'null' %}
-                <option value="null" selected>_Без тегов_</option>
-        {% else %}
-                <option value="null">_Без тегов_</option>
-        {% endif %}
-        {% for tag in tags %}
-            {% if tag.pk == selected_tag_object.pk %}
-                <option value="{{ tag.pk }}" selected>{{ tag|truncatechars:50 }} — {{ tag.tests.count }} шт. (без учета категории)</option>
-            {% else %}
-                <option value="{{ tag.pk }}">{{ tag|truncatechars:50 }} — {{ tag.tests.count }} шт. (без учета категории)</option>
-            {% endif %}
-        {% endfor %}
-            </select>
-            <hr>
-            <div><input type="submit" value="Выполнить" class="btn btn-block btn-default btn-lg"></input></div>
-
-        </form>
-    </div>
 
     {% block before_pagination %}
     {% endblock %}
@@ -130,31 +13,53 @@
 
     {% if some_page.has_previous %}
         {% if previous %}
-                <li><a href="{{ HTTPparameters }}&page={{ previous }}" aria-label="Previous">
+                <li>{% if HTTPparameters %}
+                <a href="{{ HTTPparameters }}&page={{ previous }}" aria-label="Previous">
+                    {% else %}
+                <!-- Для списка тегов и списка категорий фильтрации и сортировки нет,
+                поэтому их представления не передают переменную контекста HTTPparameters,
+                для остальных ссылок аналогично -->
+                <a href="{{ HTTPparameters }}?page={{ previous }}" aria-label="Previous">
+                    {% endif %}
                 <span aria-hidden="true">&laquo;</span></a></li>
         {% endif %}
         {% for prev_link in pages_before_current %}
-                <li><a href="{{ HTTPparameters }}&page={{ prev_link }}">
+                <li>{% if HTTPparameters %}
+                <a href="{{ HTTPparameters }}&page={{ prev_link }}" aria-label="Previous">
+                    {% else %}
+                <a href="{{ HTTPparameters }}?page={{ prev_link }}" aria-label="Previous">
+                    {% endif %}
                 {{ prev_link }}
                 </a></li>
         {% endfor %}
     {% endif %}
 
                 <li class="active"><a href="#">{{ some_page.number }}</a></li>
-
+                
     {% if some_page.has_next %}
         {% for next_link in pages_after_current %}
-                <li><a href="{{ HTTPparameters }}&page={{ next_link }}">
+                <li>{% if HTTPparameters %}
+                <a href="{{ HTTPparameters }}&page={{ next_link }}" aria-label="Next">
+                    {% else %}
+                <a href="{{ HTTPparameters }}?page={{ next_link }}" aria-label="Next">
+                    {% endif %}
                 {{ next_link }}
                 </a></li>
         {% endfor %}
         {% if next %}
-                <li><a href="{{ HTTPparameters }}&page={{ next }}" aria-label="Next">
+                <li>{% if HTTPparameters %}
+                <a href="{{ HTTPparameters }}&page={{ next }}" aria-label="Next">
+                    {% else %}
+                <a href="{{ HTTPparameters }}?page={{ next }}" aria-label="Next">
+                    {% endif %}
                 <span aria-hidden="true">&raquo;</span></a></li>
         {% endif %}
     {% endif %}
             </ul>
         </nav>
     </div>
+
+    {% block after_pagination %}
+    {% endblock %}
 
 {% endblock %}

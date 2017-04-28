@@ -1,0 +1,135 @@
+{% extends 'octapp/list_with_pagination.html' %}
+{% load staticfiles %}
+
+
+{% block before_pagination %}
+
+    {% block before_filtering_and_sorting %}
+    {% endblock %}
+
+    <div class="dropdown inline_block">
+
+        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown btn btn-block btn-default btn-lg" data-toggle="dropdown">
+            Фильтрация и сортировка
+            <span class="caret"></span>
+        </button>
+
+        <form aria-labelledby="dLabel" class="dropdown-menu sort_filter_form" method="GET" action="">
+            <label for="sorting">Сортировать по:</label>
+            <select id="sorting" name="sorting">
+    {% if sorting == 'rating_desc' %}
+                <option value="rating_desc" selected>Рейтингу (сначала рейтинговые)</option>
+    {% else %}
+                <option value="rating_desc">Рейтингу (сначала рейтинговые)</option>
+    {% endif %}
+
+    {% if sorting == 'published_date_desc' %}
+                <option value="published_date_desc" selected>Дате публикации (сначала новые)</option>
+    {% else %}
+                <option value="published_date_desc">Дате публикации (сначала новые)</option>
+    {% endif %}
+
+    {% if sorting == 'name_asc' %}
+                <option value="name_asc" selected>Наименованию (А-Я)</option>
+        <!-- Эта тавтология - не ошибка. После добавления сортировки по количеству тестов
+        она пригодится. -->
+    {% elif not sorting %}
+                <option value="name_asc" selected>Наименованию (А-Я)</option>
+    {% else %}
+                <option value="name_asc">Наименованию (А-Я)</option>
+    {% endif %}
+            </select>
+
+    {% comment %}
+        После добавления вопросов к тестам раскомментировать и протестировать
+    {% if sorting == 'questions_amount' %}
+                <option value="questions_amount" selected>Возрастанию количества вопросов</option>
+    {% else %}
+                <option value="questions_amount">Возрастанию количества вопросов</option>
+    {% endif %}
+            </select>
+    {% endcomment %}        
+
+            <br>
+            <label class="relative" for="filter_ready_for_passing">Только готовые для прохождения
+    {% if filter_ready_for_passing %}            
+            <input name="filter_ready_for_passing" id="filter_ready_for_passing" type="checkbox" checked></input>
+    {% else %}
+            <input name="filter_ready_for_passing" id="filter_ready_for_passing" type="checkbox"></input>            
+    {% endif %}            
+            </label>
+            
+            <label class="relative" for="filter_time_restriction">С ограничением времени прохождения
+    {% if filter_time_restriction %}
+            <input name="filter_time_restriction" id="filter_time_restriction" type="checkbox" checked></input>
+    {% else %}
+            <input name="filter_time_restriction" id="filter_time_restriction" type="checkbox"></input>            
+    {% endif %}
+            </label>
+            
+            <label class="relative" for="filter_passing_control">С контролем прохождения
+    {% if filter_passing_control %}
+            <input name="filter_passing_control" id="filter_passing_control" type="checkbox" checked></input>
+    {% else %}
+            <input name="filter_passing_control" id="filter_passing_control" type="checkbox"></input>
+    {% endif %}    
+            </label>
+
+            <!-- it works -->
+            <br>
+            <label for="selected_category">Фильтр по категории:</label>
+            <select id="selected_category" name="selected_category">
+    {% if selected_category == 'any' %}
+                <option value="any" selected>_Любая категория_</option>
+    {% else %}
+                <option value="any">_Любая категория_</option>                
+    {% endif %}
+
+    {% if selected_category == 'null' %}
+                <option value="null" selected>_Без категории_</option>
+    {% else %}
+                <option value="null">_Без категории_</option>
+    {% endif %}
+
+    {% if selected_category == 'unconfirmed' %}
+                <option value="unconfirmed" selected>_Не подтверждена_</option>
+    {% else %}
+                <option value="unconfirmed">_Не подтверждена_</option>
+    {% endif %}
+
+    {% block categories_options_for_filtering %}
+    {% endblock %}
+
+            </select>
+
+            <br>
+            <label for="selected_tag">Фильтр по тегу:</label>
+            <select id="selected_tag" name="selected_tag">
+    {% if selected_tag == 'any' %}
+                <option value="any" selected>_Любой тег/теги_</option>
+    {% else %}
+                <option value="any">_Любой тег/теги_</option>                
+    {% endif %}
+    {% if selected_tag == 'null' %}
+                <option value="null" selected>_Без тегов_</option>
+    {% else %}
+                <option value="null">_Без тегов_</option>
+    {% endif %}
+
+    {% block tags_options_for_filtering %}
+    {% endblock %}
+
+
+            </select>
+            <hr>
+            <div><input type="submit" value="Выполнить" class="btn btn-block btn-default btn-lg"></input></div>
+
+        </form>
+    </div>
+
+    {% block after_filtering_and_sorting %}
+    {% endblock %}
+
+{% endblock %}
+
+

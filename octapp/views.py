@@ -16,8 +16,6 @@ User = get_user_model()
 def get_tests_lists_context():
     showing_tests_per_one_column = 14
     showing_tags_and_categories_amount = 58
-    showing_tags = Tag.objects.order_by('pk')[:showing_tags_and_categories_amount]
-    showing_categories = Category.objects.filter(confirmed=True).order_by('pk')[:showing_tags_and_categories_amount]
 
     # левый ряд тестов для списка новых тестов, диапазон от 0го до showing_tests_per_one_column - 1
     left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date', 'name')[:showing_tests_per_one_column]
@@ -28,7 +26,24 @@ def get_tests_lists_context():
     # левый ряд тестов для списка рейтинговых тестов
     right_number_of_rating_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
     
-    all_tags_count = Tag.objects.order_by('pk').count()
+    showing_tags_and_count_of_published_tests = []
+    for tag in Tag.objects.order_by('-pk')[:showing_tags_and_categories_amount]:
+        for test in tag.tests.all():
+            count_of_published_tests = 0
+            if test.published_date:
+                count_of_published_tests += 1
+        showing_tags_and_count_of_published_tests.append([tag, count_of_published_tests])
+
+    showing_categories_and_count_of_published_tests = []
+    for category in Category.objects.order_by('-pk')[:showing_tags_and_categories_amount]:
+        for test in category.tests.all():
+            count_of_published_tests = 0
+            if test.published_date:
+                count_of_published_tests += 1
+        showing_categories_and_count_of_published_tests.append([category, count_of_published_tests])
+
+    all_tags_count = Tag.objects.count()
+    
     all_published_test_count = Test.objects.filter(published_date__lte=timezone.now()).count()
     all_confirmed_categories_count = Category.objects.filter(confirmed=True).count()
     
@@ -46,18 +61,25 @@ def get_tests_lists_context():
         show_elision_marks_for_tests = None
 
     unconfirmed_categories = Category.objects.filter(confirmed=False)
-    count_of_tests_without_category = Test.objects.filter(category=None).count()
-    count_of_tests_without_tags = Test.objects.filter(tags=None).count()
-    count_of_tests_with_unconf_cat = 0
+
+    count_of_tests_without_category = Test.objects.filter(category=None).filter(published_date__lte=timezone.now()).count()
+    count_of_tests_without_tags = Test.objects.filter(tags=None).filter(published_date__lte=timezone.now()).count()
+
+    count_of_published_tests_with_unconf_cat = 0
     for unconf_cat in unconfirmed_categories:
-        count_of_tests_with_unconf_cat += unconf_cat.tests.count()
+        tests_count = 0
+        for test in unconf_cat.tests.all():
+            if test.published_date:
+                tests_count += 1
+        count_of_published_tests_with_unconf_cat += tests_count
+
     tests_lists_context = {'left_number_of_new_tests_list': left_number_of_new_tests_list,
                            'right_number_of_new_tests_list': right_number_of_new_tests_list,
                            'left_number_of_rating_tests': left_number_of_rating_tests,
                            'right_number_of_rating_tests': right_number_of_rating_tests,
-                           'showing_tags': showing_tags,
-                           'showing_categories': showing_categories,
-                           'count_of_tests_with_unconf_cat': count_of_tests_with_unconf_cat,
+                           'showing_tags_and_count_of_published_tests': showing_tags_and_count_of_published_tests,
+                           'showing_categories_and_count_of_published_tests': showing_categories_and_count_of_published_tests,
+                           'count_of_published_tests_with_unconf_cat': count_of_published_tests_with_unconf_cat,
                            'show_elision_marks_for_tags': show_elision_marks_for_tags,
                            'show_elision_marks_for_categories': show_elision_marks_for_categories,
                            'show_elision_marks_for_tests': show_elision_marks_for_tests,
@@ -102,12 +124,9 @@ def get_pagination(page, some_page, on_one_page, max_pages_before_or_after_curre
 def tests_lists(request):
     return render(request, 'octapp/tests_lists.html', get_tests_lists_context())
 
-# 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
-def tests(request):
-    tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('name')
+def get_filtered_and_sorted_tests_with_pagination(request, tests):
     q_dict = request.GET.dict()
     context = { }
-
     if request.GET.get('selected_category', '') == 'null':
         # Отбираем тесты без категории
         tests = tests.filter(category__isnull=True).filter(published_date__lte=timezone.now()).order_by('name')
@@ -150,6 +169,16 @@ def tests(request):
         tests = tests.filter(published_date__lte=timezone.now()).order_by('name')
         context['sorting'] = 'name_asc'
 
+    if request.GET.get('filter_ready_for_passing', '') == 'on':
+        tests = tests.filter(ready_for_passing=True)
+        context['filter_ready_for_passing'] = 'on'
+    elif request.GET.get('filter_time_restriction', '') == 'on':
+        tests = tests.filter(time_restricting__isnull=False)
+        context['filter_time_restriction'] = 'on'
+    elif request.GET.get('filter_passing_control', '') == 'on':
+        tests = tests.filter(controlling=True)
+        context['filter_passing_control'] = 'on'
+        
     page = request.GET.get('page', '1')
     page = int(page)
     # 35, 5 prod
@@ -157,8 +186,8 @@ def tests(request):
     context.update(pag_context)
 
     categories_for_filtering_of_tests = Category.objects.filter(confirmed=True).order_by('name')
-    tags = Tag.objects.order_by('name')
-    context.update({'categories_for_filtering_of_tests': categories_for_filtering_of_tests, 'tags': tags})
+    tags_for_filtering_of_tests = Tag.objects.order_by('name')
+    context.update({'categories_for_filtering_of_tests': categories_for_filtering_of_tests, 'tags_for_filtering_of_tests': tags_for_filtering_of_tests})
 
     q = QueryDict(mutable=True)
     # В навигационных ссылках добавляется &page=X, поэтому если в запросе уже есть page, 
@@ -167,14 +196,45 @@ def tests(request):
         q_dict.pop('page')
     q.update(q_dict)
     context['HTTPparameters'] = '?' + q.urlencode()
+    return context
+
+# 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
+def tests(request):
+    tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('name')
+    context = get_filtered_and_sorted_tests_with_pagination(request, tests)    
+    # Нужно изменить количество тестов, выводимых при фильтрации по категории или по тегу
+    categories_and_count_of_published_tests_in_them = []
+    tags_and_count_of_published_tests_in_them = []
+    for category in context['categories_for_filtering_of_tests']:
+        categories_and_count_of_published_tests_in_them.append([category, category.tests.filter(published_date__lte=timezone.now()).count])
+    for tag in context['tags_for_filtering_of_tests']:
+        tags_and_count_of_published_tests_in_them.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count])
+    context['categories_and_count_of_published_tests_in_them'] = categories_and_count_of_published_tests_in_them
+    context['tags_and_count_of_published_tests_in_them'] = tags_and_count_of_published_tests_in_them
     return render(request, 'octapp/tests.html', context)
+
+def categories(request):
+    categories = Category.objects.filter(confirmed=True).order_by('name')
+    return render(request, 'octapp/categories.html', get_pagination(int(request.GET.get('page', '1')), categories, 40, 5))
+
+def tags(request):
+    tags = Tag.objects.order_by('name')
+    return render(request, 'octapp/tags.html', get_pagination(int(request.GET.get('page', '1')), tags, 40, 5))
 
 @login_required
 def user_tests(request, pk):
-    published_user_tests = Test.objects.filter(author=request.user).order_by('name').filter(published_date__isnull=False)
-    unpublished_user_tests = Test.objects.filter(author=request.user).order_by('name').filter(published_date__isnull=True)
-    return render(request, 'octapp/user_tests.html', {'unpublished_user_tests': unpublished_user_tests,
-            'published_user_tests': published_user_tests})
+    user_tests = Test.objects.filter(author=request.user).order_by('name')
+    context = get_filtered_and_sorted_tests_with_pagination(request, user_tests)
+    # Нужно изменить количество тестов, выводимых при фильтрации по категории или по тегу
+    categories_and_count_of_user_tests_in_them = []
+    tags_and_count_of_user_tests_in_them = []
+    for category in context['categories_for_filtering_of_tests']:
+        categories_and_count_of_user_tests_in_them.append([category, category.tests.filter(author=request.user).count])
+    for tag in context['tags_for_filtering_of_tests']:
+        tags_and_count_of_user_tests_in_them.append([tag, tag.tests.filter(author=request.user).count])
+    context['categories_and_count_of_user_tests_in_them'] = categories_and_count_of_user_tests_in_them
+    context['tags_and_count_of_user_tests_in_them'] = tags_and_count_of_user_tests_in_them
+    return render(request, 'octapp/user_tests.html', context)
 
 @login_required
 def test_new(request):

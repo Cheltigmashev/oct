@@ -1,56 +1,70 @@
-{% extends 'octapp/base.html' %}
+{% extends 'octapp/list_with_filtering_and_pagination.html' %}
 {% load staticfiles %}
 
 {% block page_style %}
 <link rel="stylesheet" href="{% static 'octapp/css/user_tests.css' %}">
+<link rel="stylesheet" href="{% static 'octapp/css/sorting_and_pagination.css' %}">
 {% endblock %}
 
-{% block content %}
+{% block categories_options_for_filtering %}
+    {% for category, count_of_user_tests in categories_and_count_of_user_tests_in_them %}
+        {% if category.pk == selected_category_object.pk %}
+                <option value="{{ category.pk }}" selected>{{ category|truncatechars:50 }} — {{ count_of_user_tests }} шт.</option>
+        {% else %}
+                <option value="{{ category.pk }}">{{ category|truncatechars:50 }} — {{ count_of_user_tests }} шт.</option>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+
+{% block tags_options_for_filtering %}
+    {% for tag, count_of_user_tests in tags_and_count_of_user_tests_in_them %}
+        {% if tag.pk == selected_tag_object.pk %}
+                <option value="{{ tag.pk }}" selected>{{ tag|truncatechars:50 }} — {{count_of_user_tests }} шт. (без учета категории)</option>
+        {% else %}
+                <option value="{{ tag.pk }}">{{ tag|truncatechars:50 }} — {{count_of_user_tests }} шт. (без учета категории)</option>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+
+{% block before_filtering_and_sorting %}
 <h2>СПИСОК ЗАГРУЖЕННЫХ ВАМИ ТЕСТОВ В АЛФАВИТНОМ ПОРЯДКЕ</h2>
 <p>NB! Будьте аккуратны с удалением теста (значок X)! Никакого предупреждения перед удалением теста не выводится, тест будет немедленно удален при нажатии на данный значок.</p>
-<h2 class="text-right">Опубликованные тесты</h2>
-    {% for test in published_user_tests %}
+{% endblock %}
+
+{% block after_filtering_and_sorting %}
+    <div class="user_tests">
+    <hr>
+    {% for test in some_page %}
     <div class="test_div relative">
         <div class="absolute div_with_icons">
             <a href="{% url 'test_edit' pk=test.pk %}" title="Редактировать тест" class="edit_test_icon glyphicon glyphicon-edit"></a>
+            {% if test.published_date %}
             <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='True' %}" title="Снять тест с публикации" class="remove_test_icon glyphicon glyphicon-eye-close"></a>
-            <a href="{% url 'test_remove' pk=test.pk through_user_tests='True' %}" title="Удалить тест" class="remove_test_icon glyphicon glyphicon-remove"></a>
-        </div>
-        <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test" title="Открыть страницу теста">
-            <div class="test_div_on_user_tests">
-                <div class="blank_for_indent inline_block"></div>                
-                <span class="name_of_test">
-                № {{ forloop.counter }}. {{ test }}
-            {% if test.ready_for_passing %} — <strong>готов</strong> для прохождения пользователями
-            {% else %} — <strong>не готов</strong> для прохождения пользователями
-            {% endif %}
-                </span>
-            </div>
-        </a>
-    </div>
-
-    {% empty %}
-        <p>У вас нет опубликованных тестов.</p>
-    {% endfor %}
-<hr>
-
-<h2 class="text-right">Неопубликованные тесты</h2>
-    {% for test in unpublished_user_tests %}
-    <div class="test_div relative">
-        <div class="absolute div_with_icons">
-            <a href="{% url 'test_edit' pk=test.pk %}" title="Редактировать тест" class="edit_test_icon glyphicon glyphicon-edit"></a>
+            {% else %}
             <a href="{% url 'test_publish' pk=test.pk through_user_tests='True' %}" title="Опубликовать тест" class="remove_test_icon glyphicon glyphicon-eye-open"></a>
-            <a href="{% url 'test_remove' pk=test.pk through_user_tests='True' %}" title="Удалить тест" class="remove_test_icon glyphicon glyphicon-remove"></a>   
+            {% endif %}
+            <a href="{% url 'test_remove' pk=test.pk through_user_tests='True' %}" title="Удалить тест" class="remove_test_icon glyphicon glyphicon-remove"></a>
         </div>
         <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test" title="Открыть страницу теста">
             <div class="test_div_on_user_tests">
                 <div class="blank_for_indent inline_block"></div>
                 <span class="name_of_test">
-                № {{ forloop.counter }}. {{ test }}</span>
+                № {{ some_page.start_index|add:forloop.counter|add:"-1" }}. {{ test }}, рейтинг — {{ test.rating }}
+            {% if test.ready_for_passing %}, <strong>готов</strong> для прохождения пользователями
+            {% else %}, <strong>не готов</strong> для прохождения пользователями
+            {% endif %}
+                </span>
             </div>
         </a>
     </div>
     {% empty %}
-        <p>У вас нет неопубликованных тестов.</p>
+        <p>У вас нет таких тестов.</p>
     {% endfor %}
+    </div>
+
+
 {% endblock %}
+
+

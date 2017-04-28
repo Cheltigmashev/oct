@@ -8,12 +8,12 @@
 {% block content %}
 <div class="row flex">
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href=""><h2>КАТЕГОРИИ ТЕСТОВ</h2></a>
+        <a href="{% url 'categories' %}"><h2>КАТЕГОРИИ ТЕСТОВ</h2></a>
         <div>
-            <a href="{% url 'tests' %}?selected_category=unconfirmed" class="category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_tests_with_unconf_cat }} шт.)</span></a>
-            <a href="{% url 'tests' %}?selected_category=null" class="category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
-    {% for category in showing_categories %}
-            <a href="{% url 'tests' %}?selected_category={{ category.pk }}" class="category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
+            <a href="{% url 'tests' %}?selected_category=unconfirmed" class="tag_or_category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_published_tests_with_unconf_cat }} шт.)</span></a>
+            <a href="{% url 'tests' %}?selected_category=null" class="tag_or_category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
+    {% for category, count_of_published_tests in showing_categories_and_count_of_published_tests %}
+            <a href="{% url 'tests' %}?selected_category={{ category.pk }}" class="tag_or_category"><span class="badge">{{ category|truncatechars:35 }} ({{ category.tests.count }} шт.)</span></a>
     {% empty %}
         <h4>Нет категорий</h4>
     {% endfor %}
@@ -24,11 +24,11 @@
         </div>
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href=""><h2>ТЕГИ</h2></a>
+        <a href="{% url 'tags' %}"><h2>ТЕГИ</h2></a>
         <div>
-            <a href="{% url 'tests' %}?selected_tag=null" class="category"><span class="badge">Тесты без тегов ({{ count_of_tests_without_tags }} шт.)</span></a>            
-    {% for tag in showing_tags %}
-            <a href="{% url 'tests' %}?selected_tag={{ tag.pk }}" class="tag"><span class="badge">{{ tag|truncatechars:35 }} ({{ tag.tests.count }} шт.)</span></a>
+            <a href="{% url 'tests' %}?selected_tag=null" class="tag_or_category"><span class="badge">Тесты без тегов ({{ count_of_tests_without_tags }} шт.)</span></a>            
+    {% for tag, count_of_published_tests in showing_tags_and_count_of_published_tests %}
+            <a href="{% url 'tests' %}?selected_tag={{ tag.pk }}" class="tag_or_category"><span class="badge">{{ tag|truncatechars:35 }} ({{ count_of_published_tests }} шт.)</span></a>
     {% empty %}
         <h4>Нет тегов</h4>
     {% endfor %}
