@@ -114,6 +114,7 @@
         <div class="test_description_element test_description_element_with_buttons">
     <a href="{% url 'review' test_id=test.id user_rate='dislike' %}" class="btn btn-default voting_btn">+1 к рейтингу теста</a>
     <a href="{% url 'review' test_id=test.id user_rate='like' %}" class="btn btn-default voting_btn">-1 к рейтингу теста</a>
+        </div>
     {% endif %}
 
     {% if rate_of_current_user %}
@@ -124,8 +125,8 @@
         {% else %}
                 отрицательно<br>
         {% endif %}
-    {% endif %}
         </div>
+    {% endif %}
 
     <hr>
     <p class="text-left">Теги:
