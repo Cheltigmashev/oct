@@ -169,7 +169,20 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests):
     elif request.GET.get('filter_passing_control', '') == 'on':
         tests = tests.filter(controlling=True)
         context['filter_passing_control'] = 'on'
-        
+
+    # По-хорошему, в случае использования функции для представления tests,
+    # этот код не нужен. Он используется только для представления user_tests
+    if request.GET.get('publish_status', '') == 'published':
+        tests = tests.filter(published_date__lte=timezone.now())
+        context['publish_status'] = 'published'
+    elif request.GET.get('publish_status', '') == 'unpublished':
+        tests = tests.filter(published_date__isnull=True)
+        context['publish_status'] = 'unpublished'
+    elif request.GET.get('publish_status', '') == 'any':
+        context['publish_status'] = 'any'
+    # Если этого HTTP-параметра вообще нет в запросе,
+    # то в tests все еще будут как опубликованные, так и неопубликованные тесты 
+
     page = request.GET.get('page', '1')
     page = int(page)
     # 35, 5 prod
@@ -189,28 +202,42 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests):
     context['HTTPparameters'] = '?' + q.urlencode()
     return context
 
+def get_categories_with_count_of_published_tests(context, categories):
+    # Нужно изменить количество тестов, выводимых при фильтрации по категории
+    categories_and_count_of_published_tests_in_them = []
+    for category in categories:
+        categories_and_count_of_published_tests_in_them.append([category, category.tests.filter(published_date__lte=timezone.now()).count])
+    context['categories_and_count_of_published_tests_in_them'] = categories_and_count_of_published_tests_in_them
+    return context
+
+def get_tags_with_count_of_published_tests(context, tags):
+    # Нужно изменить количество тестов, выводимых при фильтрации по тегу
+    tags_and_count_of_published_tests_in_them = []
+    for tag in tags:
+        tags_and_count_of_published_tests_in_them.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count])
+    context['tags_and_count_of_published_tests_in_them'] = tags_and_count_of_published_tests_in_them
+    return context
+
 # 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
 def tests(request):
+    # Если сортировка не задана, то тесты будут по алфавиту
     tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('name')
-    context = get_filtered_and_sorted_tests_with_pagination(request, tests)    
-    # Нужно изменить количество тестов, выводимых при фильтрации по категории или по тегу
-    categories_and_count_of_published_tests_in_them = []
-    tags_and_count_of_published_tests_in_them = []
-    for category in context['categories_for_filtering_of_tests']:
-        categories_and_count_of_published_tests_in_them.append([category, category.tests.filter(published_date__lte=timezone.now()).count])
-    for tag in context['tags_for_filtering_of_tests']:
-        tags_and_count_of_published_tests_in_them.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count])
-    context['categories_and_count_of_published_tests_in_them'] = categories_and_count_of_published_tests_in_them
-    context['tags_and_count_of_published_tests_in_them'] = tags_and_count_of_published_tests_in_them
+    context = get_filtered_and_sorted_tests_with_pagination(request, tests)
+    context = get_categories_with_count_of_published_tests(context, context['categories_for_filtering_of_tests'])
+    context = get_tags_with_count_of_published_tests(context, context['tags_for_filtering_of_tests'])
     return render(request, 'octapp/tests.html', context)
 
 def categories(request):
     categories = Category.objects.filter(confirmed=True).order_by('name')
-    return render(request, 'octapp/categories.html', get_pagination(int(request.GET.get('page', '1')), categories, 40, 5))
+    context = get_pagination(int(request.GET.get('page', '1')), categories, 45, 5)
+    context = get_categories_with_count_of_published_tests(context, categories)
+    return render(request, 'octapp/categories.html', context)
 
 def tags(request):
     tags = Tag.objects.order_by('name')
-    return render(request, 'octapp/tags.html', get_pagination(int(request.GET.get('page', '1')), tags, 40, 5))
+    context = get_pagination(int(request.GET.get('page', '1')), tags, 45, 5)
+    context.update(get_tags_with_count_of_published_tests(context, tags))
+    return render(request, 'octapp/tags.html', context)
 
 @login_required
 def user_tests(request, pk):

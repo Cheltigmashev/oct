@@ -27,9 +27,37 @@
     {% endfor %}
 {% endblock %}
 
+{% block after_last_field_of_filtering_form %}
+    <label>Отображать тесты:</label>
+    <select name="publish_status">
+
+    {% if publish_status == 'published' %}
+        <option value="published" selected>Только опубликованные</option>
+    {% else %}
+        <option value="published">Только опубликованные</option>
+    {% endif %}
+    
+    {% if publish_status == 'unpublished' %}
+        <option value="unpublished" selected>Только неопубликованные</option>
+    {% else %}
+        <option value="unpublished">Только неопубликованные</option>
+    {% endif %}
+
+    {% if publish_status == 'any' %}
+        <option value="any" selected>Опубликованные и неопубликованные</option>
+    {% elif publish_status %}
+        <option value="any">Опубликованные и неопубликованные</option>        
+    {% endif %}
+   
+    {% if not publish_status %}
+        <option value="any" selected>Опубликованные и неопубликованные</option>
+    {% endif %}
+
+    </select>
+{% endblock %}
 
 {% block before_filtering_and_sorting %}
-<h2>СПИСОК ЗАГРУЖЕННЫХ ВАМИ ТЕСТОВ В АЛФАВИТНОМ ПОРЯДКЕ</h2>
+<h2>СПИСОК ЗАГРУЖЕННЫХ ВАМИ ТЕСТОВ</h2>
 <p>NB! Будьте аккуратны с удалением теста (значок X)! Никакого предупреждения перед удалением теста не выводится, тест будет немедленно удален при нажатии на данный значок.</p>
 {% endblock %}
 
