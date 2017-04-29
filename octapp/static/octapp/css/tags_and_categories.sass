@@ -1,28 +1,20 @@
 @charset "utf-8"
 
 .content
+  a h2
+    transition: all ease 0.2s    
   a:hover h2
     transition: all ease 0.2s
     color: orange
   a.tag_or_category:hover .badge
     font-weight: bold
     background-color: orange
-    transition: all ease 0.2s    
+    transition: all ease 0.2s
   .badge
+    transition: all ease 0.2s
     margin: 2px 0
     color: black
     background-color: #ffef80
     cursor: pointer
     font-weight: normal
-  .badge:last-child:not(:only-child)
-    text-align: middle
-    display: block
-    cursor: default
-    padding: 0 4px
-    border: 1px solid gray
-    margin-top: -10px
-    margin-left: 70px
-    margin-right: 70px
-    font-size: 18px
-    text-align: center
     

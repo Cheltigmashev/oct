@@ -2,132 +2,147 @@
 {% load staticfiles %}
 
 {% block page_style %}
-<link rel="stylesheet" href="">
+<link rel="stylesheet" href="{% static 'octapp/css/test_detail.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2>ТЕСТ <q>{{ test.name|upper }}</q></h2>
 
-    {% if not test.anonymous_loader %}
-<h3 class="text-left">Данный тест загрузил пользователь {{ test.author }}</h3>
-    {% else %}
-<h3 class="text-left">Данный тест добавлен в систему анонимно</h3>
-    {% endif %}
+<div class="test_block">
 
-    {% if test.category %}
-        {% if test.category.confirmed %}
-<h3 class="text-left">Категория теста — <q>{{ test.category }}</q></h3>
-        {% else %}
-<h3 class="text-left">Категория теста — <q>{{ test.category }} (еще не подтверждена)</q></h3>
-        {% endif %}
-    {% else %}
-<h3 class="text-left">Данному тесту не присвоена категория</h3>
-    {% endif %}
-
-<h3 class="text-left">Описание теста</h3>
-{{ test.description|safe }}
-
-    {% if test.controlling %}
-<h3 class="text-left">Для данного теста задано использование контроля прохождения</h3>
-    {% else %}
-<h3 class="text-left">Для данного теста не задано использование контроля прохождения</h3>    
-    {% endif %}
-
-    {% if test.time_restricting %}
-<h3 class="text-left">Для данного теста установлено ограничение времени прохождения в {{ test.time_restricting }} мин.</h3>
-    {% else %}
-<h3 class="text-left">Это тест без ограничения на время прохождения</h3>    
-    {% endif %}
-
-<h3 class="text-left">Рейтинг теста: {{ test.rating }}</h3>
-
-<h3 class="text-left">Дата добавления теста в систему — {{ test.created_date }}</h3>
-
-    {% if test.published_date %}
-<h3 class="text-left">Дата публикации — {{ test.published_date }}</h3>
-    {% else %}
-<h3 class="text-left">Данный тест еще не опубликован 
-        {% if test.author %}
-        пользователем {{ test.author }}</h3>
-        {% else %}
-        анонимным пользователем</h3>
-        {% endif %}
-    {% endif %}
-
-<h3 class="text-left">Теги теста:
-    {% for tag in test.tags.all %}
-        {% if forloop.last %}
-{{ tag }}</span></h3>
-        {% else %}
-{{ tag }}, </span>
-        {% endif %}
-    {% empty %}
-<p>Для данного теста какие-либо теги не назначены 
-        {% if test.author %}
-    пользователем {{ test.author }}
-        {% else %}
-    анонимным пользователем
-        {% endif %}
-    , который добавил данный тест :(</p>
-    {% endfor %}
-
-    {% if test.ready_for_passing %}
-<h3 class="text-left">Готовность теста для его прохождения пользователями подтверждена</h3>
-<a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default btn-lg">Приступить к прохождению теста</a>
-    {% else %}
-<h3 class="text-left">Готовность теста для его прохождения пользователями еще не подтверждена</h3>
-    {% endif %}
+    <h2>ТЕСТ <q>{{ test.name|upper }}</q></h2>
 
     {% if is_author or request.user.is_superuser or perms.octapp.test.can_change %}
-<hr><h2>Управление тестом</h2>
-    <p>NB! После того, как вы закончите добавление вопросов к тесту и вариантов ответа к ним, подтвердите готовность теста, используя кнопку ниже. Только после подтверждения готовности будет доступна возможность прохождения вашего тест вами и другими пользователями.</p>
+    <div class="dropdown test_description_element">
+
+        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
+            Управление тестом
+            <span class="caret"></span>
+        </button>
         
+        <div aria-labelledby="dLabel" class="dropdown-menu">
+                
         {% if is_author %}
-    Вам, как тому, кто загрузил данный тест, доступны возможности:<br>
+            <p>Вы, как тот, кто загрузил данный тест, можете:</p>
+            <a href="" class="btn btn-default">Просмотреть/редактировать<br> вопросы и/или добавить новые</a>
+            <a href="" class="btn btn-default">Поделиться ссылкой<br>на тест в соцсетях</a>    
             {% if not test.published_date %}
-    <a href="{% url 'test_publish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Опубликовать тест</a>
+            <a href="{% url 'test_publish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Опубликовать</a>
             {% else %}
-    <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Снять тест с публикации</a>            
+            <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Снять с публикации</a>            
             {% endif %}
+
             {% if not test.ready_for_passing %}
-    <a href="{% url 'test_make_ready_for_passing' pk=test.pk %}" class="btn btn-default btn-lg">Подтвердить готовность теста</a>
+            <a href="{% url 'test_make_ready_for_passing' pk=test.pk %}" class="btn btn-default btn-lg">Подтвердить готовность</a>
             {% endif %}
-    <a href="{% url 'test_remove' pk=test.pk through_user_tests='False' %}" class="btn btn-danger btn-lg">Удалить тест</a>
-    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-info btn-lg">Изменить тест</a>
-    <a href="" class="btn btn-default btn-sm">Просмотреть/редактировать<br> вопросы теста и/или добавить новый</a>
-    <a href="" class="btn btn-default btn-lg">Поделиться ссылкой на тест в соцсетях</a>    
+            <a href="{% url 'test_remove' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Удалить</a>
+            <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить</a>
         {% endif %}
-    
-        {% if not is_author and perms.octapp.test.can_change and not request.user.is_superuser %}
-    Вы не автор теста, но вы относитесь к модераторам, поэтому вам доступен данный функционал:<br>
-    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-default btn-lg">Изменить тест</a>
-        {% endif %}
-
+        
         {% if not is_author and request.user.is_superuser %}
-    Вы не автор теста, но являетесь суперпользователем, поэтому вам также доступен данный функционал:<br>
-    <a href="{% url 'test_edit' pk=test.pk %}" class="btn btn-info btn-lg">Изменить тест</a>
-    <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Снять тест с публикации</a>
-    <a href="{% url 'test_remove' pk=test.pk through_user_tests='False' %}" class="btn btn-danger btn-lg">Удалить тест</a>
+            <p>Вы, как суперпользователь, можете:</p><br>
+            <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Снять с публикации</a>
+            <a href="{% url 'test_remove' pk=test.pk through_user_tests='False' %}" class="btn btn-danger btn-lg">Удалить</a>
         {% endif %}
 
-
+            <hr><p>NB! После того, как вы закончите добавление вопросов к тесту и вариантов ответа к ним, подтвердите готовность теста, используя кнопку ниже. Только после подтверждения готовности будет доступна возможность прохождения вашего тест вами и другими пользователями.</p>
+        </div>
+    </div>
     {% endif %}
 
+        <div class="test_description_element">
+    {% if not test.anonymous_loader %}
+            <p class="text-left">Загрузил: <mark>{{ test.author }}</mark></p>
+    {% else %}
+            <p class="text-left">Тест добавлен анонимно</p>
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
+    {% if test.category %}
+        {% if test.category.confirmed %}
+            <p class="text-left">Категория — <mark><q>{{ test.category }}</q></mark></p>
+        {% else %}
+            <p class="text-left">Категория — <q>{{ test.category }} (еще не подтверждена)</q></p>
+        {% endif %}
+    {% else %}
+            <p class="text-left">Без категории</p>
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
+    {% if test.controlling %}
+            <p class="text-left">Без контроля прохождения</p>
+    {% else %}
+            <p class="text-left">С контролем прохождения</p>    
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
+    {% if test.time_restricting %}
+            <p class="text-left">С ограничением времени прохождения в <mark>{{ test.time_restricting }} мин.</mark></p>
+    {% else %}
+            <p class="text-left">Без ограничения на время прохождения</p>    
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
+            <p class="text-left">Рейтинг: <mark>{{ test.rating }}</mark></p>
+        </div>
+
+        <div class="test_description_element">        
+            <p class="text-left">Добавлен <mark>{{ test.created_date }}</mark></p>
+        </div>
+
+        <div class="test_description_element">
+    {% if test.published_date %}
+            <p class="text-left">Опубликован <mark>{{ test.published_date }}</mark></p>
+    {% else %}
+            <p class="text-left">Тест еще не опубликован
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
+    {% if test.ready_for_passing %}
+    <a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default">Приступить к прохождению</a>
+    {% else %}
+            <p class="text-left">Тест еще <mark>не готов</mark> для прохождения</p>
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
     {% if user.is_authenticated and not rate_of_current_user %}
-    <br>Если вам понравился тест, то вы можете:<br>
-    <a href="{% url 'review' test_id=test.id user_rate='dislike' %}" class="btn btn-default btn-lg">Уменьшить рейтинг теста на 1</a>
-    <a href="{% url 'review' test_id=test.id user_rate='like' %}" class="btn btn-default btn-lg">Увеличить рейтинг теста на 1</a>
+    <a href="{% url 'review' test_id=test.id user_rate='dislike' %}" class="btn btn-default voting_btn">+1 к рейтингу теста</a>
+    <a href="{% url 'review' test_id=test.id user_rate='like' %}" class="btn btn-default voting_btn">-1 к рейтингу теста</a>
     {% endif %}
 
     {% if rate_of_current_user %}
-    <br>Вы уже поставили оценку данному тесту, оценив его
+    Вы оценили тест
         {% if rate_of_current_user.like %}
                 положительно<br>
         {% else %}
                 отрицательно<br>
         {% endif %}
     {% endif %}
+        </div>
 
+    <hr>
+    <p class="text-left">Теги:
+    {% for tag in test.tags.all %}
+        <a href="{% url 'tests' %}?selected_tag={{ tag.pk }}" class="tag_or_category">
+            <span class="badge">
+                <span class="bullet">&#8226;|</span> {{ tag|truncatechars:50 }}
+            </span>
+        </a>
+    {% empty %}
+    <p>Для данного теста какие-либо теги не назначены :(</p>
+    {% endfor %}
+    </p>
+    <hr>
+
+    <h3>Описание</h3>
+    {{ test.description|safe }}
+
+    <hr>
     {% if test.rates.all %}
     <p>Этот тест оценили:</p>
         {% for rate in test.rates.all %}
@@ -141,7 +156,9 @@
     <p>Данный тест еще никто не оценил</p>    
     {% endif %}
 
-<hr><h2>Комментарии к тесту</h2>
+</div> <!-- div.test_block ends here -->
+
+<br><h2>Комментарии к тесту</h2>
 Функционал еще не реализован
 
 {% endblock %}

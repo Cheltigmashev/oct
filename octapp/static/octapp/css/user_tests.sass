@@ -6,51 +6,56 @@ $font_size_lg: 20px
 $h2_font_size_lg: 28px
 $icons_font_size_lg: 22px
 
-div.user_tests
-  padding: 5px 5px 3px 5px
+.content
+  div.user_tests
+    padding: 5px 5px 3px 5px
 
-p, .test_div_on_user_tests
-  font-size: $font_size_lg
-
-.div_with_icons a
-  font-size: $icons_font_size_lg
-
-@media(min-width:0px) and (max-width:767px)
-  p, .test_div_on_user_tests
-    font-size: $font_size_lg - 6px
-  h2
-    font-size: $h2_font_size_lg - 6px
-  .div_with_icons a
-    font-size: $icons_font_size_lg - 6px
-  .blank_for_indent
-    width: $icons_font_size_lg * 2.3
-
-@media(min-width:768px) and (max-width:991px)
-  p, .test_div_on_user_tests
-    font-size: $font_size_lg - 4px
-  h2
-    font-size: $h2_font_size_lg - 4px
-  .div_with_icons a
-    font-size: $icons_font_size_lg - 4px
-  .blank_for_indent
-    width: $icons_font_size_lg * 2.6
-
-@media(min-width:992px) and (max-width:1199px)
-  p, .test_div_on_user_tests
-    font-size: $font_size_lg - 2px
-  h2
-    font-size: $h2_font_size_lg - 2px
-  .div_with_icons a
-    font-size: $icons_font_size_lg - 2px
-  .blank_for_indent
-    width: $icons_font_size_lg * 2.8
-
-@media(min-width:1200px)
   p, .test_div_on_user_tests
     font-size: $font_size_lg
-  h2
-    font-size: $h2_font_size_lg
+
   .div_with_icons a
     font-size: $icons_font_size_lg
-  .blank_for_indent
-    width: $icons_font_size_lg * 3
+
+@media(min-width:0px) and (max-width:767px)
+  .content
+    p, .test_div_on_user_tests
+      font-size: $font_size_lg - 6px
+    h2
+      font-size: $h2_font_size_lg - 6px
+    .div_with_icons a
+      font-size: $icons_font_size_lg - 6px
+    .blank_for_indent
+      width: $icons_font_size_lg * 2.3
+
+@media(min-width:768px) and (max-width:991px)
+  .content
+    p, .test_div_on_user_tests
+      font-size: $font_size_lg - 4px
+    h2
+      font-size: $h2_font_size_lg - 4px
+    .div_with_icons a
+      font-size: $icons_font_size_lg - 4px
+    .blank_for_indent
+      width: $icons_font_size_lg * 2.6
+
+@media(min-width:992px) and (max-width:1199px)
+  .content
+    p, .test_div_on_user_tests
+      font-size: $font_size_lg - 2px
+    h2
+      font-size: $h2_font_size_lg - 2px
+    .div_with_icons a
+      font-size: $icons_font_size_lg - 2px
+    .blank_for_indent
+      width: $icons_font_size_lg * 2.8
+
+@media(min-width:1200px)
+  .content
+    p, .test_div_on_user_tests
+      font-size: $font_size_lg
+    h2
+      font-size: $h2_font_size_lg
+    .div_with_icons a
+      font-size: $icons_font_size_lg
+    .blank_for_indent
+      width: $icons_font_size_lg * 3

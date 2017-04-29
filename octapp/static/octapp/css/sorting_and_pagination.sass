@@ -5,8 +5,22 @@
 .pagination
   margin: 5px 0 0 0
   padding: 0
+  // Другого способа выровнять эти кавычки я не нашел
+  // vertical-align и text-align не помогали
+  li a.previous, li a.next
+    padding-top: 8px
+    padding-bottom: 12px
+    background-color: #fafafa
+  
+  li a.previous:hover, li a.next:hover
+    background-color: #eeeeee
+
   li:not(.active) *
-    color: #337ab7
+    color: black
+  li.active *, li.active:hover *
+    color: black
+    border-color: gray
+    background-color: lighten(orange, 20%)
   
 hr
   margin: 8px 0
