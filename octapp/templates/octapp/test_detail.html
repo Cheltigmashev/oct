@@ -12,7 +12,7 @@
     <h2>ТЕСТ <q>{{ test.name|upper }}</q></h2>
 
     {% if is_author or request.user.is_superuser or perms.octapp.test.can_change %}
-    <div class="dropdown test_description_element">
+    <div class="dropdown test_description_element test_description_element_with_buttons">
 
         <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
             Управление тестом
@@ -79,7 +79,7 @@
 
         <div class="test_description_element">
     {% if test.time_restricting %}
-            <p class="text-left">С ограничением времени прохождения в <mark>{{ test.time_restricting }} мин.</mark></p>
+            <p class="text-left">Лимит времени прохождения — <mark>{{ test.time_restricting }} мин.</mark></p>
     {% else %}
             <p class="text-left">Без ограничения на время прохождения</p>    
     {% endif %}
@@ -101,21 +101,23 @@
     {% endif %}
         </div>
 
-        <div class="test_description_element">
     {% if test.ready_for_passing %}
-    <a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default">Приступить к прохождению</a>
+        <div class="test_description_element test_description_element_with_buttons">
+            <a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default start_passing_btn">Приступить к прохождению</a>
     {% else %}
+        <div class="test_description_element">        
             <p class="text-left">Тест еще <mark>не готов</mark> для прохождения</p>
     {% endif %}
         </div>
 
-        <div class="test_description_element">
     {% if user.is_authenticated and not rate_of_current_user %}
+        <div class="test_description_element test_description_element_with_buttons">
     <a href="{% url 'review' test_id=test.id user_rate='dislike' %}" class="btn btn-default voting_btn">+1 к рейтингу теста</a>
     <a href="{% url 'review' test_id=test.id user_rate='like' %}" class="btn btn-default voting_btn">-1 к рейтингу теста</a>
     {% endif %}
 
     {% if rate_of_current_user %}
+        <div class="test_description_element">    
     Вы оценили тест
         {% if rate_of_current_user.like %}
                 положительно<br>
