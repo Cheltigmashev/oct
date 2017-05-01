@@ -31,7 +31,7 @@ def get_tests_lists_context():
         showing_tags_and_count_of_published_tests.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count()])        
 
     showing_categories_and_count_of_published_tests = []
-    for category in Category.objects.order_by('-pk')[:showing_tags_and_categories_amount]:
+    for category in Category.objects.filter(confirmed=True).order_by('-pk')[:showing_tags_and_categories_amount]:
         showing_categories_and_count_of_published_tests.append([category, category.tests.filter(published_date__lte=timezone.now()).count()])        
 
     all_tags_count = Tag.objects.count()
@@ -59,11 +59,7 @@ def get_tests_lists_context():
 
     count_of_published_tests_with_unconf_cat = 0
     for unconf_cat in unconfirmed_categories:
-        tests_count = 0
-        for test in unconf_cat.tests.all():
-            if test.published_date:
-                tests_count += 1
-        count_of_published_tests_with_unconf_cat += tests_count
+        count_of_published_tests_with_unconf_cat += unconf_cat.tests.filter(published_date__lte=timezone.now()).count()
 
     tests_lists_context = {'left_number_of_new_tests_list': left_number_of_new_tests_list,
                            'right_number_of_new_tests_list': right_number_of_new_tests_list,
@@ -294,6 +290,7 @@ def test_new(request):
     return render(request, 'octapp/test_edit.html', {'form': form})
 
 def test_detail(request, pk):
+    #test = get_object_or_404(Test, pk=pk, pub_date__lte=timezone.now())
     test = get_object_or_404(Test, pk=pk)
     if request.user == test.author:
         is_author = True

@@ -69,11 +69,11 @@
         <div class="absolute div_with_icons">
             <a href="{% url 'test_edit' pk=test.pk %}" title="Редактировать тест" class="edit_test_icon glyphicon glyphicon-edit"></a>
             {% if test.published_date %}
-            <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='True' %}" title="Снять тест с публикации" class="remove_test_icon glyphicon glyphicon-eye-close"></a>
+            <a href="{% url 'test_unpublish' pk=test.pk through_user_tests='True' %}{{ HTTPparameters }}" title="Снять тест с публикации" class="remove_test_icon glyphicon glyphicon-eye-close"></a>
             {% else %}
-            <a href="{% url 'test_publish' pk=test.pk through_user_tests='True' %}" title="Опубликовать тест" class="remove_test_icon glyphicon glyphicon-eye-open"></a>
+            <a href="{% url 'test_publish' pk=test.pk through_user_tests='True' %}{{ HTTPparameters }}" title="Опубликовать тест" class="remove_test_icon glyphicon glyphicon-eye-open"></a>
             {% endif %}
-            <a href="{% url 'test_remove' pk=test.pk through_user_tests='True' %}" title="Удалить тест" class="remove_test_icon glyphicon glyphicon-remove"></a>
+            <a href="{% url 'test_remove' pk=test.pk through_user_tests='True' %}{{ HTTPparameters }}" title="Удалить тест" class="remove_test_icon glyphicon glyphicon-remove"></a>
         </div>
         <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test" title="Открыть страницу теста">
             <div class="test_div_on_user_tests">

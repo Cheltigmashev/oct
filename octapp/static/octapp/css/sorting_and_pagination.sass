@@ -2,49 +2,50 @@
 // НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В common_form_elements.sass
 @import common_form_elements
 
-.pagination
-  margin: 5px 0 0 0
-  padding: 0
-  // Другого способа выровнять эти кавычки я не нашел
-  // vertical-align и text-align не помогали
-  li a.previous, li a.next
-    padding-top: 8px
-    padding-bottom: 12px
-    background-color: #fafafa
-  
-  li a.previous:hover, li a.next:hover
-    background-color: #eeeeee
+.content
+  .pagination
+    margin: 5px 0 0 0
+    padding: 0
+    // Другого способа выровнять эти кавычки я не нашел
+    // vertical-align и text-align не помогали
+    li a.previous, li a.next
+      padding-top: 8px
+      padding-bottom: 12px
+      background-color: #fafafa
+    
+    li a.previous:hover, li a.next:hover
+      background-color: #eeeeee
 
-  li:not(.active) *
-    color: black
-  li.active *, li.active:hover *
-    color: black
-    border-color: gray
-    background-color: lighten(orange, 20%)
-  
-hr
-  margin: 8px 0
+    li:not(.active) *
+      color: black
+    li.active *, li.active:hover *
+      color: black
+      border-color: gray
+      background-color: lighten(orange, 20%)
+    
+  hr
+    margin: 8px 0
 
-form.sort_filter_form
-  width: 100%
-  padding: 8px
-  label.relative
-    padding-left: 20px
-    input[type="checkbox"]
-      position: absolute
-      top: 3px
-      left: 4px
-  input[type="submit"]
+  form.sort_filter_form
     width: 100%
-    margin: 0
-    white-space: normal
-  select
-    width: 100%
+    padding: 8px
+    label.relative
+      padding-left: 20px
+      input[type="checkbox"]
+        position: absolute
+        top: 3px
+        left: 4px
+    input[type="submit"]
+      width: 100%
+      margin: 0
+      white-space: normal
+    select
+      width: 100%
 
-.dropdown
-  padding-right: 8px
-  button
-    width: 100%
+  .dropdown
+    padding-right: 8px
+    button
+      width: 100%
 
 /*============    	АДАПТИВ    ===========*/
 

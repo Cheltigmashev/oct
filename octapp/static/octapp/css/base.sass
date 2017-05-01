@@ -1,5 +1,7 @@
 @charset "utf-8"
+// НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В custom_thumbnail.sass или common_form_element.sass
 @import custom_thumbnail
+@import common_form_elements
 
 /*============    СБРОС СВОЙСТВ, ОБЩИЕ СВОЙСТВА    ===========*/
 *
@@ -328,8 +330,11 @@ footer
           padding: 2px 0
           font-size: 12px
       .authorization_div
-        input[type="text"], input[type="password"]
-          height: 50%
+        .table
+          border-spacing: 1px
+          label
+            display: block
+            margin-bottom: -2px
         .btn
           padding: 0
           margin: 1px
