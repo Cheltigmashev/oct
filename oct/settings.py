@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-ALLOWED_HOSTS = ['127.0.0.1', 'customtesting.pythonanywhere.com', '127.0.0.1:8000', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'customtesting.pythonanywhere.com', '127.0.0.1:8000', 'localhost', 'testserver']
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

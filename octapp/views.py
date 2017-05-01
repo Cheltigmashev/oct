@@ -290,12 +290,19 @@ def test_new(request):
     return render(request, 'octapp/test_edit.html', {'form': form})
 
 def test_detail(request, pk):
-    #test = get_object_or_404(Test, pk=pk, pub_date__lte=timezone.now())
     test = get_object_or_404(Test, pk=pk)
     if request.user == test.author:
         is_author = True
     else:
         is_author = False
+    # Если тест еще не опубликован и текущий пользователь — не автор
+    # Чтобы предотвратить возможность просмотра неопубликованного теста через URL
+    if test.published_date:
+        if not is_author and test.published_date > timezone.now():
+            return redirect('tests_lists')
+    else:
+        if not is_author:
+            return redirect('tests_lists')            
     if not request.user.is_authenticated:
         return render(request, 'octapp/test_detail.html', {'test': test })
     else:
