@@ -85,7 +85,7 @@ class Category(models.Model):
         )
 
 class ResultScale(models.Model):
-    name = models.CharField("Наименование шкалы", max_length=70, blank=False)
+    name = models.CharField("Наименование шкалы", max_length=70, blank=False, unique=True)
     scale_divisions_amount = models.IntegerField("Количество возможных оценок", default=0)
     
     divisions_layout = models.CharField(

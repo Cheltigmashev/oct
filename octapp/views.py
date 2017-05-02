@@ -252,7 +252,7 @@ def user_tests(request, pk):
 
 @login_required
 def test_new(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         # Form форма с пользовательскими данными
         form = TestForm(request.POST)
         if form.is_valid():
@@ -316,7 +316,7 @@ def test_detail(request, pk):
 @login_required
 def test_edit(request, pk):
     test = get_object_or_404(Test, pk=pk)
-    if request.method == "POST":
+    if request.method == 'POST':
         form = TestForm(request.POST, instance=test)
         if form.is_valid():
             test = form.save()
@@ -364,9 +364,9 @@ def review(request, test_id, user_rate):
     user = request.user
     # Устранение возможности голосовать за других пользователей с помощью ввода URL
     if user == request.user:
-        if user_rate == "like":
+        if user_rate == 'like':
             bool_rate = True
-        elif user_rate == "dislike":
+        elif user_rate == 'dislike':
             bool_rate = False
         # Пользователь еще не ставил оценку данному тесту
         if not test.rates.filter(reviewer=user):
@@ -374,7 +374,7 @@ def review(request, test_id, user_rate):
             # добавляем его в связанные объекты объекта Test
             test_rate = Test_rate(test=test, reviewer=user, like=bool_rate)
             test_rate.save(force_insert=True)
-            if user_rate == "like":
+            if user_rate == 'like':
                 test.review_positively()
             else:
                 test.review_negatively() 

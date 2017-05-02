@@ -10,52 +10,26 @@ User = get_user_model()
 
 # Методы-фабрики
 
-def create_test(category, result_scale, tags,
-    anonymous_loader, name, description, controlling,
-    time_restricting, rating, publishing_days_offset, ready_for_passing):
-    """
-    Создает и возвращает тест с переданными аргументами, добавляемый с текущей датой.
-    Дата публикации устанавливается со смещением `publishing_days_offset`
-    относительно текущей даты. Отрицательное значение для публикации
-    теста в прошлом, положительное для тестов, публикуемых в будущем.
-    """
-    if not User.objects.filter(username='SomeUser'):
-        author = User.objects.create(username='SomeUser', first_name="Vasya",
-                last_name="Pupkin", email="pupkin@yandex.ru", is_active=True)
-    else:
-        author = get_object_or_404(User, username='SomeUser')
-
-    publishing_time = timezone.now() + datetime.timedelta(days=publishing_days_offset)
-    new_test = Test.objects.create(author=author,
-            category=category,
-            result_scale=result_scale,
-            anonymous_loader=anonymous_loader, name=name,
-            description=description, controlling=controlling,
-            time_restricting=time_restricting, rating=rating,
-            created_date=timezone.now(), published_date=publishing_time,
-            ready_for_passing=ready_for_passing)
-    # Назначает теги определенному тесту
-    for tag in tags:
-        new_test.tags.add(tag)
-        # new_test.save()
-    return new_test
-
 def create_category(name, confirmed):
     """
     Создает и возвращает категорию, подтвержденную либо неподтвержденную
     """
     return Category.objects.create(name=name, confirmed=confirmed)
 
-def create_standart_scale():
+def create_or_return_standart_scale():
     """
     Создает и возвращает стандартную оценочную шкалу.
     """
-    return ResultScale.objects.create(name="Стандартная 5-балльная шкала",
-    scale_divisions_amount=5, divisions_layout="20,20,20,20")
+    if ResultScale.objects.filter(name='Стандартная 5-балльная шкала').count() >= 1:
+        return ResultScale.objects.get(name='Стандартная 5-балльная шкала')
+    else:
+        return ResultScale.objects.create(name='Стандартная 5-балльная шкала',
+                                          scale_divisions_amount=5, divisions_layout='20,20,20,20')
+
 
 def create_tag(name):
     """
-    Создает и возвращает тег. Проверяет наличие.
+    Создает и возвращает тег.
     """
     return Tag.objects.create(name=name)
 
@@ -71,15 +45,45 @@ def create_some_tags():
 
 def create_some_categories():
     """
-    Создает кортеж категорий.
+    Создает список категорий.
     Третья и четвертая категории — неподтвержденные.
     """
     confirmed_category1 = create_category('SomeConfCat', True)
     confirmed_category2 = create_category('SomeConfCat2', True)
     unconfirmed_category1 = create_category('SomeUnconfCat', False)
     unconfirmed_category2 = create_category('SomeUnconfCat2', False)
-    return (confirmed_category1, confirmed_category2, unconfirmed_category1, unconfirmed_category2)
+    return [confirmed_category1, confirmed_category2, unconfirmed_category1, unconfirmed_category2]
 
+def create_test(category=None, result_scale=None, tags=[],
+    anonymous_loader=False, name='Некий тест', description='Без описания', controlling=True,
+    time_restricting=True, rating=0, publishing_days_offset=-30,ready_for_passing=False):
+    """
+    Создает и возвращает тест с переданными аргументами, добавляемый с текущей датой.
+    Дата публикации устанавливается со смещением `publishing_days_offset`
+    относительно текущей даты. Отрицательное значение для публикации
+    теста в прошлом, положительное для тестов, публикуемых в будущем.
+    """
+    if not User.objects.filter(username='SomeUser'):
+        author = User.objects.create(username='SomeUser', first_name="Vasya",
+                last_name="Pupkin", email="pupkin@yandex.ru", is_active=True)
+    else:
+        author = get_object_or_404(User, username='SomeUser')
+    publishing_time = timezone.now() + datetime.timedelta(days=publishing_days_offset)
+    if result_scale == None:
+        result_scale = create_or_return_standart_scale()
+    new_test = Test.objects.create(author=author,
+            category=category,
+            result_scale=result_scale,
+            anonymous_loader=anonymous_loader, name=name,
+            description=description, controlling=controlling,
+            time_restricting=time_restricting, rating=rating,
+            created_date=timezone.now(), published_date=publishing_time,
+            ready_for_passing=ready_for_passing)
+    # Назначает теги определенному тесту
+    for tag in tags:
+        new_test.tags.add(tag)
+        # new_test.save()
+    return new_test
 
 
 class TestsListsViewTests(TestCase):
@@ -100,6 +104,11 @@ class TestsListsViewTests(TestCase):
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
+        # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
+        self.assertEqual(response.context['all_tests_count'], 0)
+        # Должны считаться все категории, в том числе неподтвержденные
+        self.assertEqual(response.context['all_categories_count'], 0)
+        self.assertEqual(response.context['all_tags_count'], 0)
 
     def test_tests_lists_view_with_a_past_test(self):
         """
@@ -110,13 +119,8 @@ class TestsListsViewTests(TestCase):
         some_categories = create_some_categories()
         some_tags = create_some_tags()
         create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста первые два тега.
-                    tags=some_tags[:2], anonymous_loader=False,
-                    name='Опубликованный тест',
-                    description='Тест по основам теории вероятности',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=-30, ready_for_passing=False)
+                    tags=some_tags[:2], name='Опубликованный тест',
+                    publishing_days_offset=-30)
         response = self.client.get(reverse('tests_lists'))
         self.assertEqual(response.status_code, 200)
 
@@ -138,15 +142,21 @@ class TestsListsViewTests(TestCase):
         # [тег, количество опубликованных тестов с данным тегом] отсортирован в представлении по убыванию id,
         # поэтому учитываем это при сравнении.
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-        [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
+            [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
         
         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.        
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-        [[some_categories[1], 0], [some_categories[0], 1]])
+            [[some_categories[1], 0], [some_categories[0], 1]])
         
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
+
+        # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
+        self.assertEqual(response.context['all_tests_count'], 1)
+        # Должны считаться все категории, в том числе неподтвержденные
+        self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertEqual(response.context['all_tags_count'], 4)
 
     def test_tests_lists_view_with_a_future_test(self):
         """
@@ -156,14 +166,10 @@ class TestsListsViewTests(TestCase):
         """
         some_categories = create_some_categories()
         some_tags = create_some_tags()
+
         create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста первые два тега.
-                    tags=some_tags[:2], anonymous_loader=False,
-                    name='Тест с будущей датой публикации',
-                    description='Тест по основам теории вероятности',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=30, ready_for_passing=False)
+                    tags=some_tags[:2], name='Тест с будущей датой публикации',
+                    publishing_days_offset=30)
         response = self.client.get(reverse('tests_lists'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, u'Нет таких тестов')
@@ -171,19 +177,62 @@ class TestsListsViewTests(TestCase):
         self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
         self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], [])
         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
-        
+
         # Количество тестов в категориях и тегах должно быть 0, поскольку
         # неопубликованные тесты считаться не должны.
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-        [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 0], [some_tags[0], 0]])
-        
+            [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 0], [some_tags[0], 0]])
+
         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-        [[some_categories[1], 0], [some_categories[0], 0]])
+            [[some_categories[1], 0], [some_categories[0], 0]])
 
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
+
+        # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
+        self.assertEqual(response.context['all_tests_count'], 1)
+        # Должны считаться все категории, в том числе неподтвержденные
+        self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertEqual(response.context['all_tags_count'], 4)
+
+    def test_tests_lists_view_with_an_unconfirmed_category_test(self):
+        """
+        Тест с неподтвержденной категорией и с минувшей
+        датой публикации должен отображаться на главной странице.
+        """
+        some_categories = create_some_categories()
+        some_tags = create_some_tags()
+        published_test_with_uncf_cat =  create_test(category=some_categories[2],
+                    tags=some_tags[:2], name='Тест с неподтвержденной категорией',
+                    publishing_days_offset=-30)
+        response = self.client.get(reverse('tests_lists'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, u'Тест с неподтвержденной категорией')
+        self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'],
+                                 ['<Test: ' + published_test_with_uncf_cat.name + '>'])
+        self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
+        self.assertQuerysetEqual(response.context['left_number_of_rating_tests'],
+                                 ['<Test: ' + published_test_with_uncf_cat.name + '>'])
+        self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
+
+        self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
+                         [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
+
+        # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
+        self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
+                         [[some_categories[1], 0], [some_categories[0], 0]])
+
+        self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 1)
+        self.assertEqual(response.context['count_of_tests_without_category'], 0)
+        self.assertEqual(response.context['count_of_tests_without_tags'], 0)
+
+        # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
+        self.assertEqual(response.context['all_tests_count'], 1)
+        # Должны считаться все категории, в том числе неподтвержденные
+        self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertEqual(response.context['all_tags_count'], 4)
 
     def test_tests_lists_view_with_future_test_and_past_test(self):
         """
@@ -192,46 +241,39 @@ class TestsListsViewTests(TestCase):
         """
         some_categories = create_some_categories()
         some_tags = create_some_tags()
-
         create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста первые два тега.
-                    tags=some_tags[:2], anonymous_loader=False,
-                    name='Опубликованный тест',
-                    description='Тест по дискретной математике',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=-30, ready_for_passing=False)
-
+                    tags=some_tags[:2], name='Тест с минувшей датой публикации',
+                    publishing_days_offset=-30)
         create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста 3 и 4 теги.
-                    tags=some_tags[2:], anonymous_loader=False,
-                    name='Тест с будущей датой публикации',
-                    description='Тест по основам теории вероятности',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=30, ready_for_passing=False)
-
+                    tags=some_tags[2:], name='Тест с будущей датой публикации',
+                    publishing_days_offset=30)
         response = self.client.get(reverse('tests_lists'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, u'Опубликованный тест')
-        self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], ['<Test: Опубликованный тест>'])
+        self.assertContains(response, u'Тест с минувшей датой публикации')
+        self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], ['<Test: Тест с минувшей датой публикации>'])
         self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
-        self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], ['<Test: Опубликованный тест>'])
+        self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], ['<Test: Тест с минувшей датой публикации>'])
         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
-        
+
         # При расчете количества тестов с определенным тегом считаться должны только опубликованные тесты
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-        [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
-        
+            [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
+
         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
         # Несмотря на то, что для 2 тестов назначена одна и та же категория, считаться для этой
         # категории должен только опубликованный тест
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-        [[some_categories[1], 0], [some_categories[0], 1]])
+            [[some_categories[1], 0], [some_categories[0], 1]])
 
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
+
+        # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
+        self.assertEqual(response.context['all_tests_count'], 2)
+        # Должны считаться все категории, в том числе неподтвержденные
+        self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertEqual(response.context['all_tags_count'], 4)
 
     def test_tests_lists_view_with_five_past_tests_and_one_future(self):
         """
@@ -242,70 +284,44 @@ class TestsListsViewTests(TestCase):
         some_tags = create_some_tags()
 
         # Тест с тегами (первый и второй тег),
-        # подтвержденной категорией и с минувшей датой публикации.
-        # В кортеже создаваемых категорий первая и вторая по счету категории — подтвержденные.
-        t1tgsPublsConf = create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста первые два тега.
-                    tags=some_tags[:2], anonymous_loader=False,
-                    name='Опубликованный тест, 2 тега, подтв. кат.',
-                    description='Тест по дискретной математике',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=-10, ready_for_passing=False)
+        # с подтвержденной категорией и с минувшей датой публикации.
+        # В списке создаваемых категорий первая и вторая по счету категории — подтвержденные,
+        # а третья и четвертая — неподтвержденные.
+        t1tagsPublsConf =  create_test(category=some_categories[0],
+                    tags=some_tags[:2], name='Опубликованный тест, 2 тега, подтв. кат.',
+                    publishing_days_offset=-10)
 
         # Тест с тегами (третий и четвертый тег),
-        # неподтвержденной категорией и с минувшей датой публикации.
-        # В кортеже создаваемых категорий третья и четвертая по счету категории — неподтвержденные.
-        t2tgsPublsUnc = create_test(category=some_categories[2],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста 3 и 4 теги.
-                    tags=some_tags[2:], anonymous_loader=False,
-                    name='Опубликованный тест, 2 тега, неподтв. кат.',
-                    description='Тест по основам теории вероятности',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=-9, ready_for_passing=False)
+        # с неподтвержденной категорией и с минувшей датой публикации.
+        t2tagsPublsUnc =  create_test(category=some_categories[2],
+                    tags=some_tags[2:], name='Опубликованный тест, 2 тега, неподтв. кат.',
+                    publishing_days_offset=-9)
 
-        # Тест без тегов, подтвержденной категорией и с минувшей датой публикации.
-        t3noTgsPublsConf = create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Без тегов.
-                    tags=(), anonymous_loader=False,
-                    name='Опубликованный тест, без тегов, подтв. кат.',
-                    description='Тест по основам теории вероятности',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=-8, ready_for_passing=False)
+        # Тест без тегов, с подтвержденной категорией и с минувшей датой публикации.
+        t3noTagsPublsConf =  create_test(category=some_categories[0],
+                    tags=[], name='Опубликованный тест, без тегов, подтв. кат.',
+                    publishing_days_offset=-8)
 
-        # Тест без тегов, неподтвержденной категорией и с минувшей датой публикации.
-        t4noTagsPublsUnconf = create_test(category=some_categories[2],
-                    result_scale=create_standart_scale(),
-                    # Без тегов.
-                    tags=(), anonymous_loader=False,
-                    name='Опубликованный тест, без тегов, неподтв. кат.',
-                    description='Тест по основам теории вероятности',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=-7, ready_for_passing=False)
+        # Тест без тегов, с неподтвержденной категорией и с минувшей датой публикации.
+        t4noTagsPublsUnconf =  create_test(category=some_categories[2],
+                    tags=[], name='Опубликованный тест, без тегов, неподтв. кат.',
+                    publishing_days_offset=-7)
 
         # Тест без тегов, без категории и с минувшей датой публикации.
-        t5noTagsPublsNoCat = create_test(category=None,
-                    result_scale=create_standart_scale(),
-                    # Без тегов.
-                    tags=(), anonymous_loader=False,
-                    name='Опубликованный тест, без тегов, без кат.',
-                    description='Тест по основам теории вероятности',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=-6, ready_for_passing=False)
+        t5noTagsPublsNoCat =  create_test(category=None,
+                    tags=[], name='Опубликованный тест, без тегов, без кат.',
+                    publishing_days_offset=-6)
 
         # Тест с будущей датой публикации
-        t6 = create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста 3 и 4 теги.
-                    tags=some_tags[2:], anonymous_loader=False,
-                    name='Тест с будущей датой публикации',
-                    description='Тест по основам теории вероятности',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=30, ready_for_passing=False)
+        t6 =  create_test(category=None,
+                    tags=some_tags[2:], name='Тест с будущей датой публикации',
+                    publishing_days_offset=30)
 
         response = self.client.get(reverse('tests_lists'))
+        # Для просмотра содержимого ответа
+        f = open('octapp/test_tests_lists_view_with_a_past_test_content.html', 'w', encoding='utf-8')
+        f.write(response.content.decode('utf-8'))
+        f.close()
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, u'Опубликованный тест, 2 тега, подтв. кат.')
@@ -314,31 +330,46 @@ class TestsListsViewTests(TestCase):
         self.assertContains(response, u'Опубликованный тест, без тегов, неподтв. кат.')
         self.assertContains(response, u'Опубликованный тест, без тегов, без кат.')
 
+        # Для подробного вывода различий в выводе консоли при запуске тестов
         self.maxDiff = None
 
         # Тесты на главной странице должны сортироваться
         # по возрастанию рейтинга и убыванию даты публикации
         # для списка рейтинговых тестов и списка новых тестов соответственно,
         # а также по имени как второму критерию сортировки.
-        # number - ряд
+        # number в переводе — ряд (в данном случае)
         self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'],
-                         ['<Test: ' + t5noTagsPublsNoCat.name + '>', '<Test: ' + t4noTagsPublsUnconf.name + '>', '<Test: ' + t3noTgsPublsConf.name + '>', '<Test: ' + t2tgsPublsUnc.name + '>', '<Test: ' + t1tgsPublsConf.name + '>'])
+                         ['<Test: ' + t5noTagsPublsNoCat.name + '>',
+                          '<Test: ' + t4noTagsPublsUnconf.name + '>',
+                          '<Test: ' + t3noTagsPublsConf.name + '>',
+                          '<Test: ' + t2tagsPublsUnc.name + '>',
+                          '<Test: ' + t1tagsPublsConf.name + '>'])
         self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
         self.assertQuerysetEqual(response.context['left_number_of_rating_tests'],
-                         ['<Test: ' + t2tgsPublsUnc.name + '>', '<Test: ' + t1tgsPublsConf.name + '>', '<Test: ' + t5noTagsPublsNoCat.name + '>', '<Test: ' + t4noTagsPublsUnconf.name + '>', '<Test: ' + t3noTgsPublsConf.name + '>'])
+                         ['<Test: ' + t2tagsPublsUnc.name + '>',
+                          '<Test: ' + t1tagsPublsConf.name + '>',
+                          '<Test: ' + t5noTagsPublsNoCat.name + '>',
+                          '<Test: ' + t4noTagsPublsUnconf.name + '>',
+                          '<Test: ' + t3noTagsPublsConf.name + '>'])
         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
-        
+
         # Первые 2 тега назначены первому тесту, 2 два — второму
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-        [[some_tags[3], 1], [some_tags[2], 1], [some_tags[1], 1], [some_tags[0], 1]])
-        
+            [[some_tags[3], 1], [some_tags[2], 1], [some_tags[1], 1], [some_tags[0], 1]])
+
         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-        [[some_categories[1], 0], [some_categories[0], 2]])
+            [[some_categories[1], 0], [some_categories[0], 2]])
 
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 2)
         self.assertEqual(response.context['count_of_tests_without_category'], 1)
         self.assertEqual(response.context['count_of_tests_without_tags'], 3)
+
+        # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
+        self.assertEqual(response.context['all_tests_count'], 6)
+        # Должны считаться все категории, в том числе неподтвержденные
+        self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertEqual(response.context['all_tags_count'], 4)
 
 class TestDetailViewTests(TestCase):
     def test_detail_view_with_a_future_test(self):
@@ -348,17 +379,16 @@ class TestDetailViewTests(TestCase):
         """
         some_categories = create_some_categories()
         some_tags = create_some_tags()
+
         # Тест с публикацией в будущем
-        future_test = create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста первые два тега.
-                    tags=some_tags[:2], anonymous_loader=False,
-                    name='Тест с будущей датой публикации',
-                    description='Тест по дискретной математике',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=30, ready_for_passing=False)
+        future_test =  create_test(category=some_categories[0],
+                    tags=some_tags[2:], name='Тест с будущей датой публикации',
+                    publishing_days_offset=30)
 
         response = self.client.get(reverse('test_detail', args=(future_test.id,)))
+
+        # Проверка статистики в подвале здесь не требуется,
+        # поскольку у response нет content
 
         # Должно выполняться перенаправление на главную страницу
         self.assertRedirects(response, reverse('tests_lists'))
@@ -372,8 +402,7 @@ class TestDetailViewTests(TestCase):
         some_tags = create_some_tags()
         # Тест с публикацией в будущем
         past_test = create_test(category=some_categories[0],
-                    result_scale=create_standart_scale(),
-                    # Назначаем для теста первые два тега.
+                    result_scale=create_or_return_standart_scale(),
                     tags=some_tags[:2], anonymous_loader=False,
                     name='Опубликованный тест',
                     description='Тест по дискретной математике',
@@ -381,5 +410,12 @@ class TestDetailViewTests(TestCase):
                     publishing_days_offset=-30, ready_for_passing=False)
 
         response = self.client.get(reverse('test_detail', args=(past_test.id,)))
+
+        # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
+        self.assertEqual(response.context['all_tests_count'], 1)
+        # Должны считаться все категории, в том числе неподтвержденные
+        self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertEqual(response.context['all_tags_count'], 4)
+
         # На страничке с тестом его наименование приводится в верхний регистр
         self.assertContains(response, str(past_test.name).upper(), status_code=200)

@@ -1,5 +1,5 @@
-{% load staticfiles %}
-{% load avatar_tags %}
+
+
 <!doctype html>
 <html>
     <head>
@@ -12,13 +12,14 @@
         <title>Система пользовательских тестов OnlineCustomTesting</title>
         <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed|Neucha|Roboto+Mono&amp;subset=cyrillic" rel="stylesheet">
 
-        <link rel="stylesheet" href="{% static 'octapp/css/bootstrap.min.css' %}">
-        <link rel="stylesheet" href="{% static 'octapp/css/bootstrap-theme.min.css' %}">
-        <link rel="stylesheet" href="{% static 'octapp/css/base.css' %}">
+        <link rel="stylesheet" href="/static/octapp/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/octapp/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="/static/octapp/css/base.css">
 
 <!-- adding style of subtemplate -->
-{% block page_style %}
-{% endblock %}
+
+<link rel="stylesheet" href="/static/octapp/css/tests_lists_style.css">
+
         
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -29,10 +30,10 @@
         <![endif]-->
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="{% static 'octapp/js/jquery.min.js' %}"></script>
+        <script src="/static/octapp/js/jquery.min.js"></script>
         <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <script src="{% static 'octapp/js/bootstrap.min.js' %}"></script>
-        <script src="{% static 'octapp/js/jquery.nicescroll.min.js' %}"></script>
+        <script src="/static/octapp/js/bootstrap.min.js"></script>
+        <script src="/static/octapp/js/jquery.nicescroll.min.js"></script>
 
     </head>
     <body>
@@ -48,23 +49,17 @@
 
               <div class="col-md-3 col-sm-4 col-xs-6 header_element header_element_2">
                 <div class="relative">
-                <a href="{% url 'tests_lists' %}">
+                <a href="/">
                     <span class="glyphicon glyphicon-home link_to_home" data-toggle="popover" data-trigger="hover" data-container="body" title="На главную" data-content="Щелкните, чтобы перейти на главную страницу со списками тестов.">
                     </span>
                 </a>
 
                 <!-- Small thumbnail of user's avatar for xs width of screen -->
-{% if user.is_authenticated %}
-                <div class="small_avatar_for_xs">
-                    <a href="{% url 'avatar_change' %}" data-toggle="popover" data-trigger="hover" data-container="body" title="Аватар" data-content="Щелкните, чтобы изменить аватарку или удалить загруженные аватарки.">
-{% avatar user class="small_custom_thumbnail" %}
-                    </a>
-                </div>
-{% endif %}
+
 
                 <h3>Поиск тестов</h3>
                 <form name="search_form" action="POST">
-{% csrf_token %}
+<input type='hidden' name='csrfmiddlewaretoken' value='1SdXLHFLlHSNOGMgG1EyMmmdniIO7W9kx2kfMY41KLmiqAOf0qr8IYlvgrO1LuTS' />
                     <input name="search" placeholder="Искать с совпадениями" type="search">
                     <div class="search_buttons_div table center-block">
                         <div class="table_row">
@@ -82,47 +77,16 @@
               </div>
 
               <div class="col-md-2 col-sm-4 col-xs-6 header_element hidden-xs header_element_3">
-{% if user.is_authenticated %}
-                <div class="center-block text-center user_container">
-                    <small><span>Пользователь: {{ user.username|truncatechars:16 }}</span></small>
-                    <div class="avatar_container center-block">
-                        <a href="{% url 'avatar_change' %}" data-toggle="popover" data-trigger="hover" data-container="body" title="Аватар" data-content="Щелкните, чтобы изменить аватарку или удалить загруженные аватарки.">
-{% avatar user class="custom_thumbnail" %}
-                        </a>
-                    </div>
-                </div>
-{% else %}
+
                 <p>Вы в гостевом режиме.<br>Зарегистрируйтесь и/или войдите в систему для добавления тестов и просмотра статистики.</p>
-{% endif %}
+
               </div>
 
               <div class="col-md-4 col-sm-4 col-xs-6 header_element header_element_4">
-{% if user.is_authenticated %}
-                <div class="table center-block authorized_user_buttons">
-                    <div class="table_row">
-                        <div class="table_cell">
-                            <a href="{% url 'user_tests' pk=request.user.id %}" class="btn btn-default btn-sm" role="button">Ваши тесты</a>
-                        </div>
-                        <div class="table_cell">
-                            <a href="{% url 'test_new' %}" class="btn btn-default btn-sm">Новый тест</a>
-                        </div>
-                    </div>
-                    <div class="table_row">
-                        <div class="table_cell">
-                        <a href="#" class="btn btn-default btn-sm" role="button">
-                            Результаты</a>
-                        </div>
-                        <div class="table_cell">
-                        <a href="{% url 'auth_logout' %}" class="btn btn-default btn-sm">Выйти</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- If user is admin - администрирование, if moderator - модерирование -->
-                <div class="admin_moder_button_container"><a href="#" class="btn btn-default btn-sm">Модерирование</a></div>
-{% else %}
+
                 <div class="authorization_div">
-                    <form name="login_form" method="POST" action="{% url 'auth_login' %}">
-{% csrf_token %}
+                    <form name="login_form" method="POST" action="/accounts/login/">
+<input type='hidden' name='csrfmiddlewaretoken' value='1SdXLHFLlHSNOGMgG1EyMmmdniIO7W9kx2kfMY41KLmiqAOf0qr8IYlvgrO1LuTS' />
                         <div class="table">
                             <div class="table_row">
                                 <div class="table_cell">
@@ -137,25 +101,105 @@
                         </div>
                         <div class="flex">
     <!-- "and form.password" needs for avoiding evaluating to true at registration fail -->
-    {% if form.errors and form.password %}
-                            <div><button type="submit" class="btn btn-default btn-sm" id="signin_button" data-toggle="popover" data-container="body" title="Что-то пошло не так..." data-content="Пожалуйста, введите правильные имя пользователя и пароль. Оба поля могут быть чувствительны к регистру.">Войти</button></div>
-    {% else %}
+    
                             <div><button type="submit" class="btn btn-default btn-sm">Войти</button></div>
-    {% endif %}                     
-                            <div><a href="{% url 'auth_password_reset' %}" class="btn btn-default btn-sm">Забыл(а) пароль</a></div>
-                            <div><a href="{% url 'registration_register' %}" class="btn btn-default btn-sm">Регистрация</a></div>
+                         
+                            <div><a href="/accounts/password/reset/" class="btn btn-default btn-sm">Забыл(а) пароль</a></div>
+                            <div><a href="/accounts/register/" class="btn btn-default btn-sm">Регистрация</a></div>
                         </div>
                     </form>
                 </div>
-{% endif %}      
+      
               </div> <!-- header_element end -->
             </div> <!-- row flex end -->
           </div> <!-- container end -->
         </header>
 
         <div class="content container">
-{% block content %}
-{% endblock %}
+
+<div class="row flex">
+    <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
+        <a href="/categories/"><h2>КАТЕГОРИИ ТЕСТОВ</h2></a>
+        <div>
+            <a href="/tests/?selected_category=unconfirmed" class="tag_or_category"><span class="badge">Тесты с неподтвержденными категориями (2 шт.)</span></a>
+            <a href="/tests/?selected_category=null" class="tag_or_category"><span class="badge">Тесты без категории (1 шт.)</span></a>            
+    
+            <a href="/tests/?selected_category=22" class="tag_or_category"><span class="badge">SomeConfCat2 (0 шт.)</span></a>
+    
+            <a href="/tests/?selected_category=21" class="tag_or_category"><span class="badge">SomeConfCat (2 шт.)</span></a>
+    
+        
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
+        <a href="/tags/"><h2>ТЕГИ</h2></a>
+        <div>
+            <a href="/tests/?selected_tag=null" class="tag_or_category"><span class="badge">Тесты без тегов (3 шт.)</span></a>            
+    
+            <a href="/tests/?selected_tag=24" class="tag_or_category"><span class="badge">для школьников (1 шт.)</span></a>
+    
+            <a href="/tests/?selected_tag=23" class="tag_or_category"><span class="badge">образовательные (1 шт.)</span></a>
+    
+            <a href="/tests/?selected_tag=22" class="tag_or_category"><span class="badge">для студентов (1 шт.)</span></a>
+    
+            <a href="/tests/?selected_tag=21" class="tag_or_category"><span class="badge">большие (1 шт.)</span></a>
+    
+        
+        </div>
+    </div>
+
+    <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
+        <a href="/tests/?sorting=published_date_desc"><h2>НОВЫЕ ТЕСТЫ</h2></a>
+    
+        <!-- Если правого ряда новых тестов нет, то помещать тесты в 1 ячейку таблицы -->
+        
+        <div class="table">
+            <div class="table_row">
+                <div class="table_cell">
+            
+                    <a href="/test/10/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, без тегов, без кат.</span></div></a>
+            
+                    <a href="/test/9/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, без тегов, неподтв. кат.</span></div></a>
+            
+                    <a href="/test/8/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, без тегов, подтв. кат.</span></div></a>
+            
+                    <a href="/test/7/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, 2 тега, неподтв. кат.</span></div></a>
+            
+                    <a href="/test/6/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, 2 тега, подтв. кат.</span></div></a>
+            
+                </div>
+            </div>
+        </div>
+                
+    
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
+        <a href="/tests/?sorting=rating_desc"><h2>РЕЙТИНГОВЫЕ ТЕСТЫ</h2></a>
+    
+        <!-- Если правого ряда новых тестов нет, то помещать тесты в 1 ячейку таблицы -->
+        
+        <div class="table">
+            <div class="table_row">
+                <div class="table_cell">
+            
+                    <a href="/test/7/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, 2 тега, неподтв. кат.</span></div></a>
+            
+                    <a href="/test/6/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, 2 тега, подтв. кат.</span></div></a>
+            
+                    <a href="/test/10/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, без тегов, без кат.</span></div></a>
+            
+                    <a href="/test/9/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, без тегов, неподтв. кат.</span></div></a>
+            
+                    <a href="/test/8/" class="link_to_test"><div class="test_div"><span class="name_of_test">Опубликованный тест, без тегов, подтв. кат.</span></div></a>
+            
+                </div>
+            </div>
+        </div>
+                
+    
+    </div>
+</div>
+
         </div>
 
         <footer>
@@ -169,9 +213,9 @@
                         <a href="" class="btn btn-sm btn-default">Пользовательское соглашение</a>
                         <a href="mailto:danil.cheltigmashev@yandex.ru" class="btn btn-sm btn-default hidden-xs">Обратная связь</a>
                         <div class="general_statictics inline_block hidden-xs">
-                            <span class="badge">Тестов: {{ all_tests_count }}</span>
-                            <span class="badge">Категорий: {{ all_categories_count }}</span>
-                            <span class="badge">Тегов: {{ all_tags_count }}</span>
+                            <span class="badge">Тестов: 6</span>
+                            <span class="badge">Категорий: 4</span>
+                            <span class="badge">Тегов: 4</span>
                         </div>
                     </div>
                 </div>
