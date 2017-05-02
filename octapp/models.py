@@ -143,7 +143,7 @@ class ClosedQuestion(models.Model):
                              verbose_name='Тест, к которому относится вопрос', null=False, blank=False)
     only_one_right = models.BooleanField('Только один вариант ответа — правильный', default=True, blank=True)
     question_content = RichTextField('Содержимое (наполнение, контент) вопроса.', null=False,
-        blank=False, help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.')
+        blank=False, help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.', default='')
     question_index_number = models.IntegerField('Порядковый номер вопроса в тесте', blank=False, null=False)
     correct_option_numbers = models.CharField('Номера одного или нескольких правильных вариантов через запятую и без пробелов',
         max_length=55, blank=False, null=False)
@@ -156,11 +156,31 @@ class ClosedQuestion(models.Model):
         verbose_name = 'Вопрос закрытого типа'
         verbose_name_plural = 'Вопросы закрытого типа'
 
+class ClosedQuestionOption(models.Model):
+    question = models.ForeignKey('octapp.ClosedQuestion', related_name='closed_question_options',
+        on_delete=models.CASCADE, verbose_name='Вопрос закрытого типа, которому принадлежит данный вариант ответа')
+    content = RichTextField('Содержимое (наполнение, контент) варианта ответа',
+                            help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                            null=False, blank=False, default='')
+    option_number = models.IntegerField('Порядковый номер варианта ответа', blank=False, null=False)
+
+    def __str__(self):
+        return 'Вариант ответа № ' + self.option_number + ' на вопрос № /' + self.question.num.question_index_number + '/'
+
+    class Meta:
+        ordering = ['question']
+        verbose_name = 'Элемент строки сопоставления'
+        verbose_name_plural = 'Элементы строки сопоставления'
+
 class OpenQuestion(models.Model):
     test = models.ForeignKey('octapp.Test', related_name='open_questions', on_delete=models.CASCADE,
                              null=False, blank=False, verbose_name='Тест, к которому относится вопрос')
-    question_content_before_blank = RichTextField('Содержимое (наполнение, контент) вопроса перед пропуском', null=False, blank=False)
-    question_content_after_blank = RichTextField('Содержимое (наполнение, контент) вопроса после пропуска (может отсутствовать)', null=True, blank=True)
+    question_content_before_blank = RichTextField('Содержимое (наполнение, контент) вопроса перед пропуском',
+                                                  help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                                                  null=False, blank=False, default='')
+    question_content_after_blank = RichTextField('Содержимое (наполнение, контент) вопроса после пропуска (может отсутствовать)',
+                                             help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                                             null=False, blank=False, default='')
     correct_option = models.CharField('Текст правильного ответа', max_length=120, blank=False, null=False)
     question_index_number = models.IntegerField('Порядковый номер вопроса в тесте', blank=False, null=False)
 
@@ -175,7 +195,9 @@ class OpenQuestion(models.Model):
 class SequenceQuestion(models.Model):
     test = models.ForeignKey('octapp.Test', related_name='sequence_questions', null=False, blank=False,
                 on_delete=models.CASCADE, verbose_name='Тест, к которому относится вопрос')
-    question_content = RichTextField('Содержимое (наполнение, контент) вопроса', null=False, blank=False)
+    question_content = RichTextField('Содержимое (наполнение, контент) вопроса',
+                                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                                     null=False, blank=False, default='')
     correct_sequence = models.CharField(
         'Правильная последовательность',
         max_length=55, blank=False, null=False, help_text='Номера элементов последовательности, разделенные запятыми без пробелов.')
@@ -190,13 +212,16 @@ class SequenceQuestion(models.Model):
         verbose_name_plural = 'Вопросы на определение последовательности (порядка) элементов'
 
 class SequenceQuestionElement(models.Model):
-    sequence_question = models.ForeignKey('octapp.SequenceQuestion', related_name='sequence_elements',
+    question = models.ForeignKey('octapp.SequenceQuestion', related_name='sequence_elements', null=False, blank=False,
         on_delete=models.CASCADE, verbose_name='Вопрос на определение последовательности, к которому относится элемент')
+    element_content = RichTextField('Содержимое (наполнение, контент) элемента последовательности',
+                                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                                     null=False, blank=False, default='')
     element_index_number = models.IntegerField('Порядковый номер элемента последовательности', blank=False, null=False)
 
     def __str__(self):
         return 'Элемент №' + str(self.element_index_number) + \
-               ' вопроса № ' + self.sequence_question.question_index_number
+               ' вопроса № ' + self.question.question_index_number
 
     class Meta:
         ordering = ['element_index_number']
@@ -204,8 +229,15 @@ class SequenceQuestionElement(models.Model):
         verbose_name_plural = 'Элементы для вопроса на определение последовательности'
 
 class ComparisonQuestion(models.Model):
-    test = models.ForeignKey('octapp.Test', related_name='comparison_questions', on_delete=models.CASCADE, verbose_name='Тест, к которому относится вопрос')
-    question_content = RichTextField('Содержимое (наполнение, контент) вопроса', null=False, blank=False)
+    test = models.ForeignKey('octapp.Test', related_name='comparison_questions', null=False, blank=False,
+                             on_delete=models.CASCADE, verbose_name='Тест, к которому относится вопрос')
+    question_content = RichTextField('Содержимое (наполнение, контент) вопроса',
+                                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                                     null=False, blank=False, default='')
+    left_row_elements = models.ManyToManyField('octapp.ComparisonQuestionElement', related_name='left_comparison_elements',
+        verbose_name='Левые элементы сопоставления', blank=False)
+    right_row_elements = models.ManyToManyField('octapp.ComparisonQuestionElement', related_name='right_comparison_elements',
+        verbose_name='Правые элементы сопоставления', blank=False)
     correct_sequence = models.CharField(
         'Правильная последовательность элементов второго (правого) ряда (столбца)',
         max_length=55, blank=False, null=False, help_text='Номера элементов последовательности второго ряда, разделенные запятыми без пробелов.')
@@ -218,3 +250,20 @@ class ComparisonQuestion(models.Model):
         ordering = ['test']
         verbose_name = 'Вопрос на сопоставление'
         verbose_name_plural = 'Вопросы на сопоставление'
+
+class ComparisonQuestionElement(models.Model):
+    question = models.ForeignKey('octapp.ComparisonQuestion', related_name='comparison_elements', null=False, blank=False,
+        on_delete=models.CASCADE, verbose_name='Вопрос на сопоставление, к которому относится элемент')
+    element_content = RichTextField('Содержимое (наполнение, контент) элемента сопоставления',
+                                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                                     null=False, blank=False, default='')
+    element_index_number = models.IntegerField('Порядковый номер элемента сопоставления', blank=False, null=False)
+
+    def __str__(self):
+        return 'Элемент №' + str(self.element_index_number) + \
+               ' вопроса № ' + self.question.question_index_number
+
+    class Meta:
+        ordering = ['question']
+        verbose_name = 'Элемент левого или правого ряда в вопросе на сопоставление'
+        verbose_name_plural = 'Элементы левого или правого ряда в вопросе на сопоставление'
