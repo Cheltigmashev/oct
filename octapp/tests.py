@@ -113,7 +113,7 @@ class TestsListsViewTests(TestCase):
                     result_scale=create_standart_scale(),
                     # Назначаем для теста первые два тега.
                     tags=some_tags[:2], anonymous_loader=False,
-                    name='Тест с минувшей датой публикации',
+                    name='Опубликованный тест',
                     description='Тест по основам теории вероятности',
                     controlling=True, time_restricting=True, rating=0,
                     publishing_days_offset=-30, ready_for_passing=False)
@@ -121,15 +121,15 @@ class TestsListsViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Для просмотра содержимого ответа
-        f = open('octapp/test_tests_lists_view_with_a_past_test_content.html', 'w', encoding='utf-8')
-        f.write(response.content.decode('utf-8'))
-        f.close()
+        # f = open('octapp/test_tests_lists_view_with_a_past_test_content.html', 'w', encoding='utf-8')
+        # f.write(response.content.decode('utf-8'))
+        # f.close()
 
-        self.assertContains(response, u'Тест с минувшей датой публикации')
+        self.assertContains(response, u'Опубликованный тест')
 
-        self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], ['<Test: Тест с минувшей датой публикации>'])
+        self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], ['<Test: Опубликованный тест>'])
         self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
-        self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], ['<Test: Тест с минувшей датой публикации>'])
+        self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], ['<Test: Опубликованный тест>'])
         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
         
         # Количество тестов в категориях и тегах
@@ -148,219 +148,238 @@ class TestsListsViewTests(TestCase):
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
 
-#     def test_tests_lists_view_with_a_future_test(self):
-#         """
-#         Тест с будущей датой публикации, которая еще не наступила,
-#         не должен отображаться на главной странице — tests_lists.
-#         В контексте представления не должно быть такого теста.
-#         """
-#         some_categories = create_some_categories()
-#         some_tags = create_some_tags()
-#         create_test(category=some_categories[0],
-#                     result_scale=create_standart_scale(),
-#                     # Назначаем для теста первые два тега.
-#                     tags=some_tags[:2], anonymous_loader=False,
-#                     name='Тест с будущей датой публикации',
-#                     description='Тест по основам теории вероятности',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=30, ready_for_passing=False)
-#         response = self.client.get(reverse('tests_lists'))
-#         self.assertEqual(response.status_code, 200)
-#         self.assertContains(response, u'Нет таких тестов')
-#         self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], [])
-#         self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
-#         self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], [])
-#         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
+    def test_tests_lists_view_with_a_future_test(self):
+        """
+        Тест с будущей датой публикации, которая еще не наступила,
+        не должен отображаться на главной странице — tests_lists.
+        В контексте представления не должно быть такого теста.
+        """
+        some_categories = create_some_categories()
+        some_tags = create_some_tags()
+        create_test(category=some_categories[0],
+                    result_scale=create_standart_scale(),
+                    # Назначаем для теста первые два тега.
+                    tags=some_tags[:2], anonymous_loader=False,
+                    name='Тест с будущей датой публикации',
+                    description='Тест по основам теории вероятности',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=30, ready_for_passing=False)
+        response = self.client.get(reverse('tests_lists'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, u'Нет таких тестов')
+        self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], [])
+        self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
+        self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], [])
+        self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
         
-#         # Количество тестов в категориях и тегах должно быть 0, поскольку
-#         # неопубликованные тесты считаться не должны.
-#         self.assertQuerysetEqual(response.context['showing_tags_and_count_of_published_tests'],
-#         [[some_tags[0], 0], [some_tags[1], 0], [some_tags[2], 0], [some_tags[3], 0]])
+        # Количество тестов в категориях и тегах должно быть 0, поскольку
+        # неопубликованные тесты считаться не должны.
+        self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
+        [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 0], [some_tags[0], 0]])
         
-#         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.        
-#         self.assertQuerysetEqual(response.context['showing_categories_and_count_of_published_tests'],
-#         [[some_categories[0], 0], [some_categories[1], 0]])
+        # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
+        self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
+        [[some_categories[1], 0], [some_categories[0], 0]])
 
-#         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
-#         self.assertEqual(response.context['count_of_tests_without_category'], 0)
-#         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
+        self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
+        self.assertEqual(response.context['count_of_tests_without_category'], 0)
+        self.assertEqual(response.context['count_of_tests_without_tags'], 0)
 
-#     def test_tests_lists_view_with_future_test_and_past_test(self):
-#         """
-#         Если есть как тест с минувшей датей публикации, так и тест с будущей,
-#         то отображаться и быть в контексте должен быть только тест с минувшей.
-#         """
-#         some_categories = create_some_categories()
-#         some_tags = create_some_tags()
+    def test_tests_lists_view_with_future_test_and_past_test(self):
+        """
+        Если есть как тест с минувшей датей публикации, так и тест с будущей,
+        то отображаться и быть в контексте должен быть только тест с минувшей.
+        """
+        some_categories = create_some_categories()
+        some_tags = create_some_tags()
 
-#         create_test(category=some_categories[0],
-#                     result_scale=create_standart_scale(),
-#                     # Назначаем для теста первые два тега.
-#                     tags=some_tags[:2], anonymous_loader=False,
-#                     name='Тест с минувшей датой публикации',
-#                     description='Тест по дискретной математике',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=-30, ready_for_passing=False)
+        create_test(category=some_categories[0],
+                    result_scale=create_standart_scale(),
+                    # Назначаем для теста первые два тега.
+                    tags=some_tags[:2], anonymous_loader=False,
+                    name='Опубликованный тест',
+                    description='Тест по дискретной математике',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=-30, ready_for_passing=False)
 
-#         create_test(category=some_categories[0],
-#                     result_scale=create_standart_scale(),
-#                     # Назначаем для теста 3 и 4 теги.                    
-#                     tags=some_tags[2:], anonymous_loader=False,
-#                     name='Тест с будущей датой публикации',
-#                     description='Тест по основам теории вероятности',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=30, ready_for_passing=False)
+        create_test(category=some_categories[0],
+                    result_scale=create_standart_scale(),
+                    # Назначаем для теста 3 и 4 теги.
+                    tags=some_tags[2:], anonymous_loader=False,
+                    name='Тест с будущей датой публикации',
+                    description='Тест по основам теории вероятности',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=30, ready_for_passing=False)
 
-#         response = self.client.get(reverse('tests_lists'))
-#         self.assertEqual(response.status_code, 200)
-#         self.assertContains(response, u'Тест с минувшей датой публикации')
-#         self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], ['<Test: Тест с минувшей датой публикации>'])
-#         self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
-#         self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], ['<Test: Тест с минувшей датой публикации>'])
-#         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
+        response = self.client.get(reverse('tests_lists'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, u'Опубликованный тест')
+        self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], ['<Test: Опубликованный тест>'])
+        self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
+        self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], ['<Test: Опубликованный тест>'])
+        self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
         
-#         # Количество тестов в категориях и тегах должно быть 1, поскольку
-#         # неопубликованные тесты считаться не должны.
-#         self.assertQuerysetEqual(response.context['showing_tags_and_count_of_published_tests'],
-#         [[some_tags[0], 1], [some_tags[1], 1], [some_tags[2], 0], [some_tags[3], 0]])
+        # При расчете количества тестов с определенным тегом считаться должны только опубликованные тесты
+        self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
+        [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
         
-#         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
-#         # Несмотря на то, что для 2 тестов назначена одна и та же категория, считаться для этой
-#         # категории должен только опубликованный тест
-#         self.assertQuerysetEqual(response.context['showing_categories_and_count_of_published_tests'],
-#         [[some_categories[0], 1], [some_categories[1], 0]])
+        # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
+        # Несмотря на то, что для 2 тестов назначена одна и та же категория, считаться для этой
+        # категории должен только опубликованный тест
+        self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
+        [[some_categories[1], 0], [some_categories[0], 1]])
 
-#         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
-#         self.assertEqual(response.context['count_of_tests_without_category'], 0)
-#         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
+        self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
+        self.assertEqual(response.context['count_of_tests_without_category'], 0)
+        self.assertEqual(response.context['count_of_tests_without_tags'], 0)
 
-#     def test_tests_lists_view_with_five_past_tests(self):
-#         """
-#         Могут отображаться несколько тестов с минувшей датей публикации, т.е. опубликованных тестов.
-#         В том числе, если у них нет тегов, нет категории, либо категория не подтверждена.
-#         """
-#         some_categories = create_some_categories()
-#         some_tags = create_some_tags()
+    def test_tests_lists_view_with_five_past_tests_and_one_future(self):
+        """
+        Могут отображаться несколько тестов с минувшей датей публикации, т.е. опубликованных тестов.
+        В том числе, если у них нет тегов, нет категории, либо категория не подтверждена.
+        """
+        some_categories = create_some_categories()
+        some_tags = create_some_tags()
 
-#         # Тест с тегами (первый и второй тег),
-#         # подтвержденной категорией и с минувшей датой публикации.
-#         # В кортеже создаваемых категорий первая и вторая по счету категории — подтвержденные.
-#         t1 = create_test(category=some_categories[0],
-#                     result_scale=create_standart_scale(),
-#                     # Назначаем для теста первые два тега.
-#                     tags=some_tags[:2], anonymous_loader=False,
-#                     name='Тест с минувшей датой публикации, с 2 тегами, с подтвержденной категорией',
-#                     description='Тест по дискретной математике',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=-30, ready_for_passing=False)
+        # Тест с тегами (первый и второй тег),
+        # подтвержденной категорией и с минувшей датой публикации.
+        # В кортеже создаваемых категорий первая и вторая по счету категории — подтвержденные.
+        t1tgsPublsConf = create_test(category=some_categories[0],
+                    result_scale=create_standart_scale(),
+                    # Назначаем для теста первые два тега.
+                    tags=some_tags[:2], anonymous_loader=False,
+                    name='Опубликованный тест, 2 тега, подтв. кат.',
+                    description='Тест по дискретной математике',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=-10, ready_for_passing=False)
 
-#         # Тест с тегами (третий и четвертый тег),
-#         # неподтвержденной категорией и с минувшей датой публикации.
-#         # В кортеже создаваемых категорий третья и четвертая по счету категории — неподтвержденные.
-#         t2 = create_test(category=some_categories[2],
-#                     result_scale=create_standart_scale(),
-#                     # Назначаем для теста 3 и 4 теги.                    
-#                     tags=some_tags[2:], anonymous_loader=False,
-#                     name='Тест с минувшей датой публикации, с 2 тегами, с неподтвержденной категорией',
-#                     description='Тест по основам теории вероятности',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=-3, ready_for_passing=False)
+        # Тест с тегами (третий и четвертый тег),
+        # неподтвержденной категорией и с минувшей датой публикации.
+        # В кортеже создаваемых категорий третья и четвертая по счету категории — неподтвержденные.
+        t2tgsPublsUnc = create_test(category=some_categories[2],
+                    result_scale=create_standart_scale(),
+                    # Назначаем для теста 3 и 4 теги.
+                    tags=some_tags[2:], anonymous_loader=False,
+                    name='Опубликованный тест, 2 тега, неподтв. кат.',
+                    description='Тест по основам теории вероятности',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=-9, ready_for_passing=False)
 
-#         # Тест без тегов, подтвержденной категорией и с минувшей датой публикации.
-#         t3 = create_test(category=some_categories[0],
-#                     result_scale=create_standart_scale(),
-#                     # Без тегов.                    
-#                     tags=(), anonymous_loader=False,
-#                     name='Тест с минувшей датой публикации, без тегов, с подтвержденной категорией',
-#                     description='Тест по основам теории вероятности',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=-3, ready_for_passing=False)
+        # Тест без тегов, подтвержденной категорией и с минувшей датой публикации.
+        t3noTgsPublsConf = create_test(category=some_categories[0],
+                    result_scale=create_standart_scale(),
+                    # Без тегов.
+                    tags=(), anonymous_loader=False,
+                    name='Опубликованный тест, без тегов, подтв. кат.',
+                    description='Тест по основам теории вероятности',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=-8, ready_for_passing=False)
 
-#         # Тест без тегов, неподтвержденной категорией и с минувшей датой публикации.
-#         t4 = create_test(category=some_categories[2],
-#                     result_scale=create_standart_scale(),
-#                     # Без тегов.                    
-#                     tags=(), anonymous_loader=False,
-#                     name='Тест с минувшей датой публикации, без тегов, с неподтвержденной категорией',
-#                     description='Тест по основам теории вероятности',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=-3, ready_for_passing=False)
+        # Тест без тегов, неподтвержденной категорией и с минувшей датой публикации.
+        t4noTagsPublsUnconf = create_test(category=some_categories[2],
+                    result_scale=create_standart_scale(),
+                    # Без тегов.
+                    tags=(), anonymous_loader=False,
+                    name='Опубликованный тест, без тегов, неподтв. кат.',
+                    description='Тест по основам теории вероятности',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=-7, ready_for_passing=False)
 
-#         # Тест без тегов, без категории и с минувшей датой публикации.
-#         t5 = create_test(category=None,
-#                     result_scale=create_standart_scale(),
-#                     # Без тегов.                    
-#                     tags=(), anonymous_loader=False,
-#                     name='Тест с минувшей датой публикации, без тегов, без категории',
-#                     description='Тест по основам теории вероятности',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=-3, ready_for_passing=False)
+        # Тест без тегов, без категории и с минувшей датой публикации.
+        t5noTagsPublsNoCat = create_test(category=None,
+                    result_scale=create_standart_scale(),
+                    # Без тегов.
+                    tags=(), anonymous_loader=False,
+                    name='Опубликованный тест, без тегов, без кат.',
+                    description='Тест по основам теории вероятности',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=-6, ready_for_passing=False)
 
-#         response = self.client.get(reverse('tests_lists'))
-#         self.assertEqual(response.status_code, 200)
-#         self.assertContains(response, u'Тест с минувшей датой публикации, с 2 тегами, с подтвержденной категорией')
-#         self.assertContains(response, u'Тест с минувшей датой публикации, с 2 тегами, с неподтвержденной категорией')
-#         self.assertContains(response, u'Тест с минувшей датой публикации, без тегов, с подтвержденной категорией')
-#         self.assertContains(response, u'Тест с минувшей датой публикации, без тегов, с неподтвержденной категорией')
-#         self.assertContains(response, u'Тест с минувшей датой публикации, без тегов, без категории')
+        # Тест с будущей датой публикации
+        t6 = create_test(category=some_categories[0],
+                    result_scale=create_standart_scale(),
+                    # Назначаем для теста 3 и 4 теги.
+                    tags=some_tags[2:], anonymous_loader=False,
+                    name='Тест с будущей датой публикации',
+                    description='Тест по основам теории вероятности',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=30, ready_for_passing=False)
+
+        response = self.client.get(reverse('tests_lists'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, u'Опубликованный тест, 2 тега, подтв. кат.')
+        self.assertContains(response, u'Опубликованный тест, 2 тега, неподтв. кат.')
+        self.assertContains(response, u'Опубликованный тест, без тегов, подтв. кат.')
+        self.assertContains(response, u'Опубликованный тест, без тегов, неподтв. кат.')
+        self.assertContains(response, u'Опубликованный тест, без тегов, без кат.')
+
+        self.maxDiff = None
+
+        # Тесты на главной странице должны сортироваться
+        # по возрастанию рейтинга и убыванию даты публикации
+        # для списка рейтинговых тестов и списка новых тестов соответственно,
+        # а также по имени как второму критерию сортировки.
+        # number - ряд
+        self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'],
+                         ['<Test: ' + t5noTagsPublsNoCat.name + '>', '<Test: ' + t4noTagsPublsUnconf.name + '>', '<Test: ' + t3noTgsPublsConf.name + '>', '<Test: ' + t2tgsPublsUnc.name + '>', '<Test: ' + t1tgsPublsConf.name + '>'])
+        self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
+        self.assertQuerysetEqual(response.context['left_number_of_rating_tests'],
+                         ['<Test: ' + t2tgsPublsUnc.name + '>', '<Test: ' + t1tgsPublsConf.name + '>', '<Test: ' + t5noTagsPublsNoCat.name + '>', '<Test: ' + t4noTagsPublsUnconf.name + '>', '<Test: ' + t3noTgsPublsConf.name + '>'])
+        self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
         
-#         self.assertQuerysetEqual(response.context['left_number_of_new_tests_list'], [t1, t2, t3, t4, t5])
-#         self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
-#         self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], [t1, t2, t3, t4, t5])
-#         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
+        # Первые 2 тега назначены первому тесту, 2 два — второму
+        self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
+        [[some_tags[3], 1], [some_tags[2], 1], [some_tags[1], 1], [some_tags[0], 1]])
         
-#         # Первые 2 тега назначены первому тесту, 2 два — второму
-#         self.assertQuerysetEqual(response.context['showing_tags_and_count_of_published_tests'],
-#         [[some_tags[0], 1], [some_tags[1], 1], [some_tags[2], 1], [some_tags[3], 1]])
-        
-#         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
-#         self.assertQuerysetEqual(response.context['showing_categories_and_count_of_published_tests'],
-#         [[some_categories[0], 2], [some_categories[1], 0]])
+        # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
+        self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
+        [[some_categories[1], 0], [some_categories[0], 2]])
 
-#         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 2)
-#         self.assertEqual(response.context['count_of_tests_without_category'], 1)
-#         self.assertEqual(response.context['count_of_tests_without_tags'], 3)
+        self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 2)
+        self.assertEqual(response.context['count_of_tests_without_category'], 1)
+        self.assertEqual(response.context['count_of_tests_without_tags'], 3)
 
-# class TestDetailViewTests(TestCase):
-#     def test_detail_view_with_a_future_test(self):
-#         """
-#         Подробное представление, страничка теста с будущей либо 
-#         отсутствующей датой публикации должно выдавать перенаправление
-#         """
-#         some_categories = create_some_categories()
-#         some_tags = create_some_tags()
-#         # Тест с публикацией в будущем
-#         future_test = create_test(category=some_categories[0],
-#                     result_scale=create_standart_scale(),
-#                     # Назначаем для теста первые два тега.
-#                     tags=some_tags[:2], anonymous_loader=False,
-#                     name='Тест с будущей датой публикации',
-#                     description='Тест по дискретной математике',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=30, ready_for_passing=False)
+class TestDetailViewTests(TestCase):
+    def test_detail_view_with_a_future_test(self):
+        """
+        Подробное представление, страничка теста с будущей либо
+        отсутствующей датой публикации должно выдавать перенаправление
+        """
+        some_categories = create_some_categories()
+        some_tags = create_some_tags()
+        # Тест с публикацией в будущем
+        future_test = create_test(category=some_categories[0],
+                    result_scale=create_standart_scale(),
+                    # Назначаем для теста первые два тега.
+                    tags=some_tags[:2], anonymous_loader=False,
+                    name='Тест с будущей датой публикации',
+                    description='Тест по дискретной математике',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=30, ready_for_passing=False)
 
-#         response = self.client.get(reverse('test_detail', args=(future_test.id,)))
+        response = self.client.get(reverse('test_detail', args=(future_test.id,)))
 
-#         # Должно выполняться перенаправление на главную страницу
-#         self.assertRedirects(response, reverse('tests_lists'))        
+        # Должно выполняться перенаправление на главную страницу
+        self.assertRedirects(response, reverse('tests_lists'))
 
-#     def test_detail_view_with_a_past_test(self):
-#         """
-#         Подробное представление, страничка теста с минувшей датой
-#         публикации и с кодом 200
-#         """
-#         some_categories = create_some_categories()
-#         some_tags = create_some_tags()
-#         # Тест с публикацией в будущем
-#         past_test = create_test(category=some_categories[0],
-#                     result_scale=create_standart_scale(),
-#                     # Назначаем для теста первые два тега.
-#                     tags=some_tags[:2], anonymous_loader=False,
-#                     name='Тест с минувшей датой публикации',
-#                     description='Тест по дискретной математике',
-#                     controlling=True, time_restricting=True, rating=0,
-#                     publishing_days_offset=-30, ready_for_passing=False)
+    def test_detail_view_with_a_past_test(self):
+        """
+        Подробное представление, страничка теста с минувшей датой
+        публикации и с кодом 200
+        """
+        some_categories = create_some_categories()
+        some_tags = create_some_tags()
+        # Тест с публикацией в будущем
+        past_test = create_test(category=some_categories[0],
+                    result_scale=create_standart_scale(),
+                    # Назначаем для теста первые два тега.
+                    tags=some_tags[:2], anonymous_loader=False,
+                    name='Опубликованный тест',
+                    description='Тест по дискретной математике',
+                    controlling=True, time_restricting=True, rating=0,
+                    publishing_days_offset=-30, ready_for_passing=False)
 
-#         response = self.client.get(reverse('test_detail', args=(past_test.id,)))
-#         # На страничке с тестом его наименование приводится в верхний регистр
-#         self.assertContains(response, str(past_test.name).upper(), status_code=200)
+        response = self.client.get(reverse('test_detail', args=(past_test.id,)))
+        # На страничке с тестом его наименование приводится в верхний регистр
+        self.assertContains(response, str(past_test.name).upper(), status_code=200)
