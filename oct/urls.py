@@ -1,7 +1,6 @@
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views
-from django.conf import settings
 from registration.backends.simple.views import RegistrationView
 from octapp.forms import RegistrationFormTermOfServiceUniqueEmail
 
@@ -9,8 +8,6 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from ckeditor_uploader import views as ckeditor_views
 
-from django.utils import timezone
-from octapp.models import Test
 # Эта функция, также используемая для представления главной страницы, 
 # будет передавать данные в контекст (в extra_context) стандартного представления для авторизации
 from octapp.views import get_tests_lists_context
