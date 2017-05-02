@@ -87,6 +87,9 @@ def create_test(category=None, result_scale=None, tags=[],
 
 
 class TestsListsViewTests(TestCase):
+    """
+    Класс с тестами для представления tests_lists
+    """
     def test_tests_lists_view_with_no_tests(self):
         """
         Если никаких тестов не существует, то
@@ -104,11 +107,18 @@ class TestsListsViewTests(TestCase):
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
+
         # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
         self.assertEqual(response.context['all_tests_count'], 0)
+        self.assertContains(response, u'Тестов: 0')
+
         # Должны считаться все категории, в том числе неподтвержденные
         self.assertEqual(response.context['all_categories_count'], 0)
+        self.assertContains(response, u'Категорий: 0')
+
         self.assertEqual(response.context['all_tags_count'], 0)
+        self.assertContains(response, u'Тегов: 0')
+
 
     def test_tests_lists_view_with_a_past_test(self):
         """
@@ -154,9 +164,14 @@ class TestsListsViewTests(TestCase):
 
         # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
         self.assertEqual(response.context['all_tests_count'], 1)
+        self.assertContains(response, u'Тестов: 1')
+
         # Должны считаться все категории, в том числе неподтвержденные
         self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertContains(response, u'Категорий: 4')
+
         self.assertEqual(response.context['all_tags_count'], 4)
+        self.assertContains(response, u'Тегов: 4')
 
     def test_tests_lists_view_with_a_future_test(self):
         """
@@ -193,9 +208,14 @@ class TestsListsViewTests(TestCase):
 
         # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
         self.assertEqual(response.context['all_tests_count'], 1)
+        self.assertContains(response, u'Тестов: 1')
+
         # Должны считаться все категории, в том числе неподтвержденные
         self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertContains(response, u'Категорий: 4')
+
         self.assertEqual(response.context['all_tags_count'], 4)
+        self.assertContains(response, u'Тегов: 4')
 
     def test_tests_lists_view_with_an_unconfirmed_category_test(self):
         """
@@ -230,9 +250,14 @@ class TestsListsViewTests(TestCase):
 
         # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
         self.assertEqual(response.context['all_tests_count'], 1)
+        self.assertContains(response, u'Тестов: 1')
+
         # Должны считаться все категории, в том числе неподтвержденные
         self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertContains(response, u'Категорий: 4')
+
         self.assertEqual(response.context['all_tags_count'], 4)
+        self.assertContains(response, u'Тегов: 4')
 
     def test_tests_lists_view_with_future_test_and_past_test(self):
         """
@@ -318,11 +343,6 @@ class TestsListsViewTests(TestCase):
                     publishing_days_offset=30)
 
         response = self.client.get(reverse('tests_lists'))
-        # Для просмотра содержимого ответа
-        f = open('octapp/test_tests_lists_view_with_a_past_test_content.html', 'w', encoding='utf-8')
-        f.write(response.content.decode('utf-8'))
-        f.close()
-
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, u'Опубликованный тест, 2 тега, подтв. кат.')
         self.assertContains(response, u'Опубликованный тест, 2 тега, неподтв. кат.')
@@ -367,11 +387,19 @@ class TestsListsViewTests(TestCase):
 
         # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
         self.assertEqual(response.context['all_tests_count'], 6)
+        self.assertContains(response, u'Тестов: 6')
+
         # Должны считаться все категории, в том числе неподтвержденные
         self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertContains(response, u'Категорий: 4')
+
         self.assertEqual(response.context['all_tags_count'], 4)
+        self.assertContains(response, u'Тегов: 4')
 
 class TestDetailViewTests(TestCase):
+    """
+    Класс с тестами для представления test_detail
+    """
     def test_detail_view_with_a_future_test(self):
         """
         Подробное представление, страничка теста с будущей либо
@@ -413,9 +441,14 @@ class TestDetailViewTests(TestCase):
 
         # Статистика в подвале, считаются как опубликованные, так и неопубликованные тесты
         self.assertEqual(response.context['all_tests_count'], 1)
+        self.assertContains(response, u'Тестов: 1')
+
         # Должны считаться все категории, в том числе неподтвержденные
         self.assertEqual(response.context['all_categories_count'], 4)
+        self.assertContains(response, u'Категорий: 4')
+
         self.assertEqual(response.context['all_tags_count'], 4)
+        self.assertContains(response, u'Тегов: 4')
 
         # На страничке с тестом его наименование приводится в верхний регистр
         self.assertContains(response, str(past_test.name).upper(), status_code=200)
