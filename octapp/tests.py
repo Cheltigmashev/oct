@@ -5,6 +5,7 @@ import datetime
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from .models import Test, Category, ResultScale, Tag
+from .forms import ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm
 
 User = get_user_model()
 
@@ -472,6 +473,10 @@ class QuestionsOfTestsViewTests(TestCase):
         self.assertContains(response, u'Вы еще не добавили никаких вопросов для данного теста.')
         # В контекст должен передаваться тест с id, полученным из URL
         self.assertEqual(response.context['test'], past_test_with_no_questions)
+
+        # Для подробного вывода различий в выводе консоли при запуске тестов
+        self.maxDiff = None
+
         # В данном случае переменная контекста для хранения вопросов теста должна быть пустой
         self.assertQuerysetEqual(response.context['questions_of_test'], [])
 

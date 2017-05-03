@@ -1,4 +1,4 @@
-{% extends 'octapp/list_with_pagination.html' %}
+{% extends 'octapp/base.html' %}
 {% load staticfiles %}
 
 {% block page_style %}
@@ -28,17 +28,97 @@
 
 </p>
     {% empty %}
-<p class="text-warning">Вы еще не добавили никаких вопросов для данного теста. Используйте кнопки, чтобы добавить новые вопросы.</p>
+<p>Вы еще не добавили никаких вопросов для данного теста. Используйте кнопки, чтобы добавить новый вопрос, а затем варианты ответа к нему.</p>
     {% endfor %}
 
-
+<hr>
 <div class="adding_questions_btns">
-    <p class="text-center">Добавить новый вопрос</p>
-    <a href="" class="btn btn-default btn-lg">Закрытого типа</a>
-    <a href="" class="btn btn-default btn-lg">Открытого типа</a>
-    <a href="" class="btn btn-default btn-lg">На сопоставление</a>
-    <a href="" class="btn btn-default btn-lg">На определение последовательности</a>
+    <span class="text-center">Добавить новый вопрос</span>
+
+    <div class="dropdown inline_block">
+        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-lg" data-toggle="dropdown">
+            Закрытого типа<span class="caret"></span></button>
+
+        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <form method="POST" action="">
+    {% csrf_token %}
+            <!-- Загрузка js-скриптов ckeditor-init.js, ckeditor.js.
+            Для каждой из форм они будут одни и те же, поэтому
+            нет необходимости загружать их для каждой формы. -->
+    {{ closed_question_form.media }}
+    {% for field in closed_question_form %}
+            <p>{{ field.label_tag }}</p>
+            <p>{{ field }}</p>
+        {% if field.help_text %}<p>NB! {{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
+    {% endfor %}
+            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
+        </form>
+        </div>
+    </div>
+
+    <div class="dropdown inline_block">
+        <button id="dLabe2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-lg" data-toggle="dropdown">
+            Открытого типа<span class="caret"></span></button>
+
+        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <form method="POST" action="">
+    {% csrf_token %}
+    {% for field in open_question_form %}
+            <p>{{ field.label_tag }}</p>
+            <p>{{ field }}</p>
+        {% if field.help_text %}<p>NB! {{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
+    {% endfor %}
+            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
+        </form>
+        </div>
+    </div>
+
+    <div class="dropdown inline_block">
+        <button id="dLabe3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-lg" data-toggle="dropdown">
+            На сопоставление<span class="caret"></span></button>
+
+        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <form method="POST" action="">
+    {% csrf_token %}
+    {% for field in comparison_question_form %}
+            <p>{{ field.label_tag }}</p>
+            <p>{{ field }}</p>
+        {% if field.help_text %}<p>NB! {{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
+    {% endfor %}
+            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
+        </form>
+        </div>
+    </div>
+
+    <div class="dropdown inline_block">
+        <button id="dLabe4" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-lg" data-toggle="dropdown">
+            На определение последовательности<span class="caret"></span></button>
+        <div aria-labelledby="dLabel" class="dropdown-menu">
+
+        <form method="POST" action="">
+    {% csrf_token %}
+    {% for field in sequence_question_form %}
+            <p>{{ field.label_tag }}</p>
+            <p>{{ field }}</p>
+        {% if field.help_text %}<p>NB! {{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
+    {% endfor %}
+            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
+        </form>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    $(document).ready (function() {
+        $(".django-ckeditor-widget").css({"width" : "100%"});
+    });
+</script>
+
 
 {% endblock %}
 

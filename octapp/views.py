@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .forms import TestForm
+from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm
 from .models import Test, Comment, TestRate, Tag, Category
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -359,8 +359,19 @@ def test_remove(request, pk, through_user_tests):
 def questions_of_test(request, test_id):
     test = get_object_or_404(Test, pk=test_id)
     questions_of_test = test.questions_of_test.order_by('question_index_number')
+
+    # 4 формы для добавления вопросов соответствующих типов
+    closed_question_form = ClosedQuestionForm()
+    open_question_form = OpenQuestionForm()
+    sequence_question_form = SequenceQuestionForm()
+    comparison_question_form = ComparisonQuestionForm()
+
     return render(request, 'octapp/questions_of_test.html',
-                  {'test': test, 'questions_of_test': questions_of_test})
+                  {'test': test, 'questions_of_test': questions_of_test,
+                   'closed_question_form': closed_question_form,
+                   'open_question_form': open_question_form,
+                   'sequence_question_form': sequence_question_form,
+                   'comparison_question_form': comparison_question_form})
 
 @login_required
 def review(request, test_id, user_rate):

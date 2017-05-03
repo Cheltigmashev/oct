@@ -55,7 +55,7 @@ class Comment(models.Model):
     test = models.ForeignKey('octapp.Test', related_name='comments', on_delete=models.CASCADE, verbose_name='Тест, к которому относится комментарий')
     author = models.ForeignKey('auth.User', related_name='comments', verbose_name='Пользователь-автор комментария')
 
-    content = RichTextField('Содержимое (наполнение, контент) комментария',
+    content = RichTextField('Содержимое (контент) комментария',
                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.', blank=False)
     created_date = models.DateTimeField('Дата создания комментария', default=timezone.now)
 
@@ -142,7 +142,7 @@ class ClosedQuestion(models.Model):
     question_of_test = models.OneToOneField('octapp.QuestionOfTest', related_name='closed_question', null=True,
             blank=False, on_delete=models.CASCADE, verbose_name='Нумерованный элемент (пункт) списка вопросов')
     only_one_right = models.BooleanField('Только один вариант ответа — правильный', default=True, blank=True)
-    question_content = RichTextField('Содержимое (наполнение, контент) вопроса.', null=False,
+    question_content = RichTextField('Содержимое (контент) вопроса', null=False,
         blank=False, help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.', default='')
     correct_option_numbers = models.CharField('Номера одного или нескольких правильных вариантов через запятую и без пробелов',
         max_length=55, blank=False, null=False)
@@ -159,7 +159,7 @@ class ClosedQuestionOption(models.Model):
     question = models.ForeignKey('octapp.ClosedQuestion', related_name='closed_question_options',
         blank=False, on_delete=models.CASCADE,
         verbose_name='Вопрос закрытого типа, которому принадлежит данный вариант ответа')
-    content = RichTextField('Содержимое (наполнение, контент) варианта ответа',
+    content = RichTextField('Содержимое (контент) варианта ответа',
                             help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
                             null=False, blank=False, default='')
     option_number = models.IntegerField('Порядковый номер варианта ответа на вопрос закр. типа', blank=False, null=False)
@@ -175,10 +175,10 @@ class ClosedQuestionOption(models.Model):
 class OpenQuestion(models.Model):
     question_of_test = models.OneToOneField('octapp.QuestionOfTest', related_name='open_question', null=True,
         blank=False, on_delete=models.CASCADE, verbose_name='Нумерованный элемент (пункт) списка вопросов')
-    question_content_before_blank = RichTextField('Содержимое (наполнение, контент) вопроса перед пропуском',
+    question_content_before_blank = RichTextField('Содержимое (контент) перед пропуском',
           help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
           null=False, blank=False, default='')
-    question_content_after_blank = RichTextField('Содержимое (наполнение, контент) вопроса после пропуска (может отсутствовать)',
+    question_content_after_blank = RichTextField('Содержимое (контент) после пропуска (может отсутствовать)',
              help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
              null=False, blank=False, default='')
     # При обработке результатов прохождения, регистр учитываться не должен
@@ -196,7 +196,7 @@ class SequenceQuestion(models.Model):
     # null=True пришлось добавлять, чтобы создать миграцию
     question_of_test = models.OneToOneField('octapp.QuestionOfTest', related_name='sequence_question', null=True,
         blank=False, on_delete=models.CASCADE, verbose_name='Нумерованный элемент (пункт) списка вопросов')
-    question_content = RichTextField('Содержимое (наполнение, контент) вопроса',
+    sequence_question_content = RichTextField('Содержимое (контент) вопроса',
                                      help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
                                      null=False, blank=False, default='')
     correct_sequence = models.CharField(
@@ -214,7 +214,7 @@ class SequenceQuestion(models.Model):
 class SequenceQuestionElement(models.Model):
     question = models.ForeignKey('octapp.SequenceQuestion', related_name='sequence_elements', blank=False,
         on_delete=models.CASCADE, verbose_name='Вопрос на определение последовательности, к которому относится элемент')
-    element_content = RichTextField('Содержимое (наполнение, контент) элемента последовательности',
+    element_content = RichTextField('Содержимое (контент) элемента последовательности',
                                      help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
                                      null=False, blank=False, default='')
     element_index_number = models.IntegerField('Порядковый номер элемента последовательности', blank=False, null=False)
@@ -231,13 +231,15 @@ class SequenceQuestionElement(models.Model):
 class ComparisonQuestion(models.Model):
     question_of_test = models.OneToOneField('octapp.QuestionOfTest', related_name='comparison_question', null=True,
         blank=False, on_delete=models.CASCADE, verbose_name='Нумерованный элемент (пункт) списка вопросов')
-    question_content = RichTextField('Содержимое (наполнение, контент) вопроса',
+    # Поля с RichTextField, ModelForm которых потенциально могут находиться на 1 странице
+    # следует называть по-разному, иначе происходит конфликт идентификаторов элементов веб-страницы
+    comparison_question_content = RichTextField('Содержимое (контент) вопроса',
                                      help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
                                      null=False, blank=False, default='')
     left_row_elements = models.ManyToManyField('octapp.ComparisonQuestionElement', related_name='left_comparison_elements',
-        verbose_name='Левые элементы сопоставления', blank=False)
+        verbose_name='Левые элементы сопоставления', blank=True)
     right_row_elements = models.ManyToManyField('octapp.ComparisonQuestionElement', related_name='right_comparison_elements',
-        verbose_name='Правые элементы сопоставления', blank=False)
+        verbose_name='Правые элементы сопоставления', blank=True)
     correct_sequence = models.CharField('Правильная последовательность элементов второго (правого) ряда (столбца)',
         max_length=55, blank=False, null=False, help_text='Номера элементов последовательности второго ряда, разделенные запятыми без пробелов.')
 
@@ -252,7 +254,7 @@ class ComparisonQuestion(models.Model):
 class ComparisonQuestionElement(models.Model):
     question = models.ForeignKey('octapp.ComparisonQuestion', related_name='comparison_elements',
         blank=False, on_delete=models.CASCADE, verbose_name='Вопрос на сопоставление, к которому относится элемент')
-    element_content = RichTextField('Содержимое (наполнение, контент) элемента сопоставления',
+    element_content = RichTextField('Содержимое (контент) элемента сопоставления',
                                      help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
                                      null=False, blank=False, default='')
     element_index_number = models.IntegerField('Порядковый номер элемента сопоставления', blank=False, null=False)

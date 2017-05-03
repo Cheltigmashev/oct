@@ -1,13 +1,11 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.forms import CheckboxSelectMultiple
-from django.forms import NumberInput
-from django.forms import TextInput
-from .models import Category
-
+from django.forms import CheckboxSelectMultiple, NumberInput, TextInput
+from .models import Category, ClosedQuestion, OpenQuestion, SequenceQuestion, ComparisonQuestion
 from registration import validators
 from registration.forms import RegistrationFormTermsOfService
 from .models import Test, Comment
+from ckeditor.widgets import CKEditorWidget
 
 User = get_user_model()
 
@@ -24,6 +22,7 @@ class RegistrationFormTermOfServiceUniqueEmail(RegistrationFormTermsOfService):
         return self.cleaned_data['email']
 
 class TestForm(forms.ModelForm):
+    # Фильтрация предложенных для выбора категорий
     def __init__(self, *args, **kwargs):
         super(TestForm, self).__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.filter(confirmed=True)
@@ -67,3 +66,29 @@ class TestForm(forms.ModelForm):
                 'unique': "Тест с таким именем уже присутствует в системе. Пожалуйста, придумайте другое название.",
             }
         }
+
+class ClosedQuestionForm(forms.ModelForm):
+    class Meta:
+        model = ClosedQuestion
+        fields = ('only_one_right',
+                  'question_content',
+                  'correct_option_numbers')
+
+class OpenQuestionForm(forms.ModelForm):
+    class Meta:
+        model = OpenQuestion
+        fields = ('question_content_before_blank',
+                  'question_content_after_blank',
+                  'correct_option')
+
+class SequenceQuestionForm(forms.ModelForm):
+    class Meta:
+        model = SequenceQuestion
+        fields = ('sequence_question_content',
+                  'correct_sequence')
+
+class ComparisonQuestionForm(forms.ModelForm):
+    class Meta:
+        model = ComparisonQuestion
+        fields = ('comparison_question_content',
+                  'correct_sequence')
