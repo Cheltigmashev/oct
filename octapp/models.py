@@ -113,7 +113,7 @@ class Tag(models.Model):
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
         
-class Test_rate(models.Model):
+class TestRate(models.Model):
     test = models.ForeignKey('octapp.Test',
             related_name='rates',
             on_delete=models.CASCADE,
@@ -271,8 +271,9 @@ class QuestionOfTest(models.Model):
             blank=False, on_delete=models.CASCADE, verbose_name='Тест, к которому относится вопрос')
     question_index_number = models.IntegerField('Порядковый номер вопроса в тесте', blank=False, null=False)
     type_of_question = models.CharField('Тип теста, чтобы знать, к какому типу вопроса обращаться через связь',
-            max_length=2, blank=False, unique=True,
-            choices=[('CQ', 'закрытый'), ('OQ', 'открытый'), ('SQ', 'последовательность'), ('CQ', 'сопоставление')])
+            max_length=7, blank=False, unique=True,
+            choices=[('ClsdQ', 'закрытый'), ('OpndQ', 'открытый'),
+                     ('SqncQ', 'последовательность'), ('CmprsnQ', 'сопоставление')])
 
     def __str__(self):
         return 'Вопрос № ' + str(self.element_index_number) + \

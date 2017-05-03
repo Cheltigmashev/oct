@@ -428,14 +428,11 @@ class TestDetailViewTests(TestCase):
         """
         some_categories = create_some_categories()
         some_tags = create_some_tags()
-        # Тест с публикацией в будущем
-        past_test = create_test(category=some_categories[0],
-                    result_scale=create_or_return_standart_scale(),
-                    tags=some_tags[:2], anonymous_loader=False,
-                    name='Опубликованный тест',
-                    description='Тест по дискретной математике',
-                    controlling=True, time_restricting=True, rating=0,
-                    publishing_days_offset=-30, ready_for_passing=False)
+
+        # Опубликованный тест
+        past_test =  create_test(category=some_categories[0],
+                    tags=some_tags[:2], name='Опубликованный тест',
+                    publishing_days_offset=-30)
 
         response = self.client.get(reverse('test_detail', args=(past_test.id,)))
 
@@ -452,3 +449,35 @@ class TestDetailViewTests(TestCase):
 
         # На страничке с тестом его наименование приводится в верхний регистр
         self.assertContains(response, str(past_test.name).upper(), status_code=200)
+
+class QuestionsOfTestsViewTests(TestCase):
+    """
+    Класс с тестами для представления test_questions
+    """
+    def test_test_questions_view_with_no_questions(self):
+        """
+        Если для данного теста пользователем
+        еще не добавлено никаких вопросов к тесту,
+        то и в контексте их быть не должно.
+        """
+        past_test_with_no_questions = create_test(category=None,
+                    tags=[], name='Некий опубликованный тест',
+                    publishing_days_offset=-30)
+
+        response = self.client.get(reverse('questions_of_test', args=(past_test_with_no_questions.id,)))
+        self.assertEqual(response.status_code, 200)
+        # Должно выводиться название теста, чтобы пользователь был в курсе,
+        # к какому тесту он добавляет вопросы (или редактирует, просматривает их
+        self.assertContains(response, u'Некий опубликованный тест')
+        self.assertContains(response, u'Вы еще не добавили никаких вопросов для данного теста.')
+        # В контекст должен передаваться тест с id, полученным из URL
+        self.assertEqual(response.context['test'], past_test_with_no_questions)
+        # В данном случае переменная контекста для хранения вопросов теста должна быть пустой
+        self.assertQuerysetEqual(response.context['questions_of_test'], [])
+
+        self.assertEqual(response.context['all_tests_count'], 1)
+        self.assertContains(response, u'Тестов: 1')
+        self.assertEqual(response.context['all_categories_count'], 0)
+        self.assertContains(response, u'Категорий: 0')
+        self.assertEqual(response.context['all_tags_count'], 0)
+        self.assertContains(response, u'Тегов: 0')

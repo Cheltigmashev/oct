@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^test/(?P<pk>\d+)/make_ready/$', views.test_make_ready_for_passing, name='test_make_ready_for_passing'),
     url(r'^test/(?P<pk>\d+)/remove/(?P<through_user_tests>(True)|(False))/$', views.test_remove, name='test_remove'),
     url(r'^tests/$', views.tests, name='tests'),
+    url(r'^test/(?P<test_id>\d+)/questions$', views.questions_of_test, name='questions_of_test'),
     url(r'^categories/$', views.categories, name='categories'),
     url(r'^tags/$', views.tags, name='tags'),
 

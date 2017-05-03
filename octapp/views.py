@@ -2,10 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import TestForm
-from .models import Test, Comment, Test_rate, Tag, Category
+from .models import Test, Comment, TestRate, Tag, Category
 from django.contrib.auth import get_user_model
-from django.contrib.auth import views as auth_views
-from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import QueryDict
 import re
@@ -307,10 +305,10 @@ def test_detail(request, pk):
         return render(request, 'octapp/test_detail.html', {'test': test })
     else:
         try:
-            rate_of_current_user = Test_rate.objects.get(test=test, reviewer=request.user)
+            rate_of_current_user = TestRate.objects.get(test=test, reviewer=request.user)
             return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author, 'rate_of_current_user': rate_of_current_user })
         # Пользователь еще не ставил оценку данному тесту
-        except Test_rate.DoesNotExist:
+        except TestRate.DoesNotExist:
             return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author })
 
 @login_required
@@ -358,6 +356,12 @@ def test_remove(request, pk, through_user_tests):
     else:
         return redirect('tests_lists')
 
+def questions_of_test(request, test_id):
+    test = get_object_or_404(Test, pk=test_id)
+    questions_of_test = test.questions_of_test.order_by('question_index_number')
+    return render(request, 'octapp/questions_of_test.html',
+                  {'test': test, 'questions_of_test': questions_of_test})
+
 @login_required
 def review(request, test_id, user_rate):
     test = get_object_or_404(Test, pk=test_id)
@@ -370,9 +374,9 @@ def review(request, test_id, user_rate):
             bool_rate = False
         # Пользователь еще не ставил оценку данному тесту
         if not test.rates.filter(reviewer=user):
-            # Создаем новый объект модели Test_rate для данного пользователя, теста и оценки, а также
+            # Создаем новый объект модели TestRate для данного пользователя, теста и оценки, а также
             # добавляем его в связанные объекты объекта Test
-            test_rate = Test_rate(test=test, reviewer=user, like=bool_rate)
+            test_rate = TestRate(test=test, reviewer=user, like=bool_rate)
             test_rate.save(force_insert=True)
             if user_rate == 'like':
                 test.review_positively()

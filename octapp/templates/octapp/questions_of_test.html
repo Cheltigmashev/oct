@@ -1,0 +1,47 @@
+{% extends 'octapp/list_with_pagination.html' %}
+{% load staticfiles %}
+
+{% block page_style %}
+{% endblock %}
+
+{% block content %}
+<h2>Вопросы к тесту <q>{{ test }}</q></h2>
+
+    {% for qu_of_test in questions_of_tests %}
+<p>Вопрос № {{ qu_of_test.question_index_number }}.
+
+    {% if qu_of_test == 'ClsdQ' %}
+    qu_of_test.closed_question.content
+    {% endif %}
+
+    {% if qu_of_test == 'OpndQ' %}
+    qu_of_test.open_question.content
+    {% endif %}
+
+    {% if qu_of_test == 'SqncQ' %}
+    qu_of_test.sequence_question.content
+    {% endif %}
+
+    {% if qu_of_test == 'CmprsnQ' %}
+    qu_of_test.comparison_question.content
+    {% endif %}
+
+</p>
+    {% empty %}
+<p class="text-warning">Вы еще не добавили никаких вопросов для данного теста. Используйте кнопки, чтобы добавить новые вопросы.</p>
+    {% endfor %}
+
+
+<div class="adding_questions_btns">
+    <p class="text-center">Добавить новый вопрос</p>
+    <a href="" class="btn btn-default btn-lg">Закрытого типа</a>
+    <a href="" class="btn btn-default btn-lg">Открытого типа</a>
+    <a href="" class="btn btn-default btn-lg">На сопоставление</a>
+    <a href="" class="btn btn-default btn-lg">На определение последовательности</a>
+</div>
+
+{% endblock %}
+
+
+
+
