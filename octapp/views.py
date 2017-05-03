@@ -25,20 +25,20 @@ def get_tests_lists_context():
     left_number_of_rating_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:showing_tests_per_one_column]
     # левый ряд тестов для списка рейтинговых тестов
     right_number_of_rating_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
-    
+
     showing_tags_and_count_of_published_tests = []
     for tag in Tag.objects.order_by('-pk')[:showing_tags_and_categories_amount]:
-        showing_tags_and_count_of_published_tests.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count()])        
+        showing_tags_and_count_of_published_tests.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count()])
 
     showing_categories_and_count_of_published_tests = []
     for category in Category.objects.filter(confirmed=True).order_by('-pk')[:showing_tags_and_categories_amount]:
-        showing_categories_and_count_of_published_tests.append([category, category.tests.filter(published_date__lte=timezone.now()).count()])        
+        showing_categories_and_count_of_published_tests.append([category, category.tests.filter(published_date__lte=timezone.now()).count()])
 
     all_tags_count = Tag.objects.count()
-    
+
     all_published_test_count = Test.objects.filter(published_date__lte=timezone.now()).count()
     all_confirmed_categories_count = Category.objects.filter(confirmed=True).count()
-    
+
     if all_tags_count > showing_tags_and_categories_amount:
         show_elision_marks_for_tags = True
     else:
@@ -95,7 +95,7 @@ def get_pagination(page, some_page, on_one_page, max_pages_before_or_after_curre
         previous = pages_before_current[0] - 1
     # Если правый отображаемый диапазон номеров страниц выходит за границы возможных номеров
     if page + max_pages_before_or_after_current >= paginator.num_pages:
-        # Диапазон номеров страниц, которые больше текущей        
+        # Диапазон номеров страниц, которые больше текущей
         pages_after_current = range(page + 1, paginator.num_pages + 1)
         next = None
     else:
@@ -112,7 +112,7 @@ def get_pagination(page, some_page, on_one_page, max_pages_before_or_after_curre
 def tests_lists(request):
     return render(request, 'octapp/tests_lists.html', get_tests_lists_context())
 
-def get_filtered_and_sorted_tests_with_pagination(request, tests):
+def get_filtered_and_sorted_tests_with_pagination(request, tests, on_one_page, max_pages_before_or_after_current):
     q_dict = request.GET.dict()
     context = { }
     if request.GET.get('selected_category', '') == 'null':
@@ -177,12 +177,12 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests):
     elif request.GET.get('publish_status', '') == 'any':
         context['publish_status'] = 'any'
     # Если этого HTTP-параметра вообще нет в запросе,
-    # то в tests все еще будут как опубликованные, так и неопубликованные тесты 
+    # то в tests все еще будут как опубликованные, так и неопубликованные тесты
 
     page = request.GET.get('page', '1')
     page = int(page)
     # 35, 5 prod
-    pag_context = get_pagination(page, tests, 35, 5)
+    pag_context = get_pagination(page, tests, on_one_page, max_pages_before_or_after_current)
     context.update(pag_context)
 
     categories_for_filtering_of_tests = Category.objects.filter(confirmed=True).order_by('name')
@@ -190,7 +190,7 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests):
     context.update({'categories_for_filtering_of_tests': categories_for_filtering_of_tests, 'tags_for_filtering_of_tests': tags_for_filtering_of_tests})
 
     q = QueryDict(mutable=True)
-    # В навигационных ссылках добавляется &page=X, поэтому если в запросе уже есть page, 
+    # В навигационных ссылках добавляется &page=X, поэтому если в запросе уже есть page,
     # добавленный после перехода по страницам, то нужно его удалить
     if 'page' in q_dict:
         q_dict.pop('page')
@@ -218,7 +218,7 @@ def get_tags_with_count_of_published_tests(context, tags):
 def tests(request):
     # Если сортировка не задана, то тесты будут по алфавиту
     tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('name')
-    context = get_filtered_and_sorted_tests_with_pagination(request, tests)
+    context = get_filtered_and_sorted_tests_with_pagination(request, tests, 35, 5)
     context = get_categories_with_count_of_published_tests(context, context['categories_for_filtering_of_tests'])
     context = get_tags_with_count_of_published_tests(context, context['tags_for_filtering_of_tests'])
     return render(request, 'octapp/tests.html', context)
@@ -238,7 +238,7 @@ def tags(request):
 @login_required
 def user_tests(request, pk):
     user_tests = Test.objects.filter(author=request.user).order_by('name')
-    context = get_filtered_and_sorted_tests_with_pagination(request, user_tests)
+    context = get_filtered_and_sorted_tests_with_pagination(request, user_tests, 14, 5)
     # Нужно изменить количество тестов, выводимых при фильтрации по категории или по тегу
     categories_and_count_of_user_tests_in_them = []
     tags_and_count_of_user_tests_in_them = []
@@ -302,7 +302,7 @@ def test_detail(request, pk):
             return redirect('tests_lists')
     else:
         if not is_author:
-            return redirect('tests_lists')            
+            return redirect('tests_lists')
     if not request.user.is_authenticated:
         return render(request, 'octapp/test_detail.html', {'test': test })
     else:
@@ -377,10 +377,10 @@ def review(request, test_id, user_rate):
             if user_rate == 'like':
                 test.review_positively()
             else:
-                test.review_negatively() 
+                test.review_negatively()
             return redirect('test_detail', pk=test_id)
         else:
-            return redirect('tests_lists')            
+            return redirect('tests_lists')
     else:
         return redirect('user_tests')
 

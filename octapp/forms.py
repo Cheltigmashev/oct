@@ -29,7 +29,7 @@ class TestForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TestForm, self).__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.filter(confirmed=True)
-    
+
     new_category = forms.CharField(
         label=(u'Можете указать новую категорию'),
         required=False,
@@ -47,13 +47,13 @@ class TestForm(forms.ModelForm):
                                 'pattern': '[a-zA-Zа-яёА-ЯЁ0-9 -/,]+'}),
         error_messages={'unique': "Такой тег уже существует, выберите его из предложенных."}
     )
-    
+
     publish_after_adding = forms.BooleanField(
         widget=forms.CheckboxInput,
         label=(u'Опубликовать тест сразу после отправки (загрузки) либо редактирования теста'),
         required=False
     )
-    
+
     class Meta:
         model = Test
         fields = ('category', 'result_scale', 'tags', 'name',
