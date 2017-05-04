@@ -9,9 +9,9 @@
 <h2>Вопросы к тесту <q>{{ test }}</q></h2>
 
 <h3 class="text-left">Добавить новый вопрос</h3>
-<nav class="adding_questions_btns navbar navbar-default">
-    <div class="dropdown inline_block">
-        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-lg" data-toggle="dropdown">
+<div class="adding_questions_btns">
+    <div class="dropdown inline_block add_closed_question_block">
+        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
             Закрытого типа
             <span class="caret"></span></button>
 
@@ -22,19 +22,33 @@
             Для каждой из форм они будут одни и те же, поэтому
             нет необходимости загружать их для каждой формы. -->
     {{ closed_question_form.media }}
-    {% for field in closed_question_form %}
-            <p>{{ field.label_tag }}</p>
-            <p>{{ field }}</p>
-        {% if field.help_text %}<p>NB! {{ field.help_text }}</p>{% endif %}
-        {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
-    {% endfor %}
+
+    {{ closed_question_form.question_content.label_tag }}
+            <small><p>NB! {{ closed_question_form.question_content.help_text }}</p></small>
+    {{ closed_question_form.question_content }}
+    {% if closed_question_form.question_content.errors %}<p class="field_with_error">{{ closed_question_form.question_content.errors }}</p>{% endif %}
+
+            <div class="inline_block">
+    {{ closed_question_form.correct_option_numbers.label_tag }}
+    {{ closed_question_form.correct_option_numbers }}
+    {% if closed_question_form.correct_option_numbers.errors %}<p class="field_with_error">{{ closed_question_form.correct_option_numbers.errors }}</p>{% endif %}
+            </div>
+
+            <div class="inline_block">
+    {{ closed_question_form.only_one_right }}
+    {{ closed_question_form.only_one_right.label_tag }}
+    {% if closed_question_form.only_one_right.errors %}<p class="field_with_error">{{ closed_question_form.only_one_right.errors }}</p>{% endif %}
+            </div>
+
+            <small><p>NB! {{ closed_question_form.correct_option_numbers.help_text }}</p></small>
+
             <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
         </form>
         </div>
     </div>
 
     <div class="dropdown inline_block add_open_question_block">
-        <button id="dLabe2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-lg" data-toggle="dropdown">
+        <button id="dLabe2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
             Открытого типа
             <span class="caret"></span></button>
 
@@ -42,7 +56,7 @@
         <form method="POST" action="">
     {% csrf_token %}
         <label>Содержимое вопроса (в т.ч. текст) перед и после пропуска.</label>
-    {% if open_question_form.question_content_before_blank.help_text %}<p>NB! {{ open_question_form.question_content_before_blank.help_text }}</p>{% endif %}
+    <small><p>NB! {{ open_question_form.question_content_before_blank.help_text }}</p></small>
     {% for field in open_question_form %}
         <!-- Первые два поля — с CKEditor’ом -->
         {% if forloop.counter > 2 %}
@@ -58,44 +72,63 @@
         </div>
     </div>
 
-    <div class="dropdown inline_block">
-        <button id="dLabe3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-lg" data-toggle="dropdown">
+    <div class="dropdown inline_block add_comparison_question_block">
+        <button id="dLabe3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
             На сопоставление
             <span class="caret"></span></button>
 
         <div aria-labelledby="dLabel" class="dropdown-menu">
         <form method="POST" action="">
     {% csrf_token %}
-    {% for field in comparison_question_form %}
-            <p>{{ field.label_tag }}</p>
-            <p>{{ field }}</p>
-        {% if field.help_text %}<p>NB! {{ field.help_text }}</p>{% endif %}
-        {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
-    {% endfor %}
+
+            <div>
+    {{ comparison_question_form.comparison_question_content.label_tag }}
+            <small><p>NB! {{ comparison_question_form.comparison_question_content.help_text }}</p></small>
+    {{ comparison_question_form.comparison_question_content }}
+    {% if comparison_question_form.comparison_question_content.errors %}<p class="field_with_error">{{ comparison_question_form.comparison_question_content.errors }}</p>{% endif %}
+            </div>
+
+            <div>
+    {{ comparison_question_form.correct_sequence.label_tag }}
+    {{ comparison_question_form.correct_sequence }}
+            <small><p>NB! {{ comparison_question_form.correct_sequence.help_text }}</p></small>
+    {% if comparison_question_form.correct_sequence.errors %}<p class="field_with_error">{{ comparison_question_form.correct_sequence.errors }}</p>{% endif %}
+            </div>
+
+
             <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
         </form>
         </div>
     </div>
 
-    <div class="dropdown inline_block">
-        <button title="Вопрос на определение последовательности" id="dLabe4" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-lg" data-toggle="dropdown">
+    <div class="dropdown inline_block add_sequence_question_block">
+        <button title="Вопрос на определение последовательности" id="dLabe4" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
             Последовательность
             <span class="caret"></span></button>
         <div aria-labelledby="dLabel" class="dropdown-menu">
 
         <form method="POST" action="">
     {% csrf_token %}
-    {% for field in sequence_question_form %}
-            <p>{{ field.label_tag }}</p>
-            <p>{{ field }}</p>
-        {% if field.help_text %}<p>NB! {{ field.help_text }}</p>{% endif %}
-        {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
-    {% endfor %}
+
+            <div>
+    {{ sequence_question_form.sequence_question_content.label_tag }}
+            <small><p>NB! {{ sequence_question_form.sequence_question_content.help_text }}</p></small>
+    {{ sequence_question_form.sequence_question_content }}
+    {% if sequence_question_form.sequence_question_content.errors %}<p class="field_with_error">{{ sequence_question_form.sequence_question_content.errors }}</p>{% endif %}
+            </div>
+
+            <div>
+    {{ sequence_question_form.correct_sequence.label_tag }}
+    {{ sequence_question_form.correct_sequence }}
+            <small><p>NB! {{ sequence_question_form.correct_sequence.help_text }}</p></small>
+    {% if sequence_question_form.correct_sequence.errors %}<p class="field_with_error">{{ sequence_question_form.correct_sequence.errors }}</p>{% endif %}
+            </div>
+
             <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
         </form>
         </div>
     </div>
-</nav>
+</div>
 
     {% for qu_of_test in questions_of_test %}
 <div class="question">

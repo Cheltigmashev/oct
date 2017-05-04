@@ -3,30 +3,102 @@
 @import common_form_elements
 
 .content
+  min-height: 740px
+  min-width: 365px
   .question
     margin: 10px 0
     padding: 5px 10px
     border-left: 15px groove gray
     border-bottom: 2px solid gray
   .adding_questions_btns
+    min-width: 302px
     margin: 0
-    padding: 4px
     width: auto
     text-align: center
-    border: 1px solid gray
     .dropdown.inline_block
+      width: 48%
       .dropdown-menu
         padding: 5px
-        width: 550px
-        left: -150px
         input[type="submit"]
-          margin: 5px 0 0 0
+          margin: 2px 0 0 0
+        input[type="checkbox"] + label
+          cursor: pointer
+          display: inline
+        input[type="text"], input[type="number"]
+          width: 100%
       .btn:not(input)
-        width: 200px
+        width: 100%
     .dropdown.inline_block.add_open_question_block
       .dropdown-menu
-        width: 1000px
-        left: -350px
-        .ckeditor_widget
-          display: inline-block
-          width: 485px
+        left: 0
+    .dropdown.inline_block.add_closed_question_block
+      .dropdown-menu
+        left: 0
+      .inline_block
+        padding-left: 10px
+        width: 45%
+        vertical-align: middle
+    .dropdown.inline_block.add_comparison_question_block
+      .dropdown-menu
+        left: 0
+    .dropdown.inline_block.add_sequence_question_block
+      .dropdown-menu
+        left: 0
+
+@media(min-width:0px) and (max-width:767px)
+  .content
+    min-height: 1000px
+    .adding_questions_btns
+      .dropdown.inline_block
+        width: 100%
+        .dropdown-menu
+          padding: 5px
+        .btn:not(input)
+          font-size: 14px
+          padding: 5px
+          margin-left: 0
+      .dropdown.inline_block.add_open_question_block
+        left: 0
+        .dropdown-menu
+          .ckeditor_widget
+            display: block
+            width: auto
+      .dropdown.inline_block.add_closed_question_block
+        .dropdown-menu
+
+      .dropdown.inline_block.add_comparison_question_block
+        .dropdown-menu
+
+      .dropdown.inline_block.add_sequence_question_block
+        .dropdown-menu
+
+
+@media(min-width:768px) and (max-width:991px)
+
+
+@media(min-width:992px) and (max-width:1199px)
+  .content
+    min-height: 1000px
+    .adding_questions_btns
+      .dropdown.inline_block
+        width: 100%
+        .dropdown-menu
+          padding: 5px
+        .btn:not(input)
+          font-size: 14px
+          padding: 5px
+          margin-left: 0
+      .dropdown.inline_block.add_open_question_block
+        left: 0
+        .dropdown-menu
+          .ckeditor_widget
+            display: inline-block
+            width: 485px
+      .dropdown.inline_block.add_closed_question_block
+        .dropdown-menu
+
+      .dropdown.inline_block.add_comparison_question_block
+        .dropdown-menu
+
+      .dropdown.inline_block.add_sequence_question_block
+        .dropdown-menu

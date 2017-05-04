@@ -141,11 +141,11 @@ class TestRate(models.Model):
 class ClosedQuestion(models.Model):
     question_of_test = models.OneToOneField('octapp.QuestionOfTest', related_name='closed_question', null=True,
             blank=False, on_delete=models.CASCADE, verbose_name='Нумерованный элемент (пункт) списка вопросов')
-    only_one_right = models.BooleanField('Только один вариант ответа — правильный', default=True, blank=True)
+    only_one_right = models.BooleanField('Только один вариант ответа — правильный.', default=True, blank=True)
     question_content = RichTextField('Содержимое (контент) вопроса', null=False,
         blank=False, help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.', default='')
-    correct_option_numbers = models.CharField('Номера одного или нескольких правильных вариантов через запятую и без пробелов',
-        max_length=55, blank=False, null=False)
+    correct_option_numbers = models.CharField('Правильны(й/е) вариант/варианты',
+        max_length=55, blank=False, null=False, help_text='Номера одного или нескольких правильных вариантов через запятую и без пробелов')
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (закрытый) теста ' + self.question_of_test.test.name
@@ -280,7 +280,7 @@ class QuestionOfTest(models.Model):
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_index_number) + \
-               ' теста № ' + self.test.name
+               ' теста ' + self.test.name
 
     class Meta:
         ordering = ['test']

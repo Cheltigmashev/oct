@@ -1,11 +1,11 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 import datetime
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from .models import Test, Category, ResultScale, Tag
-from .forms import ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm
+from .models import Test, Category, ResultScale, Tag, ClosedQuestion, QuestionOfTest, ComparisonQuestionElement
+from .models import OpenQuestion, SequenceQuestion, ComparisonQuestion, ClosedQuestionOption, SequenceQuestionElement
 
 User = get_user_model()
 
@@ -55,7 +55,7 @@ def create_some_categories():
     unconfirmed_category2 = create_category('SomeUnconfCat2', False)
     return [confirmed_category1, confirmed_category2, unconfirmed_category1, unconfirmed_category2]
 
-def create_test(category=None, result_scale=None, tags=[],
+def create_test(category=None, result_scale=None, tags=None,
     anonymous_loader=False, name='Некий тест', description='Без описания', controlling=True,
     time_restricting=True, rating=0, publishing_days_offset=-30,ready_for_passing=False):
     """
@@ -64,9 +64,9 @@ def create_test(category=None, result_scale=None, tags=[],
     относительно текущей даты. Отрицательное значение для публикации
     теста в прошлом, положительное для тестов, публикуемых в будущем.
     """
+    # Создаем пользователя
     if not User.objects.filter(username='SomeUser'):
-        author = User.objects.create(username='SomeUser', first_name="Vasya",
-                last_name="Pupkin", email="pupkin@yandex.ru", is_active=True)
+        author = User.objects.create_user(username='SomeUser', password='lkjiDKJFlsadLKDJ34alksd')
     else:
         author = get_object_or_404(User, username='SomeUser')
     publishing_time = timezone.now() + datetime.timedelta(days=publishing_days_offset)
@@ -85,6 +85,86 @@ def create_test(category=None, result_scale=None, tags=[],
         new_test.tags.add(tag)
         # new_test.save()
     return new_test
+
+
+def create_question_of_test(test, type_of_question):
+    """
+    Создает и возвращает вопрос теста, не создавая какой-либо вопрос конкретного типа.
+    """
+    return QuestionOfTest.objects.create(test=test,
+        type_of_question=type_of_question,
+        question_index_number=test.questions_of_test.count() + 1)
+
+def create_closed_question(test, only_one_right=True,
+        question_content='Некий вопрос закрытого типа под опред. номер(ом/ми)',
+        correct_option_numbers=2):
+    """
+    Создает и возвращает вопрос закрытого типа, не создавая варианты ответа.
+    """
+    new_question_of_test = create_question_of_test(test, 'ClsdQ')
+    return ClosedQuestion.objects.create(question_of_test=new_question_of_test,
+        only_one_right=only_one_right,
+        question_content=question_content,
+        correct_option_numbers=correct_option_numbers)
+
+def create_closed_question_option(closed_question, content):
+    """
+    Создает и возвращает вариант ответа на передаваемый вопрос закрытого типа.
+    """
+    return ClosedQuestionOption.objects.create(question=closed_question,
+        content=content, option_number=closed_question.closed_question_options.count() + 1)
+
+def create_open_question(test,
+                        question_content_before_blank='Заполните пропуск:<br>Django — это ',
+                        question_content_after_blank='для разработки веб-приложений',
+                        correct_option='фреймворк',
+                        blank_width=11):
+    """
+    Создает и возвращает вопрос открытого типа.
+    """
+    new_question_of_test = create_question_of_test(test, 'OpndQ')
+    return OpenQuestion.objects.create(question_of_test=new_question_of_test,
+                                       question_content_before_blank=question_content_before_blank,
+                                       question_content_after_blank=question_content_after_blank,
+                                       correct_option=correct_option,
+                                       blank_width=blank_width)
+
+def create_sequence_question(test,
+                        sequence_question_content='Вопрос на определение последовательности',
+                        correct_sequence='4,3,2,1'):
+    """
+    Создает и возвращает вопрос на определение последовательности, не создавая элементы последовательности для этого вопроса.
+    """
+    new_question_of_test = create_question_of_test(test, 'SqncQ')
+    return SequenceQuestion.objects.create(question_of_test=new_question_of_test,
+                                       sequence_question_content=sequence_question_content,
+                                       correct_sequence=correct_sequence)
+
+def create_sequence_question_element(sequence_question, element_content):
+    """
+    Создает и возвращает элемент последовательности для вопроса на определение последовательности (упорядочивание).
+    """
+    return SequenceQuestionElement.objects.create(question=sequence_question,
+        element_content=element_content, element_index_number=sequence_question.sequence_elements.count() + 1)
+
+def create_comparison_question(test,
+                        comparison_question_content='Вопрос на сопоставление',
+                        correct_sequence='фреймворк'):
+    """
+    Создает и возвращает вопрос на сопоставление, не создавая элементы сопоставления для этого вопроса.
+    Здесь correct_sequence — правильная последовательность элементов правого ряда (упорядочиваемых тем, кто проходит тест)
+    """
+    new_question_of_test = create_question_of_test(test)
+    return ComparisonQuestion.objects.create(question_of_test=new_question_of_test,
+                                       comparison_question_content=comparison_question_content,
+                                       correct_sequence=correct_sequence)
+
+def create_comparison_question_element(comparison_question, element_content):
+    """
+    Создает и возвращает элемент левого или правого ряда в вопросе на сопоставление.
+    """
+    return ComparisonQuestionElement.objects.create(question=comparison_question,
+        element_content=element_content, element_index_number=comparison_question.comparison_elements.count() + 1)
 
 
 class TestsListsViewTests(TestCase):
@@ -465,12 +545,17 @@ class QuestionsOfTestsViewTests(TestCase):
                     tags=[], name='Некий опубликованный тест',
                     publishing_days_offset=-30)
 
-        response = self.client.get(reverse('questions_of_test', args=(past_test_with_no_questions.id,)))
-        self.assertEqual(response.status_code, 200)
+        # Авторизация (т.к. представление требует, чтобы пользователь был авторизован)
+        self.c = Client()
+        self.c.login(username='SomeUser', password='lkjiDKJFlsadLKDJ34alksd')
+
+        response = self.c.get(reverse('questions_of_test', args=(past_test_with_no_questions.id,)))
         # Должно выводиться название теста, чтобы пользователь был в курсе,
         # к какому тесту он добавляет вопросы (или редактирует, просматривает их
         self.assertContains(response, u'Некий опубликованный тест')
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, u'Вы еще не добавили никаких вопросов для данного теста.')
+
         # В контекст должен передаваться тест с id, полученным из URL
         self.assertEqual(response.context['test'], past_test_with_no_questions)
 
@@ -479,6 +564,56 @@ class QuestionsOfTestsViewTests(TestCase):
 
         # В данном случае переменная контекста для хранения вопросов теста должна быть пустой
         self.assertQuerysetEqual(response.context['questions_of_test'], [])
+
+        self.assertEqual(response.context['all_tests_count'], 1)
+        self.assertContains(response, u'Тестов: 1')
+        self.assertEqual(response.context['all_categories_count'], 0)
+        self.assertContains(response, u'Категорий: 0')
+        self.assertEqual(response.context['all_tags_count'], 0)
+        self.assertContains(response, u'Тегов: 0')
+
+
+    def test_test_questions_view_with_2_closed_questions_with_no_options(self):
+        """
+        Если для данного теста было добавлено 2 вопроса закрытого типа
+        """
+        past_test_with_2_closed_questions = create_test(category=None,
+                    tags=[], name='Некий опубликованный тест',
+                    publishing_days_offset=-30)
+
+        clsd1 = create_closed_question(test=past_test_with_2_closed_questions,
+                               question_content='Первый вопрос закрытого типа',
+                               correct_option_numbers=2)
+
+        clsd2 = create_closed_question(test=past_test_with_2_closed_questions,
+                               question_content='Второй вопрос закрытого типа',
+                               correct_option_numbers=3)
+
+        # Авторизация (т.к. представление требует, чтобы пользователь был авторизован)
+        self.c = Client()
+        self.c.login(username='SomeUser', password='lkjiDKJFlsadLKDJ34alksd')
+
+        response = self.c.get(reverse('questions_of_test', args=(past_test_with_2_closed_questions.id,)))
+        self.assertEqual(response.status_code, 200)
+
+        # Должно выводиться название теста, чтобы пользователь был в курсе,
+        # к какому тесту он добавляет вопросы (или редактирует, просматривает их
+        self.assertContains(response, u'Некий опубликованный тест')
+        # Должны выводиться сами вопросы, их условия, порядковые номера в списке вопросов
+        self.assertContains(response, u'Первый вопрос закрытого типа')
+        self.assertContains(response, u'Вопрос № 1 (закрытого типа)')
+        self.assertContains(response, u'Второй вопрос закрытого типа')
+        self.assertContains(response, u'Вопрос № 2 (закрытого типа)')
+
+        # В контекст должен передаваться тест с id, полученным из URL
+        self.assertEqual(response.context['test'], past_test_with_2_closed_questions)
+
+        # В переменной контекста для хранения вопросов теста должно быть 2 вопроса
+        self.assertQuerysetEqual(response.context['questions_of_test'],
+            ['<QuestionOfTest: Вопрос № ' + str(clsd1.question_of_test.question_index_number) \
+             + ' теста ' + past_test_with_2_closed_questions.name + '>',
+             '<QuestionOfTest: Вопрос № ' + str(clsd2.question_of_test.question_index_number) \
+             + ' теста ' + past_test_with_2_closed_questions.name + '>'])
 
         self.assertEqual(response.context['all_tests_count'], 1)
         self.assertContains(response, u'Тестов: 1')

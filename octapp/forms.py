@@ -80,6 +80,12 @@ class ClosedQuestionForm(forms.ModelForm):
                   'only_one_right',
                   'correct_option_numbers')
 
+        widgets = {
+            'correct_option_numbers': TextInput(attrs={'maxlength': 55, 'class': 'form-control',
+                                                       'placeholder': 'Цифры и запятые',
+                                                       'pattern': '[0-9,]*'}),
+        }
+
 class OpenQuestionForm(forms.ModelForm):
     class Meta:
         model = OpenQuestion
@@ -87,14 +93,31 @@ class OpenQuestionForm(forms.ModelForm):
                   'question_content_after_blank',
                   'blank_width', 'correct_option')
 
+        widgets = {
+            'blank_width': NumberInput(attrs={'min': 1, 'class': 'form-control'}),
+            'correct_option': TextInput(attrs={'maxlength': 120, 'class': 'form-control'}),
+        }
+
 class SequenceQuestionForm(forms.ModelForm):
     class Meta:
         model = SequenceQuestion
         fields = ('sequence_question_content',
                   'correct_sequence')
 
+        widgets = {
+            'correct_sequence': TextInput(attrs={'maxlength': 70, 'class': 'form-control',
+                                                       'placeholder': 'Цифры и запятые',
+                                                       'pattern': '[0-9,]*'}),
+        }
+
 class ComparisonQuestionForm(forms.ModelForm):
     class Meta:
         model = ComparisonQuestion
         fields = ('comparison_question_content',
                   'correct_sequence')
+
+        widgets = {
+            'correct_sequence': TextInput(attrs={'maxlength': 55, 'class': 'form-control',
+                                                       'placeholder': 'Цифры и запятые',
+                                                       'pattern': '[0-9,]*'}),
+        }
