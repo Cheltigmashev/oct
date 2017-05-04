@@ -1,0 +1,32 @@
+@charset "utf-8"
+// НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В common_form_elements.sass
+@import common_form_elements
+
+.content
+  .question
+    margin: 10px 0
+    padding: 5px 10px
+    border-left: 15px groove gray
+    border-bottom: 2px solid gray
+  .adding_questions_btns
+    margin: 0
+    padding: 4px
+    width: auto
+    text-align: center
+    border: 1px solid gray
+    .dropdown.inline_block
+      .dropdown-menu
+        padding: 5px
+        width: 550px
+        left: -150px
+        input[type="submit"]
+          margin: 5px 0 0 0
+      .btn:not(input)
+        width: 200px
+    .dropdown.inline_block.add_open_question_block
+      .dropdown-menu
+        width: 1000px
+        left: -350px
+        .ckeditor_widget
+          display: inline-block
+          width: 485px

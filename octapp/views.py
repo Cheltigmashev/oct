@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm
-from .models import Test, Comment, TestRate, Tag, Category
+from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import QueryDict
@@ -254,7 +254,7 @@ def test_new(request):
         # Form форма с пользовательскими данными
         form = TestForm(request.POST)
         if form.is_valid():
-            # Если использовать form.save(Commit=False), то выбранные пользователем теги к тесту не добавляются!
+            # Если использовать form.save(commit=False), то выбранные пользователем теги к тесту не добавляются!
             # Это происходит потому невозможно создать связи для объекта, который не сохранен в базе данных.
             # Подробнее см. https://djbook.ru/rel1.9/topics/forms/modelforms.html#the-save-method
             test = form.save()
@@ -356,22 +356,63 @@ def test_remove(request, pk, through_user_tests):
     else:
         return redirect('tests_lists')
 
+@login_required
 def questions_of_test(request, test_id):
     test = get_object_or_404(Test, pk=test_id)
     questions_of_test = test.questions_of_test.order_by('question_index_number')
-
     # 4 формы для добавления вопросов соответствующих типов
     closed_question_form = ClosedQuestionForm()
     open_question_form = OpenQuestionForm()
     sequence_question_form = SequenceQuestionForm()
     comparison_question_form = ComparisonQuestionForm()
-
     return render(request, 'octapp/questions_of_test.html',
                   {'test': test, 'questions_of_test': questions_of_test,
                    'closed_question_form': closed_question_form,
                    'open_question_form': open_question_form,
                    'sequence_question_form': sequence_question_form,
                    'comparison_question_form': comparison_question_form})
+
+@login_required
+def new_question(request, test_id, type):
+    # Пустые формы для контекста
+    # # Префиксы форм — http://www.joshuakehn.com/2013/7/18/multiple-django-forms-in-one-form.html
+    # НЕ РАБОТАЕТ
+    # closed_question_form = ClosedQuestionForm(prefix="clsd")
+    # open_question_form = OpenQuestionForm(prefix="opnd")
+    # sequence_question_form = SequenceQuestionForm(prefix="sqnc")
+    # comparison_question_form = ComparisonQuestionForm(prefix="cmprsn")
+
+    # Префиксы форм — http://www.joshuakehn.com/2013/7/18/multiple-django-forms-in-one-form.html
+    closed_question_form = ClosedQuestionForm()
+    open_question_form = OpenQuestionForm()
+    sequence_question_form = SequenceQuestionForm()
+    comparison_question_form = ComparisonQuestionForm()
+
+    test = get_object_or_404(Test, pk=test_id)
+    questions_of_test = test.questions_of_test.order_by('question_index_number')
+    if type == 'closed':
+        if request.method == 'POST':
+            # Form форма с пользовательскими данными
+            closed_question_form = ClosedQuestionForm(request.POST)
+            if closed_question_form.is_valid():
+                test = get_object_or_404(Test, pk=test_id)
+                index_number_of_new_test_question = test.questions_of_test.count() + 1
+                new_question_of_test = QuestionOfTest.objects.create(test=test,
+                        type_of_question='ClsdQ', question_index_number=index_number_of_new_test_question)
+                # Пока не сохраняем объект
+                new_closed_question_object = closed_question_form.save(commit=False)
+                new_closed_question_object.question_of_test = new_question_of_test
+                new_closed_question_object.save()
+                return redirect('questions_of_test', test_id=test_id)
+        else:
+            # Пустая форма
+            closed_question_form = ClosedQuestionForm()
+    return render(request, 'octapp/questions_of_test.html', {'test': test,
+                        'questions_of_test': questions_of_test,
+                        'closed_question_form': closed_question_form,
+                        'open_question_form': open_question_form,
+                        'sequence_question_form': sequence_question_form,
+                        'comparison_question_form': comparison_question_form})
 
 @login_required
 def review(request, test_id, user_rate):

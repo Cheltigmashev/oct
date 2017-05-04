@@ -31,14 +31,17 @@ class TestForm(forms.ModelForm):
         label=(u'Можете указать новую категорию'),
         required=False,
         help_text=(u'Учтите, что новая категория не будет использована, пока не будет подтверждена администратором или модератором'),
-        widget=TextInput(attrs={'maxlength': 80, 'title': 'Допускается использовать строчные и заглавные буквы, цифры, дефис и /', 'placeholder': 'Допускается использовать строчные и заглавные буквы, цифры, дефис и /', 'pattern': '[ a-zA-Zа-яёА-ЯЁ0-9 -/]+'}),
+        widget=TextInput(attrs={'class': 'form-control', 'maxlength': 80,
+            'title': 'Допускается использовать строчные и заглавные буквы, цифры, дефис и /',
+            'placeholder': 'Допускается использовать строчные и заглавные буквы, цифры, дефис и /',
+            'pattern': '[ a-zA-Zа-яёА-ЯЁ0-9 -/]+'}),
         error_messages={'unique': "Такая категория уже существует, выберите ее из предложенных."}
     )
 
     new_tags = forms.CharField(
         label=(u'Если требуется, укажите через запятую новые теги'),
         required=False,
-        widget=TextInput(attrs={'maxlength': 250,
+        widget=TextInput(attrs={'maxlength': 250, 'class': 'form-control',
                                 'title': 'Допускается использовать строчные и заглавные буквы, цифры, запятые, дефис и /',
                                 'placeholder': 'Допускается использовать строчные и заглавные буквы, цифры, запятые, дефис и /',
                                 'pattern': '[a-zA-Zа-яёА-ЯЁ0-9 -/,]+'}),
@@ -58,8 +61,11 @@ class TestForm(forms.ModelForm):
         # Переопределение стандартного виджета, подробнее на https://djbook.ru/rel1.9/topics/forms/modelforms.html#overriding-the-default-fields
         widgets = {
             'tags': CheckboxSelectMultiple,
-            'time_restricting': NumberInput(attrs={'min': 1, 'placeholder': 'Не менее 1 минуты'}),
-            'name': TextInput(attrs={'maxlength': 200, 'title': 'Первая буква названия будет преобразована в заглавную, остальные — в строчные. Допускается использовать: буквы, цифры, пробелы, запятые, -/«»():;', 'placeholder': 'Допускается использовать: буквы, цифры, пробелы, запятые, -/«»():;', 'pattern': '[a-zA-Zа-яёА-Я0-9 -/,«»();:]*'}),
+            'time_restricting': NumberInput(attrs={'min': 1, 'placeholder': 'Не менее 1 минуты', 'class': 'form-control'}),
+            'name': TextInput(attrs={'maxlength': 200, 'class': 'form-control',
+                                     'title': 'Первая буква названия будет преобразована в заглавную, остальные — в строчные. Допускается использовать: буквы, цифры, пробелы, запятые, -/«»():;',
+                                     'placeholder': 'Допускается использовать: буквы, цифры, пробелы, запятые, -/«»():;',
+                                     'pattern': '[a-zA-Zа-яёА-Я0-9 -/,«»();:]*'}),
         }
         error_messages = {
             'name': {
@@ -70,8 +76,8 @@ class TestForm(forms.ModelForm):
 class ClosedQuestionForm(forms.ModelForm):
     class Meta:
         model = ClosedQuestion
-        fields = ('only_one_right',
-                  'question_content',
+        fields = ('question_content',
+                  'only_one_right',
                   'correct_option_numbers')
 
 class OpenQuestionForm(forms.ModelForm):
@@ -79,7 +85,7 @@ class OpenQuestionForm(forms.ModelForm):
         model = OpenQuestion
         fields = ('question_content_before_blank',
                   'question_content_after_blank',
-                  'correct_option')
+                  'blank_width', 'correct_option')
 
 class SequenceQuestionForm(forms.ModelForm):
     class Meta:

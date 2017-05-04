@@ -148,7 +148,7 @@ class ClosedQuestion(models.Model):
         max_length=55, blank=False, null=False)
 
     def __str__(self):
-        return self.question_of_test.test.name + ':' + self.question_of_test.question_index_number + ' (закрытый)'
+        return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (закрытый) теста ' + self.question_of_test.test.name
 
     class Meta:
         ordering = ['question_of_test']
@@ -165,7 +165,7 @@ class ClosedQuestionOption(models.Model):
     option_number = models.IntegerField('Порядковый номер варианта ответа на вопрос закр. типа', blank=False, null=False)
 
     def __str__(self):
-        return 'Вариант ответа № ' + str(self.option_number) + ' на вопрос № /' + self.question.question_of_test.question_index_number + '/'
+        return 'Вариант ответа № ' + str(self.option_number) + ' на вопрос № /' + str(self.question.question_of_test.question_index_number) + '/'
 
     class Meta:
         ordering = ['question']
@@ -183,9 +183,10 @@ class OpenQuestion(models.Model):
              null=False, blank=False, default='')
     # При обработке результатов прохождения, регистр учитываться не должен
     correct_option = models.CharField('Текст правильного ответа', max_length=120, blank=False, null=False)
+    blank_width = models.IntegerField('Ширина пропуска в пикселях', default=50)
 
     def __str__(self):
-        return self.question_of_test.test.name + ':' + str(self.question_of_test.question_index_number) + ' (открытый)'
+        return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (открытый) теста ' + self.question_of_test.test.name
 
     class Meta:
         ordering = ['question_of_test']
@@ -204,7 +205,7 @@ class SequenceQuestion(models.Model):
         max_length=70, blank=False, null=False, help_text='Номера элементов последовательности, разделенные запятыми без пробелов.')
 
     def __str__(self):
-        return self.question_of_test.test.name + ':' + str(self.question_of_test.question_index_number) + ' (последовательность)'
+        return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (последовательность) теста ' + self.question_of_test.test.name
 
     class Meta:
         ordering = ['question_of_test']
@@ -221,7 +222,7 @@ class SequenceQuestionElement(models.Model):
 
     def __str__(self):
         return 'Элемент №' + str(self.element_index_number) + \
-               ' вопроса № ' + self.question.question_of_test.question_index_number
+               ' вопроса № ' + str(self.question.question_of_test.question_index_number)
 
     class Meta:
         ordering = ['question']
@@ -244,7 +245,7 @@ class ComparisonQuestion(models.Model):
         max_length=55, blank=False, null=False, help_text='Номера элементов последовательности второго ряда, разделенные запятыми без пробелов.')
 
     def __str__(self):
-        return self.question_of_test.test.name + ', вопрос № ' + self.question_of_test.question_index_number + ' (сопоставление)'
+        return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (сопоставление) теста ' + self.question_of_test.test.name
 
     class Meta:
         ordering = ['question_of_test']
@@ -273,15 +274,15 @@ class QuestionOfTest(models.Model):
             blank=False, on_delete=models.CASCADE, verbose_name='Тест, к которому относится вопрос')
     question_index_number = models.IntegerField('Порядковый номер вопроса в тесте', blank=False, null=False)
     type_of_question = models.CharField('Тип теста, чтобы знать, к какому типу вопроса обращаться через связь',
-            max_length=7, blank=False, unique=True,
+            max_length=7, blank=False, unique=False,
             choices=[('ClsdQ', 'закрытый'), ('OpndQ', 'открытый'),
                      ('SqncQ', 'последовательность'), ('CmprsnQ', 'сопоставление')])
 
     def __str__(self):
-        return 'Вопрос № ' + str(self.element_index_number) + \
+        return 'Вопрос № ' + str(self.question_index_number) + \
                ' теста № ' + self.test.name
 
     class Meta:
         ordering = ['test']
-        verbose_name = 'Вопрос (как пункт) теста'
-        verbose_name_plural = 'Вопросы (как пункт) теста'
+        verbose_name = 'Вопрос теста'
+        verbose_name_plural = 'Вопросы теста'
