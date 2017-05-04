@@ -91,10 +91,9 @@ class OpenQuestionForm(forms.ModelForm):
         model = OpenQuestion
         fields = ('question_content_before_blank',
                   'question_content_after_blank',
-                  'blank_width', 'correct_option')
+                  'correct_option')
 
         widgets = {
-            'blank_width': NumberInput(attrs={'min': 1, 'class': 'form-control'}),
             'correct_option': TextInput(attrs={'maxlength': 120, 'class': 'form-control'}),
         }
 

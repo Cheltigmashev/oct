@@ -8,7 +8,7 @@
 {% block content %}
 <h2>Вопросы к тесту <q>{{ test }}</q></h2>
 
-<h3 class="text-left">Добавить новый вопрос</h3>
+<h3 class="text-left">Добавить новый вопрос:</h3>
 <div class="adding_questions_btns">
     <div class="dropdown inline_block add_closed_question_block">
         <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
@@ -53,12 +53,13 @@
             <span class="caret"></span></button>
 
         <div aria-labelledby="dLabel" class="dropdown-menu">
-        <form method="POST" action="">
+        <form method="POST" action="{% url 'new_question' test_id=test.pk type='open' %}">
     {% csrf_token %}
-        <label>Содержимое вопроса (в т.ч. текст) перед и после пропуска.</label>
-    <small><p>NB! {{ open_question_form.question_content_before_blank.help_text }}</p></small>
+            <label>Содержимое вопроса (в т.ч. текст) перед и после пропуска.</label>
+            <small><p>NB! Используйте кнопку «Источник», если хотите, чтобы пропуск и текст были в одном абзаце, т.е. не разрывались переносом строки.</p></small>
+            <small><p>NB! {{ open_question_form.question_content_before_blank.help_text }}</p></small>
     {% for field in open_question_form %}
-        <!-- Первые два поля — с CKEditor’ом -->
+            <!-- Первые два поля — с CKEditor’ом -->
         {% if forloop.counter > 2 %}
             {{ field.label_tag }}
             {{ field }}
@@ -78,7 +79,7 @@
             <span class="caret"></span></button>
 
         <div aria-labelledby="dLabel" class="dropdown-menu">
-        <form method="POST" action="">
+        <form method="POST" action="{% url 'new_question' test_id=test.pk type='comparison' %}">
     {% csrf_token %}
 
             <div>
@@ -95,7 +96,6 @@
     {% if comparison_question_form.correct_sequence.errors %}<p class="field_with_error">{{ comparison_question_form.correct_sequence.errors }}</p>{% endif %}
             </div>
 
-
             <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
         </form>
         </div>
@@ -107,7 +107,7 @@
             <span class="caret"></span></button>
         <div aria-labelledby="dLabel" class="dropdown-menu">
 
-        <form method="POST" action="">
+        <form method="POST" action="{% url 'new_question' test_id=test.pk type='sequence' %}">
     {% csrf_token %}
 
             <div>
@@ -132,27 +132,58 @@
 
     {% for qu_of_test in questions_of_test %}
 <div class="question">
-    {% if qu_of_test.type_of_question == 'ClsdQ' %}
-    <p>Вопрос № {{ qu_of_test.question_index_number }} (закрытого типа):</p>
-    {{ qu_of_test.closed_question.question_content|safe }}
-    {% endif %}
+        {% if qu_of_test.type_of_question == 'ClsdQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (закрытого типа), один или несколько правильных вариантов: <mark>{{ qu_of_test.closed_question.correct_option_numbers }}</mark></p>
+        {{ qu_of_test.closed_question.question_content|safe }}
+    <div class="closed_question_options_div">
+            {% for closed_question_options in qu_of.closed_question.closed_question_options %}
+                <p>{{ closed_question_options.option_number }}. {{ closed_question_options }}</p>
+            {% empty %}
+        <p>Вы еще не добавили вариантов ответа на этот вопрос.</p>
+            {% endfor %}
+    </div>
+        {% endif %}
 
-    {% if qu_of_test.type_of_question == 'OpndQ' %}
-    <p>Вопрос № {{ qu_of_test.question_index_number }} (открытого типа):</p>
-    {{ qu_of_test.sequence_question.question_content_before_blank|safe }}
+        {% if qu_of_test.type_of_question == 'OpndQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (открытого типа), правильный ответ: <mark>{{ qu_of_test.open_question.correct_option }}</mark></p>
+        {{ qu_of_test.open_question.question_content_before_blank|safe }}
     <mark>__ПРОПУСК__</mark>
-    {{ qu_of_test.sequence_question.question_content_after_blank|safe }}
-    {% endif %}
+        {{ qu_of_test.open_question.question_content_after_blank|safe }}
+        {% endif %}
 
-    {% if qu_of_test.type_of_question == 'SqncQ' %}
-    <p>Вопрос № {{ qu_of_test.question_index_number }} (определение последовательности):</p>
-    {{ qu_of_test.comparison_question.sequence_question_content|safe }}
-    {% endif %}
+        {% if qu_of_test.type_of_question == 'SqncQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (определение последовательности), правильная последовательность: <mark>{{ qu_of_test.sequence_question.correct_sequence }}</mark></p>
+        {{ qu_of_test.sequence_question.sequence_question_content|safe }}
+    <div class="sequence_elements_div">
+            {% for sequence_element in qu_of_test.sequence_elements %}
+    <span class="sequence_element">{{ sequence_element }}</span>
+            {% empty %}
+        <p>Вы еще не добавили элементы последовательности</p>
+            {% endfor %}
+    </div>
+        {% endif %}
 
-    {% if qu_of_test.type_of_question == 'CmprsnQ' %}
-    <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление):</p>    
-    {{ qu_of_test.comparison_question.comparison_question_content|safe }}
-    {% endif %}
+        {% if qu_of_test.type_of_question == 'CmprsnQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление), правильная последовательность элементов правого ряда: <mark>{{ qu_of_test.comparison_question.correct_sequence }}</mark></p>
+        {{ qu_of_test.comparison_question.comparison_question_content|safe }}
+            <div class="comparing_elements_div">
+                <div class="left_row inline_block">
+            {% for left_row_element in left_row_elements %}
+                <div>{{ left_row_element }}</div>
+            {% empty %}
+                    <span>Вы еще не добавили элементы <mark>левого ряда</mark> сопоставления</span>
+            {% endfor %}
+                </div>
+
+                <div class="right_row inline_block">
+            {% for right_row_element in right_row_elements %}
+                <div>{{ right_row_element }}</div>
+            {% empty %}
+                    <span>Вы еще не добавили элементы <mark>правого ряда</mark> сопоставления</span>
+            {% endfor %}
+                </div>
+            </div>
+        {% endif %}
 </div>
 
     {% empty %}

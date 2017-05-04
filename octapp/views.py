@@ -382,7 +382,6 @@ def new_question(request, test_id, type):
     # sequence_question_form = SequenceQuestionForm(prefix="sqnc")
     # comparison_question_form = ComparisonQuestionForm(prefix="cmprsn")
 
-    # Префиксы форм — http://www.joshuakehn.com/2013/7/18/multiple-django-forms-in-one-form.html
     closed_question_form = ClosedQuestionForm()
     open_question_form = OpenQuestionForm()
     sequence_question_form = SequenceQuestionForm()
@@ -390,13 +389,12 @@ def new_question(request, test_id, type):
 
     test = get_object_or_404(Test, pk=test_id)
     questions_of_test = test.questions_of_test.order_by('question_index_number')
+    index_number_of_new_test_question = test.questions_of_test.count() + 1
     if type == 'closed':
         if request.method == 'POST':
             # Form форма с пользовательскими данными
             closed_question_form = ClosedQuestionForm(request.POST)
             if closed_question_form.is_valid():
-                test = get_object_or_404(Test, pk=test_id)
-                index_number_of_new_test_question = test.questions_of_test.count() + 1
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
                         type_of_question='ClsdQ', question_index_number=index_number_of_new_test_question)
                 # Пока не сохраняем объект
@@ -407,6 +405,54 @@ def new_question(request, test_id, type):
         else:
             # Пустая форма
             closed_question_form = ClosedQuestionForm()
+
+    if type == 'open':
+        if request.method == 'POST':
+            # Form форма с пользовательскими данными
+            open_question_form = OpenQuestionForm(request.POST)
+            if open_question_form.is_valid():
+                new_question_of_test = QuestionOfTest.objects.create(test=test,
+                        type_of_question='OpndQ', question_index_number=index_number_of_new_test_question)
+                # Пока не сохраняем объект
+                new_open_question_object = open_question_form.save(commit=False)
+                new_open_question_object.question_of_test = new_question_of_test
+                new_open_question_object.save()
+                return redirect('questions_of_test', test_id=test_id)
+        else:
+            # Пустая форма
+            open_question_form = OpenQuestionForm()
+
+    if type == 'sequence':
+        if request.method == 'POST':
+            # Form форма с пользовательскими данными
+            sequence_question_form = SequenceQuestionForm(request.POST)
+            if sequence_question_form.is_valid():
+                new_question_of_test = QuestionOfTest.objects.create(test=test,
+                        type_of_question='SqncQ', question_index_number=index_number_of_new_test_question)
+                # Пока не сохраняем объект
+                new_sequence_question_object = sequence_question_form.save(commit=False)
+                new_sequence_question_object.question_of_test = new_question_of_test
+                new_sequence_question_object.save()
+                return redirect('questions_of_test', test_id=test_id)
+        else:
+            # Пустая форма
+            sequence_question_form = SequenceQuestionForm()
+
+    if type == 'comparison':
+        if request.method == 'POST':
+            # Form форма с пользовательскими данными
+            comparison_question_form = ComparisonQuestionForm(request.POST)
+            if comparison_question_form.is_valid():
+                new_question_of_test = QuestionOfTest.objects.create(test=test,
+                        type_of_question='CmprsnQ', question_index_number=index_number_of_new_test_question)
+                # Пока не сохраняем объект
+                new_comparison_question_object = comparison_question_form.save(commit=False)
+                new_comparison_question_object.question_of_test = new_question_of_test
+                new_comparison_question_object.save()
+                return redirect('questions_of_test', test_id=test_id)
+        else:
+            # Пустая форма
+            comparison_question_form = ComparisonQuestionForm()
     return render(request, 'octapp/questions_of_test.html', {'test': test,
                         'questions_of_test': questions_of_test,
                         'closed_question_form': closed_question_form,

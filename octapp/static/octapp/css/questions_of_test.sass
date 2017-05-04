@@ -10,6 +10,16 @@
     padding: 5px 10px
     border-left: 15px groove gray
     border-bottom: 2px solid gray
+    border-top: 2px solid gray
+    border-right: 2px solid gray
+    border-radius: 10px
+    .closed_question_options_div, .sequence_elements_div, .comparing_elements_div
+      padding: 8px 8px 8px 15px
+      border-top: 1px dashed orange
+    .comparing_elements_div
+      .left_row, .right_row
+        width: 50%
+        margin-right: -5px
   .adding_questions_btns
     min-width: 302px
     margin: 0
@@ -63,42 +73,15 @@
           .ckeditor_widget
             display: block
             width: auto
-      .dropdown.inline_block.add_closed_question_block
-        .dropdown-menu
 
-      .dropdown.inline_block.add_comparison_question_block
-        .dropdown-menu
-
-      .dropdown.inline_block.add_sequence_question_block
-        .dropdown-menu
-
-
-@media(min-width:768px) and (max-width:991px)
-
-
-@media(min-width:992px) and (max-width:1199px)
+@media(min-width:992px)
   .content
-    min-height: 1000px
     .adding_questions_btns
-      .dropdown.inline_block
-        width: 100%
-        .dropdown-menu
-          padding: 5px
-        .btn:not(input)
-          font-size: 14px
-          padding: 5px
-          margin-left: 0
       .dropdown.inline_block.add_open_question_block
-        left: 0
         .dropdown-menu
+          right: 0
+          left: auto
+          width: 1000px
           .ckeditor_widget
             display: inline-block
             width: 485px
-      .dropdown.inline_block.add_closed_question_block
-        .dropdown-menu
-
-      .dropdown.inline_block.add_comparison_question_block
-        .dropdown-menu
-
-      .dropdown.inline_block.add_sequence_question_block
-        .dropdown-menu

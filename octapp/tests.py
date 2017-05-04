@@ -117,8 +117,7 @@ def create_closed_question_option(closed_question, content):
 def create_open_question(test,
                         question_content_before_blank='Заполните пропуск:<br>Django — это ',
                         question_content_after_blank='для разработки веб-приложений',
-                        correct_option='фреймворк',
-                        blank_width=11):
+                        correct_option='фреймворк'):
     """
     Создает и возвращает вопрос открытого типа.
     """
@@ -126,8 +125,7 @@ def create_open_question(test,
     return OpenQuestion.objects.create(question_of_test=new_question_of_test,
                                        question_content_before_blank=question_content_before_blank,
                                        question_content_after_blank=question_content_after_blank,
-                                       correct_option=correct_option,
-                                       blank_width=blank_width)
+                                       correct_option=correct_option)
 
 def create_sequence_question(test,
                         sequence_question_content='Вопрос на определение последовательности',
@@ -149,12 +147,12 @@ def create_sequence_question_element(sequence_question, element_content):
 
 def create_comparison_question(test,
                         comparison_question_content='Вопрос на сопоставление',
-                        correct_sequence='фреймворк'):
+                        correct_sequence='3,1,2,4'):
     """
     Создает и возвращает вопрос на сопоставление, не создавая элементы сопоставления для этого вопроса.
     Здесь correct_sequence — правильная последовательность элементов правого ряда (упорядочиваемых тем, кто проходит тест)
     """
-    new_question_of_test = create_question_of_test(test)
+    new_question_of_test = create_question_of_test(test, 'CmprsnQ')
     return ComparisonQuestion.objects.create(question_of_test=new_question_of_test,
                                        comparison_question_content=comparison_question_content,
                                        correct_sequence=correct_sequence)
@@ -604,16 +602,82 @@ class QuestionsOfTestsViewTests(TestCase):
         self.assertContains(response, u'Вопрос № 1 (закрытого типа)')
         self.assertContains(response, u'Второй вопрос закрытого типа')
         self.assertContains(response, u'Вопрос № 2 (закрытого типа)')
+        self.assertContains(response, u'Вы еще не добавили вариантов ответа на этот вопрос.', count=2)
 
         # В контекст должен передаваться тест с id, полученным из URL
         self.assertEqual(response.context['test'], past_test_with_2_closed_questions)
 
         # В переменной контекста для хранения вопросов теста должно быть 2 вопроса
         self.assertQuerysetEqual(response.context['questions_of_test'],
-            ['<QuestionOfTest: Вопрос № ' + str(clsd1.question_of_test.question_index_number) \
-             + ' теста ' + past_test_with_2_closed_questions.name + '>',
-             '<QuestionOfTest: Вопрос № ' + str(clsd2.question_of_test.question_index_number) \
-             + ' теста ' + past_test_with_2_closed_questions.name + '>'])
+            ['<QuestionOfTest: Вопрос № ' + str(clsd1.question_of_test.question_index_number) + ' (' +
+             clsd1.question_of_test.type_of_question + ') теста ' + past_test_with_2_closed_questions.name + '>',
+             '<QuestionOfTest: Вопрос № ' + str(clsd2.question_of_test.question_index_number) + ' (' +
+             clsd2.question_of_test.type_of_question + ') теста ' + past_test_with_2_closed_questions.name + '>'])
+
+        self.assertEqual(response.context['all_tests_count'], 1)
+        self.assertContains(response, u'Тестов: 1')
+        self.assertEqual(response.context['all_categories_count'], 0)
+        self.assertContains(response, u'Категорий: 0')
+        self.assertEqual(response.context['all_tags_count'], 0)
+        self.assertContains(response, u'Тегов: 0')
+
+    def test_test_questions_view_with_all_types_questions_with_no_options(self):
+        """
+        Если для данного теста было добавлено 2 вопроса закрытого типа
+        """
+        published_test = create_test(category=None,
+                    tags=[], name='Некий опубликованный тест',
+                    publishing_days_offset=-30)
+
+        ClsdQ = create_closed_question(test=published_test,
+                               question_content='Вопрос закрытого типа',
+                               correct_option_numbers=2)
+
+        OpndQ = create_open_question(test=published_test)
+
+        SqncQ = create_sequence_question(test=published_test)
+
+        CmprsnQ = create_comparison_question(test=published_test)
+
+        # Авторизация (т.к. представление требует, чтобы пользователь был авторизован)
+        self.c = Client()
+        self.c.login(username='SomeUser', password='lkjiDKJFlsadLKDJ34alksd')
+
+        response = self.c.get(reverse('questions_of_test', args=(published_test.id,)))
+        self.assertEqual(response.status_code, 200)
+
+        # Должно выводиться название теста, чтобы пользователь был в курсе,
+        # к какому тесту он добавляет вопросы (или редактирует, просматривает их
+        self.assertContains(response, u'Некий опубликованный тест')
+
+        # Должны выводиться сами вопросы, их условия, порядковые номера в списке вопросов
+        self.assertContains(response, u'Вопрос закрытого типа')
+        self.assertContains(response, u'Вопрос № 1 (закрытого типа)')
+
+        self.assertContains(response, u'Заполните пропуск:<br>Django — это ')
+        self.assertContains(response, u'Вопрос № 2 (открытого типа)')
+
+        self.assertContains(response, u'Вопрос на определение последовательности')
+        self.assertContains(response, u'Вопрос № 3 (определение последовательности)')
+
+        self.assertContains(response, u'Вопрос на сопоставление')
+        self.assertContains(response, u'Вопрос № 4 (сопоставление)')
+
+        self.assertContains(response, u'Вы еще не добавили вариантов ответа на этот вопрос.')
+
+        # В контекст должен передаваться тест с id, полученным из URL
+        self.assertEqual(response.context['test'], published_test)
+
+        # В переменной контекста для хранения вопросов теста должно быть 2 вопроса
+        self.assertQuerysetEqual(response.context['questions_of_test'],
+            ['<QuestionOfTest: Вопрос № ' + str(ClsdQ.question_of_test.question_index_number) +
+             ' (' + ClsdQ.question_of_test.type_of_question + ') теста ' + published_test.name + '>',
+             '<QuestionOfTest: Вопрос № ' + str(OpndQ.question_of_test.question_index_number) +
+             ' (' + OpndQ.question_of_test.type_of_question + ') теста ' + published_test.name + '>',
+             '<QuestionOfTest: Вопрос № ' + str(SqncQ.question_of_test.question_index_number) +
+             ' (' + SqncQ.question_of_test.type_of_question + ') теста ' + published_test.name + '>',
+             '<QuestionOfTest: Вопрос № ' + str(CmprsnQ.question_of_test.question_index_number) +
+             ' (' + CmprsnQ.question_of_test.type_of_question + ') теста ' + published_test.name + '>'])
 
         self.assertEqual(response.context['all_tests_count'], 1)
         self.assertContains(response, u'Тестов: 1')

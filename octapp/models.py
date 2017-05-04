@@ -183,7 +183,6 @@ class OpenQuestion(models.Model):
              null=False, blank=False, default='')
     # При обработке результатов прохождения, регистр учитываться не должен
     correct_option = models.CharField('Текст правильного ответа', max_length=120, blank=False, null=False)
-    blank_width = models.IntegerField('Ширина пропуска в пикселях', default=50)
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (открытый) теста ' + self.question_of_test.test.name
@@ -280,7 +279,7 @@ class QuestionOfTest(models.Model):
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_index_number) + \
-               ' теста ' + self.test.name
+               ' (' + self.type_of_question + ') теста ' + self.test.name
 
     class Meta:
         ordering = ['test']
