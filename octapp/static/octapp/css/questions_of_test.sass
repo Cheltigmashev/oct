@@ -7,6 +7,7 @@
   min-width: 365px
   .question
     margin: 10px 0
+    position: relative
     padding: 5px 10px
     border-left: 15px groove gray
     border-bottom: 2px solid gray
@@ -20,6 +21,42 @@
       .left_row, .right_row
         width: 50%
         margin-right: -5px
+
+    .question_buttons
+      top: 5px
+      right: 5px
+      float: right
+      user-select: none
+      text-align: right
+      .glyphicon
+        transition: all ease 0.5s
+        color: #333333
+        font-size: 35px
+        cursor: pointer
+      .glyphicon:hover
+        transition: all ease 0.2s
+        color: darkorange
+      .dropdown
+        .dropdown-menu
+          padding: 10px
+          width: 800px
+          top: 40px
+          right: 0
+          left: auto
+        .edit_closed_question_block
+          .inline_block
+            width: 45%
+            vertical-align: middle
+          .inline_block:nth-of-type(3)
+            padding-left: 20px
+          hr
+            margin: 2px 0
+        .edit_open_question_block
+          width: 950px
+          .ckeditor_widget
+            display: inline-block
+            width: 461px
+
   .adding_questions_btns
     min-width: 302px
     margin: 0
@@ -74,6 +111,29 @@
             display: block
             width: auto
 
+    .question
+      .question_buttons
+        .dropdown
+          .dropdown-menu
+            width: 365px
+            right: -55px
+          .edit_open_question_block
+            .ckeditor_widget
+              display: block
+              width: auto
+
+@media(min-width:768px) and (max-width:991px)
+  .content
+    .question
+      .question_buttons
+        .dropdown
+          .dropdown-menu
+            width: 650px
+          .edit_open_question_block
+            .ckeditor_widget
+              display: block
+              width: auto
+
 @media(min-width:992px)
   .content
     .adding_questions_btns
@@ -81,7 +141,17 @@
         .dropdown-menu
           right: 0
           left: auto
-          width: 1000px
+          width: 940px
           .ckeditor_widget
             display: inline-block
-            width: 485px
+            width: 461px
+    .question
+      .question_buttons
+        .dropdown
+          .dropdown-menu
+            width: 910px
+            right: 0
+          .edit_open_question_block
+            .ckeditor_widget
+              display: inline-block
+              width: 441px

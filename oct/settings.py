@@ -149,10 +149,15 @@ CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
 CKEDITOR_CONFIGS = {
     'default': {
-        'height': 150,
+        'height': 220,
         'width': '100%',
         'extraPlugins': 'codesnippet',
-    }
+    },
+    'compact': {
+        'toolbar': 'Basic',
+        'height': 140,
+        'width': '100%',
+    },
 }
 
 TIME_INPUT_FORMATS = (

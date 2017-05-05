@@ -73,7 +73,16 @@ class TestForm(forms.ModelForm):
             }
         }
 
+# Формы для вопросов
+
 class ClosedQuestionForm(forms.ModelForm):
+    question_index_number = forms.IntegerField(
+        label=(u'Можете указать другой порядковый номер вопроса'),
+        required=False,
+        help_text=(u'Порядковый номер другого вопроса изменится соответственно. Если введенный номер больше номера последнего вопроса, то будет считаться, что введен номер последнего.'),
+        widget=NumberInput(attrs={'class': 'form-control', 'min': 1}),
+    )
+
     class Meta:
         model = ClosedQuestion
         fields = ('question_content',
@@ -87,6 +96,13 @@ class ClosedQuestionForm(forms.ModelForm):
         }
 
 class OpenQuestionForm(forms.ModelForm):
+    question_index_number = forms.IntegerField(
+        label=(u'Можете указать другой порядковый номер вопроса'),
+        required=False,
+        help_text=(u'Порядковый номер другого вопроса изменится соответственно. Если введенный номер больше номера последнего вопроса, то будет считаться, что введен номер последнего.'),
+        widget=NumberInput(attrs={'class': 'form-control', 'min': 1}),
+    )
+
     class Meta:
         model = OpenQuestion
         fields = ('question_content_before_blank',
@@ -98,6 +114,13 @@ class OpenQuestionForm(forms.ModelForm):
         }
 
 class SequenceQuestionForm(forms.ModelForm):
+    question_index_number = forms.IntegerField(
+        label=(u'Можете указать другой порядковый номер вопроса'),
+        required=False,
+        help_text=(u'Порядковый номер другого вопроса изменится соответственно. Если введенный номер больше номера последнего вопроса, то будет считаться, что введен номер последнего.'),
+        widget=NumberInput(attrs={'class': 'form-control', 'min': 1}),
+    )
+
     class Meta:
         model = SequenceQuestion
         fields = ('sequence_question_content',
@@ -110,6 +133,13 @@ class SequenceQuestionForm(forms.ModelForm):
         }
 
 class ComparisonQuestionForm(forms.ModelForm):
+    question_index_number = forms.IntegerField(
+        label=(u'Можете указать другой порядковый номер вопроса'),
+        required=False,
+        help_text=(u'Порядковый номер другого вопроса изменится соответственно. Если введенный номер больше номера последнего вопроса, то будет считаться, что введен номер последнего.'),
+        widget=NumberInput(attrs={'class': 'form-control', 'min': 1}),
+    )
+
     class Meta:
         model = ComparisonQuestion
         fields = ('comparison_question_content',

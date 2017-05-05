@@ -16,7 +16,11 @@ urlpatterns = [
 
     url(r'^test/(?P<test_id>\d+)/questions/$', views.questions_of_test, name='questions_of_test'),
     url(r'^test/(?P<test_id>\d+)/new_question/(?P<type>(closed)|(open)|(sequence)|(comparison))/$', views.new_question, name='new_question'),
-    
+    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/edit/$', views.question_edit, name='question_edit'),
+    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/remove/$', views.question_remove, name='question_remove'),
+
+    # url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/new_option/$', views.new_option, name='new_option'),
+
     url(r'^categories/$', views.categories, name='categories'),
     url(r'^tags/$', views.tags, name='tags'),
 

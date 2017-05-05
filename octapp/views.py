@@ -360,6 +360,36 @@ def test_remove(request, pk, through_user_tests):
 def questions_of_test(request, test_id):
     test = get_object_or_404(Test, pk=test_id)
     questions_of_test = test.questions_of_test.order_by('question_index_number')
+    questions_of_test_with_filled_forms = []
+
+    # Генерация двумерного списка с вопросами теста и соответствующими заполненными формами,
+    # чтобы иметь возможность выводить эти формы для редактирования вопросов
+    # Через атрибут auto_id переопределяются id элементов форм. Без переопределения id у форм будут
+    # одинаковы — id_question_content (в случае вопросов закрытого типа, поле с контентом которых называется question_content),
+    # что приведет к тому, что js скрипты для ckeditor’а не будут работать для этих полей должным образом —
+    # будет отображаться лишь стандартный HTML-тег textarea.
+    for question_of_test in questions_of_test:
+        if question_of_test.type_of_question == 'ClsdQ':
+            closed_question_form = ClosedQuestionForm(instance=question_of_test.closed_question,
+                        initial={'question_index_number': question_of_test.question_index_number},
+                                                      auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
+            questions_of_test_with_filled_forms.append([question_of_test, closed_question_form])
+        elif question_of_test.type_of_question == 'OpndQ':
+            open_question_form = OpenQuestionForm(instance=question_of_test.open_question,
+                        initial={'question_index_number': question_of_test.question_index_number},
+                                                  auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
+            questions_of_test_with_filled_forms.append([question_of_test, open_question_form])
+        elif question_of_test.type_of_question == 'SqncQ':
+            sequence_question_form = SequenceQuestionForm(instance=question_of_test.sequence_question,
+                        initial={'question_index_number': question_of_test.question_index_number},
+                                                          auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
+            questions_of_test_with_filled_forms.append([question_of_test, sequence_question_form])
+        elif question_of_test.type_of_question == 'CmprsnQ':
+            comparison_question_form = ComparisonQuestionForm(instance=question_of_test.comparison_question,
+                        initial={'question_index_number': question_of_test.question_index_number},
+                                                              auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
+            questions_of_test_with_filled_forms.append([question_of_test, comparison_question_form])
+
     # 4 формы для добавления вопросов соответствующих типов
     closed_question_form = ClosedQuestionForm()
     open_question_form = OpenQuestionForm()
@@ -367,6 +397,7 @@ def questions_of_test(request, test_id):
     comparison_question_form = ComparisonQuestionForm()
     return render(request, 'octapp/questions_of_test.html',
                   {'test': test, 'questions_of_test': questions_of_test,
+                   'questions_of_test_with_filled_forms': questions_of_test_with_filled_forms,
                    'closed_question_form': closed_question_form,
                    'open_question_form': open_question_form,
                    'sequence_question_form': sequence_question_form,
@@ -375,13 +406,6 @@ def questions_of_test(request, test_id):
 @login_required
 def new_question(request, test_id, type):
     # Пустые формы для контекста
-    # # Префиксы форм — http://www.joshuakehn.com/2013/7/18/multiple-django-forms-in-one-form.html
-    # НЕ РАБОТАЕТ
-    # closed_question_form = ClosedQuestionForm(prefix="clsd")
-    # open_question_form = OpenQuestionForm(prefix="opnd")
-    # sequence_question_form = SequenceQuestionForm(prefix="sqnc")
-    # comparison_question_form = ComparisonQuestionForm(prefix="cmprsn")
-
     closed_question_form = ClosedQuestionForm()
     open_question_form = OpenQuestionForm()
     sequence_question_form = SequenceQuestionForm()
@@ -459,6 +483,50 @@ def new_question(request, test_id, type):
                         'open_question_form': open_question_form,
                         'sequence_question_form': sequence_question_form,
                         'comparison_question_form': comparison_question_form})
+
+@login_required
+def question_edit(request, test_id, question_of_test_id):
+    test = get_object_or_404(Test, pk=test_id)
+    question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
+    if request.method == 'POST':
+        if question_of_test.type_of_question == 'ClsdQ':
+            form = ClosedQuestionForm(request.POST, instance=question_of_test.closed_question)
+        elif question_of_test.type_of_question == 'OpndQ':
+            form = OpenQuestionForm(request.POST, instance=question_of_test.open_question)
+        elif question_of_test.type_of_question == 'SqncQ':
+            form = SequenceQuestionForm(request.POST, instance=question_of_test.sequence_question)
+        elif question_of_test.type_of_question == 'CmprsnQ':
+            form = ComparisonQuestionForm(request.POST, instance=question_of_test.comparison_question)
+        if form.is_valid():
+            new_index = form.cleaned_data['question_index_number']
+            old_index = question_of_test.question_index_number
+            if new_index != old_index:
+                if new_index > test.questions_of_test.count():
+                    new_index = test.questions_of_test.count()
+                qus_of_test = get_object_or_404(QuestionOfTest, test=test, question_index_number=new_index)
+                qus_of_test.question_index_number = old_index
+                qus_of_test.save()
+            certain_type_question_from_form = form.save(commit=False)
+            certain_type_question_from_form.question_of_test.question_index_number = new_index
+            certain_type_question_from_form.question_of_test.save()
+            return redirect('questions_of_test', test_id=test_id)
+    else:
+        return redirect('questions_of_test', test_id=test_id)
+
+@login_required
+def question_remove(request, test_id, question_of_test_id):
+    test = get_object_or_404(Test, pk=test_id)
+    question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
+
+    # Коррекция порядковых номеров последующих вопросов
+    farther_questions = test.questions_of_test.all().order_by('question_index_number')[question_of_test.question_index_number:]
+    for father_question in farther_questions:
+        father_question.question_index_number -= 1
+        father_question.save()
+
+    question_of_test.delete()
+    return redirect('questions_of_test', test_id=test_id)
+
 
 @login_required
 def review(request, test_id, user_rate):

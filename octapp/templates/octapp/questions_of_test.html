@@ -11,7 +11,7 @@
 <h3 class="text-left">Добавить новый вопрос:</h3>
 <div class="adding_questions_btns">
     <div class="dropdown inline_block add_closed_question_block">
-        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
+        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg">
             Закрытого типа
             <span class="caret"></span></button>
 
@@ -59,12 +59,15 @@
             <small><p>NB! Используйте кнопку «Источник», если хотите, чтобы пропуск и текст были в одном абзаце, т.е. не разрывались переносом строки.</p></small>
             <small><p>NB! {{ open_question_form.question_content_before_blank.help_text }}</p></small>
     {% for field in open_question_form %}
-            <!-- Первые два поля — с CKEditor’ом -->
-        {% if forloop.counter > 2 %}
-            {{ field.label_tag }}
-            {{ field }}
-        {% else %}
+            <!-- Первые два поля — с CKEditor’ом. Не выводить последнее поле,
+            т.к. при добавлении нового вопроса номер рассчитывается автоматически -->
+        {% if not forloop.last %}
+            {% if forloop.counter > 2 %}
+                {{ field.label_tag }}
+                {{ field }}
+            {% else %}
             <div class="ckeditor_widget">{{ field }}</div>
+            {% endif %}
         {% endif %}
         {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
     {% endfor %}
@@ -130,10 +133,141 @@
     </div>
 </div>
 
-    {% for qu_of_test in questions_of_test %}
+    {% for qu_of_test, form_for_editing_question in questions_of_test_with_filled_forms %}
 <div class="question">
+    <!-- Кнопки и формы для редактирования вопросов -->
+    <div class="question_buttons">
+    <div class="dropdown inline_block">
+        <span title="Нажмите, чтобы изменить вопрос" id="dLabel2" class="glyphicon glyphicon-edit" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
+
+
         {% if qu_of_test.type_of_question == 'ClsdQ' %}
-    <p>Вопрос № {{ qu_of_test.question_index_number }} (закрытого типа), один или несколько правильных вариантов: <mark>{{ qu_of_test.closed_question.correct_option_numbers }}</mark></p>
+        <div aria-labelledby="dLabel2" class="dropdown-menu edit_closed_question_block">
+        <form name="closed_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
+    {% csrf_token %}
+
+    {{ form_for_editing_question.question_content.label_tag }}
+            <small><p>NB! {{ form_for_editing_question.question_content.help_text }}</p></small>
+    {{ form_for_editing_question.question_content }}
+    {% if form_for_editing_question.question_content.errors %}<p class="field_with_error">{{ form_for_editing_question.question_content.errors }}</p>{% endif %}
+
+            <div class="inline_block">
+    {{ form_for_editing_question.correct_option_numbers.label_tag }}
+    {{ form_for_editing_question.correct_option_numbers }}
+    {% if form_for_editing_question.correct_option_numbers.errors %}<p class="field_with_error">{{ form_for_editing_question.correct_option_numbers.errors }}</p>{% endif %}
+            </div>
+
+            <div class="inline_block">
+    {{ form_for_editing_question.only_one_right }}
+    {{ form_for_editing_question.only_one_right.label_tag }}
+    {% if form_for_editing_question.only_one_right.errors %}<p class="field_with_error">{{ form_for_editing_question.only_one_right.errors }}</p>{% endif %}
+            </div>
+            <small><p>NB! {{ form_for_editing_question.correct_option_numbers.help_text }}</p></small>
+            <hr>
+    {{ form_for_editing_question.question_index_number.label_tag }}
+    {{ form_for_editing_question.question_index_number }}
+            <small><p>NB! {{ form_for_editing_question.question_index_number.help_text }}</p></small>
+    {% if form_for_editing_question.question_index_number.errors %}<p class="field_with_error">{{ form_for_editing_question.question_index_number.errors }}</p>{% endif %}
+
+            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default">
+        </form>
+        </div>
+        {% endif %}
+
+
+        {% if qu_of_test.type_of_question == 'OpndQ' %}
+        <div aria-labelledby="dLabel" class="dropdown-menu edit_open_question_block">
+        <form name="open_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
+    {% csrf_token %}
+
+            <div class="ckeditor_widget">
+    {{ form_for_editing_question.question_content_before_blank.label_tag }}
+            <small><p>NB! {{ form_for_editing_question.question_content_before_blank.help_text }}</p></small>
+    {{ form_for_editing_question.question_content_before_blank }}
+    {% if form_for_editing_question.question_content_before_blank.errors %}<p class="field_with_error">{{ form_for_editing_question.question_content_before_blank.errors }}</p>{% endif %}
+            </div>
+
+            <div class="ckeditor_widget">
+    {{ form_for_editing_question.question_content_after_blank.label_tag }}
+            <small><p>NB! {{ form_for_editing_question.question_content_after_blank.help_text }}</p></small>
+    {{ form_for_editing_question.question_content_after_blank }}
+    {% if form_for_editing_question.question_content_after_blank.errors %}<p class="field_with_error">{{ form_for_editing_question.question_content_after_blank.errors }}</p>{% endif %}
+            </div>
+
+    {{ form_for_editing_question.correct_option.label_tag }}
+    {{ form_for_editing_question.correct_option }}
+    {% if form_for_editing_question.correct_option.errors %}<p class="field_with_error">{{ form_for_editing_question.correct_option.errors }}</p>{% endif %}
+
+
+    {{ form_for_editing_question.question_index_number.label_tag }}
+    {{ form_for_editing_question.question_index_number }}
+            <small><p>NB! {{ form_for_editing_question.question_index_number.help_text }}</p></small>
+    {% if form_for_editing_question.question_index_number.errors %}<p class="field_with_error">{{ form_for_editing_question.question_index_number.errors }}</p>{% endif %}
+
+            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default">
+        </form>
+        </div>
+        {% endif %}
+
+
+        {% if qu_of_test.type_of_question == 'SqncQ' %}
+        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <form name="sequence_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
+    {% csrf_token %}
+
+    {{ form_for_editing_question.sequence_question_content.label_tag }}
+            <small><p>NB! {{ form_for_editing_question.sequence_question_content.help_text }}</p></small>
+    {{ form_for_editing_question.sequence_question_content }}
+    {% if form_for_editing_question.sequence_question_content.errors %}<p class="field_with_error">{{ form_for_editing_question.sequence_question_content.errors }}</p>{% endif %}
+
+    {{ form_for_editing_question.correct_sequence.label_tag }}
+            <small><p>NB! {{ form_for_editing_question.correct_sequence.help_text }}</p></small>
+    {{ form_for_editing_question.correct_sequence }}
+    {% if form_for_editing_question.correct_sequence.errors %}<p class="field_with_error">{{ form_for_editing_question.correct_sequence.errors }}</p>{% endif %}
+
+    {{ form_for_editing_question.question_index_number.label_tag }}
+    {{ form_for_editing_question.question_index_number }}
+            <small><p>NB! {{ form_for_editing_question.question_index_number.help_text }}</p></small>
+    {% if form_for_editing_question.question_index_number.errors %}<p class="field_with_error">{{ form_for_editing_question.question_index_number.errors }}</p>{% endif %}
+
+            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default">
+        </form>
+        </div>
+        {% endif %}
+
+
+        {% if qu_of_test.type_of_question == 'CmprsnQ' %}
+        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <form name="comparison_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
+    {% csrf_token %}
+
+    {{ form_for_editing_question.comparison_question_content.label_tag }}
+            <small><p>NB! {{ form_for_editing_question.comparison_question_content.help_text }}</p></small>
+    {{ form_for_editing_question.comparison_question_content }}
+    {% if form_for_editing_question.comparison_question_content.errors %}<p class="field_with_error">{{ form_for_editing_question.comparison_question_content.errors }}</p>{% endif %}
+
+    {{ form_for_editing_question.correct_sequence.label_tag }}
+            <small><p>NB! {{ form_for_editing_question.correct_sequence.help_text }}</p></small>
+    {{ form_for_editing_question.correct_sequence }}
+    {% if form_for_editing_question.correct_sequence.errors %}<p class="field_with_error">{{ form_for_editing_question.correct_sequence.errors }}</p>{% endif %}
+
+    {{ form_for_editing_question.question_index_number.label_tag }}
+    {{ form_for_editing_question.question_index_number }}
+            <small><p>NB! {{ form_for_editing_question.question_index_number.help_text }}</p></small>
+    {% if form_for_editing_question.question_index_number.errors %}<p class="field_with_error">{{ form_for_editing_question.question_index_number.errors }}</p>{% endif %}
+
+            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default">
+        </form>
+        </div>
+        {% endif %}
+
+    </div> <!-- закрывающий для div.dropdown.inline_block -->
+
+        <a href="{% url 'question_remove' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить вопрос" class="glyphicon glyphicon-remove"></a>
+    </div> <!-- закрывающий для div.question_buttons -->
+
+        {% if qu_of_test.type_of_question == 'ClsdQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (закрытого типа), правильные варианты: <mark>{{ qu_of_test.closed_question.correct_option_numbers }}</mark></p>
         {{ qu_of_test.closed_question.question_content|safe }}
     <div class="closed_question_options_div">
             {% for closed_question_options in qu_of.closed_question.closed_question_options %}
@@ -166,29 +300,29 @@
         {% if qu_of_test.type_of_question == 'CmprsnQ' %}
     <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление), правильная последовательность элементов правого ряда: <mark>{{ qu_of_test.comparison_question.correct_sequence }}</mark></p>
         {{ qu_of_test.comparison_question.comparison_question_content|safe }}
-            <div class="comparing_elements_div">
-                <div class="left_row inline_block">
+    <div class="comparing_elements_div">
+        <div class="left_row inline_block">
             {% for left_row_element in left_row_elements %}
                 <div>{{ left_row_element }}</div>
             {% empty %}
                     <span>Вы еще не добавили элементы <mark>левого ряда</mark> сопоставления</span>
             {% endfor %}
-                </div>
+        </div>
 
-                <div class="right_row inline_block">
+        <div class="right_row inline_block">
             {% for right_row_element in right_row_elements %}
-                <div>{{ right_row_element }}</div>
+            <div>{{ right_row_element }}</div>
             {% empty %}
                     <span>Вы еще не добавили элементы <mark>правого ряда</mark> сопоставления</span>
             {% endfor %}
-                </div>
             </div>
+    </div>
         {% endif %}
-</div>
+</div> <!-- закрывающий для div.question -->
 
     {% empty %}
 <p>Вы еще не добавили никаких вопросов для данного теста. Используйте кнопки, чтобы добавить новый вопрос, а затем варианты ответа к нему.</p>
-    {% endfor %}
+    {% endfor %} <!-- цикл вывода вопросов и форм для их изменения -->
 
 <script>
     $(document).ready (function() {
