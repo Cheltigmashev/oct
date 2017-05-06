@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.forms import CheckboxSelectMultiple, NumberInput, TextInput
-from .models import Category, ClosedQuestion, OpenQuestion, SequenceQuestion, ComparisonQuestion
+from .models import Category, ClosedQuestion, OpenQuestion, SequenceQuestion, ComparisonQuestion, ClosedQuestionOption, SequenceQuestionElement, ComparisonQuestionElement
 from registration import validators
 from registration.forms import RegistrationFormTermsOfService
 from .models import Test, Comment
@@ -149,4 +149,36 @@ class ComparisonQuestionForm(forms.ModelForm):
             'correct_sequence': TextInput(attrs={'maxlength': 55, 'class': 'form-control',
                                                        'placeholder': 'Цифры и запятые',
                                                        'pattern': '[0-9,]*'}),
+        }
+
+# Формы для вариантов ответа либо элементов последовательности/сопоставления
+class ClosedQuestionOptionForm(forms.ModelForm):
+    class Meta:
+        model = ClosedQuestionOption
+        fields = ('content',
+                  'option_number')
+
+        widgets = {
+            'option_number': NumberInput(attrs={'class': 'form-control', 'min': 1}),
+        }
+
+
+class SequenceQuestionElementForm(forms.ModelForm):
+    class Meta:
+        model = SequenceQuestionElement
+        fields = ('element_content',
+                  'element_index_number')
+
+        widgets = {
+            'element_index_number': NumberInput(attrs={'class': 'form-control', 'min': 1}),
+        }
+
+class ComparisonQuestionElementForm(forms.ModelForm):
+    class Meta:
+        model = ComparisonQuestionElement
+        fields = ('element_content',
+                  'element_index_number')
+
+        widgets = {
+            'element_index_number': NumberInput(attrs={'class': 'form-control', 'min': 1}),
         }

@@ -162,7 +162,7 @@ class ClosedQuestionOption(models.Model):
     content = RichTextField('Содержимое (контент) варианта ответа',
                             help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
                             null=False, blank=False, default='')
-    option_number = models.IntegerField('Порядковый номер варианта ответа на вопрос закр. типа', blank=False, null=False)
+    option_number = models.IntegerField('Порядковый номер варианта ответа на вопрос закр. типа', blank=True, null=False, help_text='Оставьте это поле пустым, чтобы добавить вариант вопроса последним (т.е. номер = кол-во вопросов + 1)')
 
     def __str__(self):
         return 'Вариант ответа № ' + str(self.option_number) + ' на вопрос № /' + str(self.question.question_of_test.question_index_number) + '/'
@@ -215,7 +215,7 @@ class SequenceQuestionElement(models.Model):
     element_content = RichTextField('Содержимое (контент) элемента последовательности',
                                      help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
                                      null=False, blank=False, default='')
-    element_index_number = models.IntegerField('Порядковый номер элемента последовательности', blank=False, null=False)
+    element_index_number = models.IntegerField('Порядковый номер элемента последовательности', blank=True, null=False, help_text='Оставьте это поле пустым, чтобы добавить элемент последним (т.е. номер = кол-во элементов + 1)')
 
     def __str__(self):
         return 'Элемент №' + str(self.element_index_number) + \
@@ -255,7 +255,7 @@ class ComparisonQuestionElement(models.Model):
     element_content = RichTextField('Содержимое (контент) элемента сопоставления',
                                      help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
                                      null=False, blank=False, default='')
-    element_index_number = models.IntegerField('Порядковый номер элемента сопоставления', blank=False, null=False)
+    element_index_number = models.IntegerField('Порядковый номер элемента сопоставления', blank=True, null=False, help_text='Оставьте это поле пустым, чтобы добавить элемент ряда последним (т.е. номер = кол-во элементов + 1)')
 
     def __str__(self):
         return 'Элемент № ' + str(self.element_index_number) + \
