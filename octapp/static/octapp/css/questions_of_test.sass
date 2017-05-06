@@ -53,9 +53,11 @@
             margin: 2px 0
         .edit_open_question_block
           width: 950px
-          .ckeditor_widget
+          .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
             display: inline-block
             width: 461px
+            textarea
+              width: 442px
 
   .adding_questions_btns
     min-width: 302px
@@ -107,9 +109,9 @@
       .dropdown.inline_block.add_open_question_block
         left: 0
         .dropdown-menu
-          .ckeditor_widget
+          .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
             display: block
-            width: auto
+            width: 100%
 
     .question
       .question_buttons
@@ -118,21 +120,27 @@
             width: 365px
             right: -55px
           .edit_open_question_block
-            .ckeditor_widget
+            .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
               display: block
-              width: auto
+              width: 100%
 
 @media(min-width:768px) and (max-width:991px)
   .content
+    .adding_questions_btns
+      .dropdown.inline_block.add_open_question_block
+        .dropdown-menu
+          .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
+            display: block
+            width: 100%
     .question
       .question_buttons
         .dropdown
           .dropdown-menu
             width: 650px
           .edit_open_question_block
-            .ckeditor_widget
+            .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
               display: block
-              width: auto
+              width: 100%
 
 @media(min-width:992px)
   .content
@@ -142,9 +150,10 @@
           right: 0
           left: auto
           width: 940px
-          .ckeditor_widget
+          .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
             display: inline-block
-            width: 461px
+            width: 462px
+
     .question
       .question_buttons
         .dropdown
@@ -152,6 +161,6 @@
             width: 910px
             right: 0
           .edit_open_question_block
-            .ckeditor_widget
+            .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
               display: inline-block
               width: 441px

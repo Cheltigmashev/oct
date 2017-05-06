@@ -15,28 +15,33 @@ def get_tests_lists_context():
     showing_tests_per_one_column = 14
     showing_tags_and_categories_amount = 58
 
-    # левый ряд тестов для списка новых тестов, диапазон от 0го до showing_tests_per_one_column - 1
+    # Левый ряд тестов для списка новых тестов, диапазон от 0го до showing_tests_per_one_column - 1
     left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date', 'name')[:showing_tests_per_one_column]
-    # левый ряд тестов для списка новых тестов
+    # Левый ряд тестов для списка новых тестов
     right_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
-    # левый ряд тестов для списка рейтинговых тестов, диапазон от 0го до showing_tests_per_one_column - 1
+    # Левый ряд тестов для списка рейтинговых тестов, диапазон от 0го до showing_tests_per_one_column - 1
     left_number_of_rating_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[:showing_tests_per_one_column]
-    # левый ряд тестов для списка рейтинговых тестов
+    # Левый ряд тестов для списка рейтинговых тестов
     right_number_of_rating_tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('-rating', 'name')[showing_tests_per_one_column:showing_tests_per_one_column*2]
 
+    # Создаем и сортируем массив массивов [тег, количество опубликованных тестов с этим тегом]
     showing_tags_and_count_of_published_tests = []
     for tag in Tag.objects.order_by('-pk')[:showing_tags_and_categories_amount]:
         showing_tags_and_count_of_published_tests.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count()])
+    showing_tags_and_count_of_published_tests.sort(key=lambda i: i[1], reverse=True)
 
+    # Создаем и сортируем массив массивов [категория, количество опубликованных тестов с этой категорией]
     showing_categories_and_count_of_published_tests = []
     for category in Category.objects.filter(confirmed=True).order_by('-pk')[:showing_tags_and_categories_amount]:
         showing_categories_and_count_of_published_tests.append([category, category.tests.filter(published_date__lte=timezone.now()).count()])
+    showing_categories_and_count_of_published_tests.sort(key=lambda i: i[1], reverse=True)
 
     all_tags_count = Tag.objects.count()
 
     all_published_test_count = Test.objects.filter(published_date__lte=timezone.now()).count()
     all_confirmed_categories_count = Category.objects.filter(confirmed=True).count()
 
+    # Определяем, показывать ли значки-многоточия под списками.
     if all_tags_count > showing_tags_and_categories_amount:
         show_elision_marks_for_tags = True
     else:
@@ -196,41 +201,45 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests, on_one_page, m
     context['HTTPparameters'] = '?' + q.urlencode()
     return context
 
-def get_categories_with_count_of_published_tests(context, categories):
+def get_categories_with_count_of_published_tests(categories):
     # Нужно изменить количество тестов, выводимых при фильтрации по категории
     categories_and_count_of_published_tests_in_them = []
     for category in categories:
-        categories_and_count_of_published_tests_in_them.append([category, category.tests.filter(published_date__lte=timezone.now()).count])
-    context['categories_and_count_of_published_tests_in_them'] = categories_and_count_of_published_tests_in_them
-    return context
+        categories_and_count_of_published_tests_in_them.append([category, category.tests.filter(published_date__lte=timezone.now()).count()])
+    categories_and_count_of_published_tests_in_them.sort(key=lambda i: i[1], reverse=True)
+    return categories_and_count_of_published_tests_in_them
 
-def get_tags_with_count_of_published_tests(context, tags):
+def get_tags_with_count_of_published_tests(tags):
     # Нужно изменить количество тестов, выводимых при фильтрации по тегу
     tags_and_count_of_published_tests_in_them = []
     for tag in tags:
-        tags_and_count_of_published_tests_in_them.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count])
-    context['tags_and_count_of_published_tests_in_them'] = tags_and_count_of_published_tests_in_them
-    return context
+        tags_and_count_of_published_tests_in_them.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count()])
+    tags_and_count_of_published_tests_in_them.sort(key=lambda i: i[1], reverse=True)        
+    return tags_and_count_of_published_tests_in_them
 
 # 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
 def tests(request):
     # Если сортировка не задана, то тесты будут по алфавиту
     tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('name')
+    categories = Category.objects.filter(confirmed=True).order_by('name')    
+    categories_with_count_of_published_tests = get_categories_with_count_of_published_tests(categories)
+    tags = Tag.objects.order_by('name')    
+    tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
     context = get_filtered_and_sorted_tests_with_pagination(request, tests, 35, 5)
-    context = get_categories_with_count_of_published_tests(context, context['categories_for_filtering_of_tests'])
-    context = get_tags_with_count_of_published_tests(context, context['tags_for_filtering_of_tests'])
+    context['categories_for_filtering_of_tests'] = categories_with_count_of_published_tests
+    context['tags_for_filtering_of_tests'] = tags_with_count_of_published_tests
     return render(request, 'octapp/tests.html', context)
 
 def categories(request):
     categories = Category.objects.filter(confirmed=True).order_by('name')
-    context = get_pagination(int(request.GET.get('page', '1')), categories, 45, 5)
-    context = get_categories_with_count_of_published_tests(context, categories)
+    categories_with_count_of_published_tests = get_categories_with_count_of_published_tests(categories)
+    context = get_pagination(int(request.GET.get('page', '1')), categories_with_count_of_published_tests, 35, 5)
     return render(request, 'octapp/categories.html', context)
 
 def tags(request):
     tags = Tag.objects.order_by('name')
-    context = get_pagination(int(request.GET.get('page', '1')), tags, 45, 5)
-    context.update(get_tags_with_count_of_published_tests(context, tags))
+    tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
+    context = get_pagination(int(request.GET.get('page', '1')), tags_with_count_of_published_tests, 35, 5)
     return render(request, 'octapp/tags.html', context)
 
 @login_required
@@ -356,8 +365,7 @@ def test_remove(request, pk, through_user_tests):
     else:
         return redirect('tests_lists')
 
-@login_required
-def questions_of_test(request, test_id):
+def get_questions_of_test_context(test_id, page):
     test = get_object_or_404(Test, pk=test_id)
     questions_of_test = test.questions_of_test.order_by('question_index_number')
     questions_of_test_with_filled_forms = []
@@ -395,13 +403,21 @@ def questions_of_test(request, test_id):
     open_question_form = OpenQuestionForm()
     sequence_question_form = SequenceQuestionForm()
     comparison_question_form = ComparisonQuestionForm()
-    return render(request, 'octapp/questions_of_test.html',
-                  {'test': test, 'questions_of_test': questions_of_test,
-                   'questions_of_test_with_filled_forms': questions_of_test_with_filled_forms,
-                   'closed_question_form': closed_question_form,
-                   'open_question_form': open_question_form,
-                   'sequence_question_form': sequence_question_form,
-                   'comparison_question_form': comparison_question_form})
+
+    context = {'test': test,
+                'closed_question_form': closed_question_form,
+                'open_question_form': open_question_form,
+                'sequence_question_form': sequence_question_form,
+                'comparison_question_form': comparison_question_form}
+    pag_context = get_pagination(page, questions_of_test_with_filled_forms, 12, 4)
+    context.update(pag_context)
+    return context
+
+@login_required
+def questions_of_test(request, test_id):
+    page = request.GET.get('page', '1')
+    page = int(page)
+    return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, page))
 
 @login_required
 def new_question(request, test_id, type):
@@ -488,6 +504,8 @@ def new_question(request, test_id, type):
 def question_edit(request, test_id, question_of_test_id):
     test = get_object_or_404(Test, pk=test_id)
     question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
+    page = request.GET.get('page', '1')
+    page = int(page)
     if request.method == 'POST':
         if question_of_test.type_of_question == 'ClsdQ':
             form = ClosedQuestionForm(request.POST, instance=question_of_test.closed_question)
@@ -509,9 +527,10 @@ def question_edit(request, test_id, question_of_test_id):
             certain_type_question_from_form = form.save(commit=False)
             certain_type_question_from_form.question_of_test.question_index_number = new_index
             certain_type_question_from_form.question_of_test.save()
-            return redirect('questions_of_test', test_id=test_id)
+            certain_type_question_from_form.save()
+            return redirect('questions_of_test', test_id)
     else:
-        return redirect('questions_of_test', test_id=test_id)
+        return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, page))
 
 @login_required
 def question_remove(request, test_id, question_of_test_id):

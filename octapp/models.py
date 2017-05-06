@@ -175,12 +175,10 @@ class ClosedQuestionOption(models.Model):
 class OpenQuestion(models.Model):
     question_of_test = models.OneToOneField('octapp.QuestionOfTest', related_name='open_question', null=True,
         blank=False, on_delete=models.CASCADE, verbose_name='Нумерованный элемент (пункт) списка вопросов')
-    question_content_before_blank = RichTextField('Содержимое (контент) перед пропуском',
-          help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
-          null=False, blank=False, default='', config_name='compact',)
-    question_content_after_blank = RichTextField('Содержимое (контент) после пропуска (может отсутствовать)',
-             help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
-             null=False, blank=False, default='', config_name='compact',)
+    question_content_before_blank = models.TextField('Содержимое (контент) перед пропуском',
+          null=False, blank=False, default='Заполните пропуск: \r\n')
+    question_content_after_blank = models.TextField('Содержимое (контент) после пропуска (может отсутствовать)',
+          null=True, blank=True, default='')
     # При обработке результатов прохождения, регистр учитываться не должен
     correct_option = models.CharField('Текст правильного ответа', max_length=120, blank=False, null=False)
 

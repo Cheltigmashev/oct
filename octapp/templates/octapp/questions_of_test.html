@@ -1,11 +1,11 @@
-{% extends 'octapp/base.html' %}
+{% extends 'octapp/list_with_pagination.html' %}
 {% load staticfiles %}
 
 {% block page_style %}
 <link rel="stylesheet" href="{% static 'octapp/css/questions_of_test.css' %}">
 {% endblock %}
 
-{% block content %}
+{% block before_pagination %}
 <h2>Вопросы к тесту <q>{{ test }}</q></h2>
 
 <h3 class="text-left">Добавить новый вопрос:</h3>
@@ -55,9 +55,8 @@
         <div aria-labelledby="dLabel" class="dropdown-menu">
         <form method="POST" action="{% url 'new_question' test_id=test.pk type='open' %}">
     {% csrf_token %}
-            <label>Содержимое вопроса (в т.ч. текст) перед и после пропуска.</label>
+            <label>Содержимое вопроса (в т.ч. текст) перед пропуском и после него:</label>
             <small><p>NB! Используйте кнопку «Источник», если хотите, чтобы пропуск и текст были в одном абзаце, т.е. не разрывались переносом строки.</p></small>
-            <small><p>NB! {{ open_question_form.question_content_before_blank.help_text }}</p></small>
     {% for field in open_question_form %}
             <!-- Первые два поля — с CKEditor’ом. Не выводить последнее поле,
             т.к. при добавлении нового вопроса номер рассчитывается автоматически -->
@@ -66,7 +65,7 @@
                 {{ field.label_tag }}
                 {{ field }}
             {% else %}
-            <div class="ckeditor_widget">{{ field }}</div>
+            <div class="ckeditor_widget_or_textarea">{{ field }}</div>
             {% endif %}
         {% endif %}
         {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
@@ -133,7 +132,7 @@
     </div>
 </div>
 
-    {% for qu_of_test, form_for_editing_question in questions_of_test_with_filled_forms %}
+    {% for qu_of_test, form_for_editing_question in some_page %}
 <div class="question">
     <!-- Кнопки и формы для редактирования вопросов -->
     <div class="question_buttons">
@@ -180,16 +179,14 @@
         <form name="open_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
     {% csrf_token %}
 
-            <div class="ckeditor_widget">
+            <div class="ckeditor_widget_or_textarea">
     {{ form_for_editing_question.question_content_before_blank.label_tag }}
-            <small><p>NB! {{ form_for_editing_question.question_content_before_blank.help_text }}</p></small>
     {{ form_for_editing_question.question_content_before_blank }}
     {% if form_for_editing_question.question_content_before_blank.errors %}<p class="field_with_error">{{ form_for_editing_question.question_content_before_blank.errors }}</p>{% endif %}
             </div>
 
-            <div class="ckeditor_widget">
+            <div class="ckeditor_widget_or_textarea">
     {{ form_for_editing_question.question_content_after_blank.label_tag }}
-            <small><p>NB! {{ form_for_editing_question.question_content_after_blank.help_text }}</p></small>
     {{ form_for_editing_question.question_content_after_blank }}
     {% if form_for_editing_question.question_content_after_blank.errors %}<p class="field_with_error">{{ form_for_editing_question.question_content_after_blank.errors }}</p>{% endif %}
             </div>
@@ -280,9 +277,11 @@
 
         {% if qu_of_test.type_of_question == 'OpndQ' %}
     <p>Вопрос № {{ qu_of_test.question_index_number }} (открытого типа), правильный ответ: <mark>{{ qu_of_test.open_question.correct_option }}</mark></p>
-        {{ qu_of_test.open_question.question_content_before_blank|safe }}
+            {% spaceless %}
+        {{ qu_of_test.open_question.question_content_before_blank|linebreaksbr }}
     <mark>__ПРОПУСК__</mark>
-        {{ qu_of_test.open_question.question_content_after_blank|safe }}
+        {{ qu_of_test.open_question.question_content_after_blank|linebreaksbr }}
+            {% endspaceless %}
         {% endif %}
 
         {% if qu_of_test.type_of_question == 'SqncQ' %}

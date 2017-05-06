@@ -149,14 +149,9 @@ CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'
 CKEDITOR_CONFIGS = {
     'default': {
-        'height': 220,
+        'height': 180,
         'width': '100%',
         'extraPlugins': 'codesnippet',
-    },
-    'compact': {
-        'toolbar': 'Basic',
-        'height': 140,
-        'width': '100%',
     },
 }
 
