@@ -52,7 +52,7 @@
             Открытого типа
             <span class="caret"></span></button>
 
-        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <div aria-labelledby="dLabe2" class="dropdown-menu">
         <form method="POST" action="{% url 'new_question' test_id=test.pk type='open' %}">
     {% csrf_token %}
             <label>Содержимое вопроса (в т.ч. текст) перед пропуском и после него:</label>
@@ -80,7 +80,7 @@
             На сопоставление
             <span class="caret"></span></button>
 
-        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <div aria-labelledby="dLabe3" class="dropdown-menu">
         <form method="POST" action="{% url 'new_question' test_id=test.pk type='comparison' %}">
     {% csrf_token %}
 
@@ -107,7 +107,7 @@
         <button title="Вопрос на определение последовательности" id="dLabe4" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default btn-lg" data-toggle="dropdown">
             Последовательность
             <span class="caret"></span></button>
-        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <div aria-labelledby="dLabe4" class="dropdown-menu">
 
         <form method="POST" action="{% url 'new_question' test_id=test.pk type='sequence' %}">
     {% csrf_token %}
@@ -132,16 +132,53 @@
     </div>
 </div>
 
-    {% for qu_of_test, form_for_editing_question in some_page %}
+    {% for qu_of_test, form_for_editing_question, option_or_element_form in some_page %}
 <div class="question">
     <!-- Кнопки и формы для редактирования вопросов -->
     <div class="question_buttons">
+
+    {% if qu_of_test.type_of_question != 'OpndQ' and qu_of_test.type_of_question != 'CmprsnQ' %}
     <div class="dropdown inline_block">
-        <span title="Нажмите, чтобы изменить вопрос" id="dLabel2" class="glyphicon glyphicon-edit" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
+        <span title="Нажмите, чтобы добавить новый вариант ответа либо элемент последовательности" id="dLabel5" class="glyphicon glyphicon-plus" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
+        <div aria-labelledby="dLabel5" class="dropdown-menu edit_closed_question_block">
+        <form name="new_option_or_element_form" method="POST" action="">
+    {% csrf_token %}
+            {{ option_or_element_form.as_p }}
+        </form>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if qu_of_test.type_of_question == 'CmprsnQ' %}
+    <div class="dropdown inline_block">
+        <span title="Нажмите, чтобы добавить новый элемент левого ряда сопоставления" id="dLabel5" class="glyphicon glyphicon-hand-left" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
+        <div aria-labelledby="dLabel5" class="dropdown-menu edit_closed_question_block">
+        <form name="new_option_or_element_form" method="POST" action="">
+        {% csrf_token %}
+            {{ option_or_element_form.as_p }}
+        </form>
+        </div>
+    </div>
+
+    <div class="dropdown inline_block">
+        <span title="Нажмите, чтобы добавить новый элемент левого ряда сопоставления" id="dLabel5" class="glyphicon glyphicon-hand-down" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
+        <div aria-labelledby="dLabel5" class="dropdown-menu edit_closed_question_block">
+        <form name="new_option_or_element_form" method="POST" action="">
+        {% csrf_token %}
+            {{ option_or_element_form.as_p }}
+        </form>
+        </div>
+    </div>    
+    {% endif %}
+
+    <div class="dropdown inline_block">
+
+        
+        <span title="Нажмите, чтобы изменить вопрос" id="dLabel6" class="glyphicon glyphicon-edit" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
 
 
         {% if qu_of_test.type_of_question == 'ClsdQ' %}
-        <div aria-labelledby="dLabel2" class="dropdown-menu edit_closed_question_block">
+        <div aria-labelledby="dLabel6" class="dropdown-menu edit_closed_question_block">
         <form name="closed_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
     {% csrf_token %}
 
@@ -175,7 +212,7 @@
 
 
         {% if qu_of_test.type_of_question == 'OpndQ' %}
-        <div aria-labelledby="dLabel" class="dropdown-menu edit_open_question_block">
+        <div aria-labelledby="dLabe6" class="dropdown-menu edit_open_question_block">
         <form name="open_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
     {% csrf_token %}
 
@@ -208,7 +245,7 @@
 
 
         {% if qu_of_test.type_of_question == 'SqncQ' %}
-        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <div aria-labelledby="dLabe6" class="dropdown-menu">
         <form name="sequence_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
     {% csrf_token %}
 
@@ -234,7 +271,7 @@
 
 
         {% if qu_of_test.type_of_question == 'CmprsnQ' %}
-        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <div aria-labelledby="dLabe6" class="dropdown-menu">
         <form name="comparison_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
     {% csrf_token %}
 
@@ -259,7 +296,9 @@
         {% endif %}
 
     </div> <!-- закрывающий для div.dropdown.inline_block -->
-
+    {% if qu_of_test.type_of_question != 'OpndQ' %}    
+        <a href="{% url 'question_remove' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>    
+    {% endif %}
         <a href="{% url 'question_remove' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить вопрос" class="glyphicon glyphicon-remove"></a>
     </div> <!-- закрывающий для div.question_buttons -->
 

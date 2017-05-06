@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm
+from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm, ClosedQuestionOptionForm, SequenceQuestionElementForm, ComparisonQuestionElementForm
 from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -380,23 +380,27 @@ def get_questions_of_test_context(test_id, page):
         if question_of_test.type_of_question == 'ClsdQ':
             closed_question_form = ClosedQuestionForm(instance=question_of_test.closed_question,
                         initial={'question_index_number': question_of_test.question_index_number},
-                                                      auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
-            questions_of_test_with_filled_forms.append([question_of_test, closed_question_form])
+                                                  auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
+            closed_question_option_form = ClosedQuestionOptionForm(auto_id='id_for_new_option_form_qu_' + str(question_of_test.question_index_number) + '_%s')
+            questions_of_test_with_filled_forms.append([question_of_test, closed_question_form, closed_question_option_form])
         elif question_of_test.type_of_question == 'OpndQ':
             open_question_form = OpenQuestionForm(instance=question_of_test.open_question,
                         initial={'question_index_number': question_of_test.question_index_number},
                                                   auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
-            questions_of_test_with_filled_forms.append([question_of_test, open_question_form])
+            plug = None
+            questions_of_test_with_filled_forms.append([question_of_test, open_question_form, plug])
         elif question_of_test.type_of_question == 'SqncQ':
             sequence_question_form = SequenceQuestionForm(instance=question_of_test.sequence_question,
                         initial={'question_index_number': question_of_test.question_index_number},
-                                                          auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
-            questions_of_test_with_filled_forms.append([question_of_test, sequence_question_form])
+                                                  auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
+            sequence_question_element_form = SequenceQuestionElementForm(auto_id='id_for_new_sequ_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
+            questions_of_test_with_filled_forms.append([question_of_test, sequence_question_form, sequence_question_element_form])
         elif question_of_test.type_of_question == 'CmprsnQ':
             comparison_question_form = ComparisonQuestionForm(instance=question_of_test.comparison_question,
                         initial={'question_index_number': question_of_test.question_index_number},
                                                               auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
-            questions_of_test_with_filled_forms.append([question_of_test, comparison_question_form])
+            comparison_question_element_form = ComparisonQuestionElementForm(auto_id='id_for_new_comp_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')            
+            questions_of_test_with_filled_forms.append([question_of_test, comparison_question_form, comparison_question_element_form])
 
     # 4 формы для добавления вопросов соответствующих типов
     closed_question_form = ClosedQuestionForm()
