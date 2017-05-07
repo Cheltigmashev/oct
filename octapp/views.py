@@ -26,13 +26,13 @@ def get_tests_lists_context():
 
     # Создаем и сортируем массив массивов [тег, количество опубликованных тестов с этим тегом]
     showing_tags_and_count_of_published_tests = []
-    for tag in Tag.objects.order_by('-pk')[:showing_tags_and_categories_amount]:
+    for tag in Tag.objects.order_by('name')[:showing_tags_and_categories_amount]:
         showing_tags_and_count_of_published_tests.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count()])
     showing_tags_and_count_of_published_tests.sort(key=lambda i: i[1], reverse=True)
 
     # Создаем и сортируем массив массивов [категория, количество опубликованных тестов с этой категорией]
     showing_categories_and_count_of_published_tests = []
-    for category in Category.objects.filter(confirmed=True).order_by('-pk')[:showing_tags_and_categories_amount]:
+    for category in Category.objects.filter(confirmed=True).order_by('name')[:showing_tags_and_categories_amount]:
         showing_categories_and_count_of_published_tests.append([category, category.tests.filter(published_date__lte=timezone.now()).count()])
     showing_categories_and_count_of_published_tests.sort(key=lambda i: i[1], reverse=True)
 
@@ -377,30 +377,33 @@ def get_questions_of_test_context(test_id, page):
     # что приведет к тому, что js скрипты для ckeditor’а не будут работать для этих полей должным образом —
     # будет отображаться лишь стандартный HTML-тег textarea.
     for question_of_test in questions_of_test:
+        plug = None
         if question_of_test.type_of_question == 'ClsdQ':
             closed_question_form = ClosedQuestionForm(instance=question_of_test.closed_question,
-                        initial={'question_index_number': question_of_test.question_index_number},
-                                                  auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
+                                                      initial={'question_index_number': question_of_test.question_index_number},
+                                                      auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
             closed_question_option_form = ClosedQuestionOptionForm(auto_id='id_for_new_option_form_qu_' + str(question_of_test.question_index_number) + '_%s')
-            questions_of_test_with_filled_forms.append([question_of_test, closed_question_form, closed_question_option_form])
+            # 4’ый элемент списка — форма для добавления элементов правого ряда сопоставления, а в случае вопросов других типов ее нет, поэтому используется з
+            questions_of_test_with_filled_forms.append([question_of_test, closed_question_form, closed_question_option_form, plug])
         elif question_of_test.type_of_question == 'OpndQ':
             open_question_form = OpenQuestionForm(instance=question_of_test.open_question,
-                        initial={'question_index_number': question_of_test.question_index_number},
+                                                  initial={'question_index_number': question_of_test.question_index_number},
                                                   auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
-            plug = None
-            questions_of_test_with_filled_forms.append([question_of_test, open_question_form, plug])
+            questions_of_test_with_filled_forms.append([question_of_test, open_question_form, plug, plug])
         elif question_of_test.type_of_question == 'SqncQ':
             sequence_question_form = SequenceQuestionForm(instance=question_of_test.sequence_question,
-                        initial={'question_index_number': question_of_test.question_index_number},
-                                                  auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
+                                                          initial={'question_index_number': question_of_test.question_index_number},
+                                                          auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
             sequence_question_element_form = SequenceQuestionElementForm(auto_id='id_for_new_sequ_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
-            questions_of_test_with_filled_forms.append([question_of_test, sequence_question_form, sequence_question_element_form])
+            questions_of_test_with_filled_forms.append([question_of_test, sequence_question_form, sequence_question_element_form, plug])
         elif question_of_test.type_of_question == 'CmprsnQ':
             comparison_question_form = ComparisonQuestionForm(instance=question_of_test.comparison_question,
-                        initial={'question_index_number': question_of_test.question_index_number},
+                                                              initial={'question_index_number': question_of_test.question_index_number},
                                                               auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
-            comparison_question_element_form = ComparisonQuestionElementForm(auto_id='id_for_new_comp_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')            
-            questions_of_test_with_filled_forms.append([question_of_test, comparison_question_form, comparison_question_element_form])
+            comparison_question_left_row_element_form = ComparisonQuestionElementForm(auto_id='id_for_new_comp_left_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
+            comparison_question_right_row_element_form = ComparisonQuestionElementForm(auto_id='id_for_new_comp_right_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
+
+            questions_of_test_with_filled_forms.append([question_of_test, comparison_question_form, comparison_question_left_row_element_form, comparison_question_right_row_element_form])
 
     # 4 формы для добавления вопросов соответствующих типов
     closed_question_form = ClosedQuestionForm()
@@ -409,10 +412,10 @@ def get_questions_of_test_context(test_id, page):
     comparison_question_form = ComparisonQuestionForm()
 
     context = {'test': test,
-                'closed_question_form': closed_question_form,
-                'open_question_form': open_question_form,
-                'sequence_question_form': sequence_question_form,
-                'comparison_question_form': comparison_question_form}
+               'closed_question_form': closed_question_form,
+               'open_question_form': open_question_form,
+               'sequence_question_form': sequence_question_form,
+               'comparison_question_form': comparison_question_form}
     pag_context = get_pagination(page, questions_of_test_with_filled_forms, 12, 4)
     context.update(pag_context)
     return context

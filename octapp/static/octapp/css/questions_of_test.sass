@@ -38,12 +38,13 @@
         color: darkorange
       .dropdown
         .dropdown-menu
-          padding: 10px
+          padding: 10px 12px 10px 10px
           width: 800px
           top: 40px
           right: 0
           left: auto
-        .edit_closed_question_block
+          .btn
+            margin: 0
           .inline_block
             width: 45%
             vertical-align: middle
@@ -52,12 +53,20 @@
           hr
             margin: 2px 0
         .edit_open_question_block
+          right: -45px
           width: 950px
+          padding: 10px 10px 10px 11px
           .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
             display: inline-block
             width: 461px
             textarea
               width: 442px
+      .dropdown-menu.add_new_options_or_elements
+        right: -120px
+      .dropdown-menu.add_left_row_comparison_element
+        right: -155px
+      .dropdown-menu.add_right_row_comparison_element
+        right: -117px
 
   .adding_questions_btns
     min-width: 302px
@@ -67,9 +76,9 @@
     .dropdown.inline_block
       width: 48%
       .dropdown-menu
-        padding: 5px
+        padding: 5px 7px 5px 5px
         input[type="submit"]
-          margin: 2px 0 0 0
+          margin: 2px 0 0 1px
         input[type="checkbox"] + label
           cursor: pointer
           display: inline
@@ -79,6 +88,7 @@
         width: 100%
     .dropdown.inline_block.add_open_question_block
       .dropdown-menu
+        padding: 5px
         left: 0
     .dropdown.inline_block.add_closed_question_block
       .dropdown-menu
@@ -116,13 +126,23 @@
     .question
       .question_buttons
         .dropdown
+          .edit_question
+            right: -80px
           .dropdown-menu
             width: 365px
             right: -55px
           .edit_open_question_block
+            right: -45px
             .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
               display: block
               width: 100%
+        .dropdown-menu.add_new_options_or_elements
+          right: -120px
+        .dropdown-menu.add_left_row_comparison_element
+          right: -155px
+        .dropdown-menu.add_right_row_comparison_element
+          right: -117px
+
 
 @media(min-width:768px) and (max-width:991px)
   .content
@@ -137,10 +157,19 @@
         .dropdown
           .dropdown-menu
             width: 650px
+          .edit_question
+            right: -80px
           .edit_open_question_block
+            right: -45px
             .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
               display: block
               width: 100%
+        .dropdown-menu.add_new_options_or_elements
+          right: -120px
+        .dropdown-menu.add_left_row_comparison_element
+          right: -155px
+        .dropdown-menu.add_right_row_comparison_element
+          right: -117px
 
 @media(min-width:992px)
   .content
@@ -160,7 +189,16 @@
           .dropdown-menu
             width: 910px
             right: 0
+          .edit_question
+            right: -80px
           .edit_open_question_block
+            right: -45px
             .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
               display: inline-block
               width: 441px
+        .dropdown-menu.add_new_options_or_elements
+          right: -120px
+        .dropdown-menu.add_left_row_comparison_element
+          right: -155px
+        .dropdown-menu.add_right_row_comparison_element
+          right: -117px

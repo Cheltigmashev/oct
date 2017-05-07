@@ -176,7 +176,7 @@ class OpenQuestion(models.Model):
     question_of_test = models.OneToOneField('octapp.QuestionOfTest', related_name='open_question', null=True,
         blank=False, on_delete=models.CASCADE, verbose_name='Нумерованный элемент (пункт) списка вопросов')
     question_content_before_blank = models.TextField('Содержимое (контент) перед пропуском',
-          null=False, blank=False, default='Заполните пропуск: \r\n')
+          null=False, blank=False, default='Заполните пропуск: ')
     question_content_after_blank = models.TextField('Содержимое (контент) после пропуска (может отсутствовать)',
           null=True, blank=True, default='')
     # При обработке результатов прохождения, регистр учитываться не должен
@@ -238,8 +238,8 @@ class ComparisonQuestion(models.Model):
         verbose_name='Левые элементы сопоставления', blank=True)
     right_row_elements = models.ManyToManyField('octapp.ComparisonQuestionElement', related_name='right_comparison_elements',
         verbose_name='Правые элементы сопоставления', blank=True)
-    correct_sequence = models.CharField('Правильная последовательность элементов второго (правого) ряда (столбца)',
-        max_length=55, blank=False, null=False, help_text='Номера элементов последовательности второго ряда, разделенные запятыми без пробелов.')
+    correct_sequence = models.CharField('Правильные пары элементов левого и правого столбцов (рядов) сопоставления',
+        max_length=55, blank=False, null=False, help_text='Перечислите здесь через запятую и без пробелов все правильные пары, например: 1-2, 2-1, 3-4, 4-3.')
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (сопоставление) теста ' + self.question_of_test.test.name

@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from .models import Test, Category, ResultScale, Tag, ClosedQuestion, QuestionOfTest, ComparisonQuestionElement
 from .models import OpenQuestion, SequenceQuestion, ComparisonQuestion, ClosedQuestionOption, SequenceQuestionElement
+from .forms import ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm
+from .forms import ClosedQuestionOptionForm, SequenceQuestionElementForm, ComparisonQuestionElementForm
 
 User = get_user_model()
 
@@ -40,8 +42,8 @@ def create_some_tags():
     """
     tag1 = create_tag('большие')
     tag2 = create_tag('для студентов')
-    tag3 = create_tag('образовательные')
-    tag4 = create_tag('для школьников')
+    tag3 = create_tag('для школьников')
+    tag4 = create_tag('образовательные')
     return [tag1, tag2, tag3, tag4]
 
 def create_some_categories():
@@ -115,7 +117,7 @@ def create_closed_question_option(closed_question, content):
         content=content, option_number=closed_question.closed_question_options.count() + 1)
 
 def create_open_question(test,
-                        question_content_before_blank='Заполните пропуск:<br>Django — это ',
+                        question_content_before_blank='Заполните пропуск: Django — это ',
                         question_content_after_blank='для разработки веб-приложений',
                         correct_option='фреймворк'):
     """
@@ -224,19 +226,19 @@ class TestsListsViewTests(TestCase):
         self.assertQuerysetEqual(response.context['right_number_of_new_tests_list'], [])
         self.assertQuerysetEqual(response.context['left_number_of_rating_tests'], ['<Test: Опубликованный тест>'])
         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
-        
+
         # Количество тестов в категориях и тегах
         # должно быть 1 для использованной категории и использованных тегов.
         # ВАЖНО! Набор тегов, по которому выполняется итерация для получения пар
         # [тег, количество опубликованных тестов с данным тегом] отсортирован в представлении по убыванию id,
         # поэтому учитываем это при сравнении.
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-            [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
-        
-        # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.        
+            [[some_tags[0], 1], [some_tags[1], 1], [some_tags[2], 0], [some_tags[3], 0]])
+
+        # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-            [[some_categories[1], 0], [some_categories[0], 1]])
-        
+            [[some_categories[0], 1], [some_categories[1], 0]])
+
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
         self.assertEqual(response.context['count_of_tests_without_tags'], 0)
@@ -275,11 +277,11 @@ class TestsListsViewTests(TestCase):
         # Количество тестов в категориях и тегах должно быть 0, поскольку
         # неопубликованные тесты считаться не должны.
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-            [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 0], [some_tags[0], 0]])
+            [[some_tags[0], 0], [some_tags[1], 0], [some_tags[2], 0], [some_tags[3], 0]])
 
         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-            [[some_categories[1], 0], [some_categories[0], 0]])
+            [[some_categories[0], 0], [some_categories[1], 0]])
 
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
@@ -317,11 +319,11 @@ class TestsListsViewTests(TestCase):
         self.assertQuerysetEqual(response.context['right_number_of_rating_tests'], [])
 
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-                         [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
+                         [[some_tags[0], 1], [some_tags[1], 1], [some_tags[2], 0], [some_tags[3], 0]])
 
         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-                         [[some_categories[1], 0], [some_categories[0], 0]])
+                         [[some_categories[0], 0], [some_categories[1], 0]])
 
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 1)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
@@ -361,13 +363,13 @@ class TestsListsViewTests(TestCase):
 
         # При расчете количества тестов с определенным тегом считаться должны только опубликованные тесты
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-            [[some_tags[3], 0], [some_tags[2], 0], [some_tags[1], 1], [some_tags[0], 1]])
+            [[some_tags[0], 1], [some_tags[1], 1], [some_tags[2], 0], [some_tags[3], 0]])
 
         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
         # Несмотря на то, что для 2 тестов назначена одна и та же категория, считаться для этой
         # категории должен только опубликованный тест
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-            [[some_categories[1], 0], [some_categories[0], 1]])
+            [[some_categories[0], 1], [some_categories[1], 0]])
 
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 0)
         self.assertEqual(response.context['count_of_tests_without_category'], 0)
@@ -454,11 +456,11 @@ class TestsListsViewTests(TestCase):
 
         # Первые 2 тега назначены первому тесту, 2 два — второму
         self.assertEqual(response.context['showing_tags_and_count_of_published_tests'],
-            [[some_tags[3], 1], [some_tags[2], 1], [some_tags[1], 1], [some_tags[0], 1]])
+            [[some_tags[0], 1], [some_tags[1], 1], [some_tags[2], 1], [some_tags[3], 1]])
 
         # Неподтвержденные категории отображаться либо входить в контекст не должны вовсе.
         self.assertEqual(response.context['showing_categories_and_count_of_published_tests'],
-            [[some_categories[1], 0], [some_categories[0], 2]])
+            [[some_categories[0], 2], [some_categories[1], 0]])
 
         self.assertEqual(response.context['count_of_published_tests_with_unconf_cat'], 2)
         self.assertEqual(response.context['count_of_tests_without_category'], 1)
@@ -561,7 +563,7 @@ class QuestionsOfTestsViewTests(TestCase):
         self.maxDiff = None
 
         # В данном случае переменная контекста для хранения вопросов теста должна быть пустой
-        self.assertQuerysetEqual(response.context['questions_of_test'], [])
+        self.assertQuerysetEqual(response.context['some_page'], [])
 
         self.assertEqual(response.context['all_tests_count'], 1)
         self.assertContains(response, u'Тестов: 1')
@@ -607,12 +609,21 @@ class QuestionsOfTestsViewTests(TestCase):
         # В контекст должен передаваться тест с id, полученным из URL
         self.assertEqual(response.context['test'], past_test_with_2_closed_questions)
 
-        # В переменной контекста для хранения вопросов теста должно быть 2 вопроса
-        self.assertQuerysetEqual(response.context['questions_of_test'],
-            ['<QuestionOfTest: Вопрос № ' + str(clsd1.question_of_test.question_index_number) + ' (' +
-             clsd1.question_of_test.type_of_question + ') теста ' + past_test_with_2_closed_questions.name + '>',
-             '<QuestionOfTest: Вопрос № ' + str(clsd2.question_of_test.question_index_number) + ' (' +
-             clsd2.question_of_test.type_of_question + ') теста ' + past_test_with_2_closed_questions.name + '>'])
+        closed_question_1_form = ClosedQuestionForm(instance=clsd1,
+                    initial={'question_index_number': clsd1.question_of_test.question_index_number},
+                    auto_id='id_for_' + str(clsd1.question_of_test.question_index_number) + '_%s')
+        closed_question_option_1_form = ClosedQuestionOptionForm(auto_id='id_for_new_option_form_qu_' + str(clsd1.question_of_test.question_index_number) + '_%s')
+
+        closed_question_2_form = ClosedQuestionForm(instance=clsd2,
+                    initial={'question_index_number': clsd2.question_of_test.question_index_number},
+                    auto_id='id_for_' + str(clsd2.question_of_test.question_index_number) + '_%s')
+        closed_question_option_2_form = ClosedQuestionOptionForm(auto_id='id_for_new_option_form_qu_' + str(clsd2.question_of_test.question_index_number) + '_%s')
+
+        self.maxDiff = None
+        closed_question_1_form.is_valid()
+        closed_question_option_1_form.is_valid()
+        closed_question_2_form.is_valid()
+        closed_question_option_2_form.is_valid()
 
         self.assertEqual(response.context['all_tests_count'], 1)
         self.assertContains(response, u'Тестов: 1')
@@ -654,11 +665,11 @@ class QuestionsOfTestsViewTests(TestCase):
         self.assertContains(response, u'Вопрос закрытого типа')
         self.assertContains(response, u'Вопрос № 1 (закрытого типа)')
 
-        self.assertContains(response, u'Заполните пропуск:<br>Django — это ')
+        self.assertContains(response, u'Заполните пропуск: Django — это')
         self.assertContains(response, u'Вопрос № 2 (открытого типа)')
 
         self.assertContains(response, u'Вопрос на определение последовательности')
-        self.assertContains(response, u'Вопрос № 3 (определение последовательности)')
+        self.assertContains(response, u'Вопрос № 3 (последовательность)')
 
         self.assertContains(response, u'Вопрос на сопоставление')
         self.assertContains(response, u'Вопрос № 4 (сопоставление)')
@@ -667,17 +678,6 @@ class QuestionsOfTestsViewTests(TestCase):
 
         # В контекст должен передаваться тест с id, полученным из URL
         self.assertEqual(response.context['test'], published_test)
-
-        # В переменной контекста для хранения вопросов теста должно быть 2 вопроса
-        self.assertQuerysetEqual(response.context['questions_of_test'],
-            ['<QuestionOfTest: Вопрос № ' + str(ClsdQ.question_of_test.question_index_number) +
-             ' (' + ClsdQ.question_of_test.type_of_question + ') теста ' + published_test.name + '>',
-             '<QuestionOfTest: Вопрос № ' + str(OpndQ.question_of_test.question_index_number) +
-             ' (' + OpndQ.question_of_test.type_of_question + ') теста ' + published_test.name + '>',
-             '<QuestionOfTest: Вопрос № ' + str(SqncQ.question_of_test.question_index_number) +
-             ' (' + SqncQ.question_of_test.type_of_question + ') теста ' + published_test.name + '>',
-             '<QuestionOfTest: Вопрос № ' + str(CmprsnQ.question_of_test.question_index_number) +
-             ' (' + CmprsnQ.question_of_test.type_of_question + ') теста ' + published_test.name + '>'])
 
         self.assertEqual(response.context['all_tests_count'], 1)
         self.assertContains(response, u'Тестов: 1')

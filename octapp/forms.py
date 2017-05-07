@@ -147,12 +147,18 @@ class ComparisonQuestionForm(forms.ModelForm):
 
         widgets = {
             'correct_sequence': TextInput(attrs={'maxlength': 55, 'class': 'form-control',
-                                                       'placeholder': 'Цифры и запятые',
-                                                       'pattern': '[0-9,]*'}),
+                                                       'placeholder': 'Допустимы цифры, запятые',
+                                                       'pattern': '[0-9,-]*'}),
         }
 
 # Формы для вариантов ответа либо элементов последовательности/сопоставления
 class ClosedQuestionOptionForm(forms.ModelForm):
+    add_several = forms.BooleanField(
+        label=(u'Добавить несколько'),
+        required=False,
+        help_text=(u'Для разделения вариантов ответа используйте переносы строк (enter) и две прямые черты (||). Кнопка «Источник» должна быть при этом неактивной.')
+    )
+
     class Meta:
         model = ClosedQuestionOption
         fields = ('content',
@@ -164,6 +170,12 @@ class ClosedQuestionOptionForm(forms.ModelForm):
 
 
 class SequenceQuestionElementForm(forms.ModelForm):
+    add_several = forms.BooleanField(
+        label=(u'Добавить несколько'),
+        required=False,
+        help_text=(u'Для разделения элементов последовательности используйте переносы строк (enter) и две прямые черты (||). Кнопка «Источник» должна быть при этом неактивной.')
+    )
+
     class Meta:
         model = SequenceQuestionElement
         fields = ('element_content',
@@ -174,6 +186,12 @@ class SequenceQuestionElementForm(forms.ModelForm):
         }
 
 class ComparisonQuestionElementForm(forms.ModelForm):
+    add_several = forms.BooleanField(
+        label=(u'Добавить несколько'),
+        required=False,
+        help_text=(u'Для разделения элементов левого или правого ряда сопоставления используйте переносы строк (enter) и две прямые черты (||). Кнопка «Источник» должна быть при этом неактивной.')
+    )
+
     class Meta:
         model = ComparisonQuestionElement
         fields = ('element_content',
