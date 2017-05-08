@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm, ClosedQuestionOptionForm, SequenceQuestionElementForm, ComparisonQuestionElementForm
-from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest
+from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest, ClosedQuestionOption, SequenceQuestionElement, ComparisonQuestionElement
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import QueryDict
@@ -184,7 +184,6 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests, on_one_page, m
 
     page = request.GET.get('page', '1')
     page = int(page)
-    # 35, 5 prod
     pag_context = get_pagination(page, tests, on_one_page, max_pages_before_or_after_current)
     context.update(pag_context)
 
@@ -217,7 +216,7 @@ def get_tags_with_count_of_published_tests(tags):
     tags_and_count_of_published_tests_in_them.sort(key=lambda i: i[1], reverse=True)        
     return tags_and_count_of_published_tests_in_them
 
-# 3 списка тестов (№ 2, № 3, № 4), на которые можно перейти из главной страницы
+# Списки тестов, на которые можно перейти из главной страницы
 def tests(request):
     # Если сортировка не задана, то тесты будут по алфавиту
     tests = Test.objects.filter(published_date__lte=timezone.now()).order_by('name')
@@ -225,7 +224,8 @@ def tests(request):
     categories_with_count_of_published_tests = get_categories_with_count_of_published_tests(categories)
     tags = Tag.objects.order_by('name')    
     tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
-    context = get_filtered_and_sorted_tests_with_pagination(request, tests, 35, 5)
+    # 25, 5 prod
+    context = get_filtered_and_sorted_tests_with_pagination(request, tests, 15, 5)
     context['categories_for_filtering_of_tests'] = categories_with_count_of_published_tests
     context['tags_for_filtering_of_tests'] = tags_with_count_of_published_tests
     return render(request, 'octapp/tests.html', context)
@@ -233,12 +233,14 @@ def tests(request):
 def categories(request):
     categories = Category.objects.filter(confirmed=True).order_by('name')
     categories_with_count_of_published_tests = get_categories_with_count_of_published_tests(categories)
+    # 35, 5 prod
     context = get_pagination(int(request.GET.get('page', '1')), categories_with_count_of_published_tests, 35, 5)
     return render(request, 'octapp/categories.html', context)
 
 def tags(request):
     tags = Tag.objects.order_by('name')
     tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
+    # 35, 5 prod
     context = get_pagination(int(request.GET.get('page', '1')), tags_with_count_of_published_tests, 35, 5)
     return render(request, 'octapp/tags.html', context)
 
@@ -260,7 +262,7 @@ def user_tests(request, pk):
 @login_required
 def test_new(request):
     if request.method == 'POST':
-        # Form форма с пользовательскими данными
+        # Форма с пользовательскими данными
         form = TestForm(request.POST)
         if form.is_valid():
             # Если использовать form.save(commit=False), то выбранные пользователем теги к тесту не добавляются!
@@ -384,26 +386,30 @@ def get_questions_of_test_context(test_id, page):
                                                       auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
             closed_question_option_form = ClosedQuestionOptionForm(auto_id='id_for_new_option_form_qu_' + str(question_of_test.question_index_number) + '_%s')
             # 4’ый элемент списка — форма для добавления элементов правого ряда сопоставления, а в случае вопросов других типов ее нет, поэтому используется з
-            questions_of_test_with_filled_forms.append([question_of_test, closed_question_form, closed_question_option_form, plug])
+            options_or_elements = question_of_test.closed_question.closed_question_options.order_by('option_number')
+            questions_of_test_with_filled_forms.append([question_of_test, options_or_elements, closed_question_form, closed_question_option_form, plug])
         elif question_of_test.type_of_question == 'OpndQ':
             open_question_form = OpenQuestionForm(instance=question_of_test.open_question,
                                                   initial={'question_index_number': question_of_test.question_index_number},
                                                   auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
-            questions_of_test_with_filled_forms.append([question_of_test, open_question_form, plug, plug])
+            questions_of_test_with_filled_forms.append([question_of_test, plug, open_question_form, plug, plug])
         elif question_of_test.type_of_question == 'SqncQ':
             sequence_question_form = SequenceQuestionForm(instance=question_of_test.sequence_question,
                                                           initial={'question_index_number': question_of_test.question_index_number},
                                                           auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
             sequence_question_element_form = SequenceQuestionElementForm(auto_id='id_for_new_sequ_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
-            questions_of_test_with_filled_forms.append([question_of_test, sequence_question_form, sequence_question_element_form, plug])
+            options_or_elements = question_of_test.sequence_question.sequence_elements.order_by('element_index_number')
+            questions_of_test_with_filled_forms.append([question_of_test, options_or_elements, sequence_question_form, sequence_question_element_form, plug])
         elif question_of_test.type_of_question == 'CmprsnQ':
             comparison_question_form = ComparisonQuestionForm(instance=question_of_test.comparison_question,
                                                               initial={'question_index_number': question_of_test.question_index_number},
                                                               auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
             comparison_question_left_row_element_form = ComparisonQuestionElementForm(auto_id='id_for_new_comp_left_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
             comparison_question_right_row_element_form = ComparisonQuestionElementForm(auto_id='id_for_new_comp_right_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
-
-            questions_of_test_with_filled_forms.append([question_of_test, comparison_question_form, comparison_question_left_row_element_form, comparison_question_right_row_element_form])
+            left_row_elements = question_of_test.comparison_question.comparison_elements.order_by('element_index_number')
+            right_row_elements = question_of_test.comparison_question.comparison_elements.order_by('element_index_number')
+            options_or_elements = [left_row_elements, right_row_elements]
+            questions_of_test_with_filled_forms.append([question_of_test, options_or_elements, comparison_question_form, comparison_question_left_row_element_form, comparison_question_right_row_element_form])
 
     # 4 формы для добавления вопросов соответствующих типов
     closed_question_form = ClosedQuestionForm()
@@ -416,7 +422,8 @@ def get_questions_of_test_context(test_id, page):
                'open_question_form': open_question_form,
                'sequence_question_form': sequence_question_form,
                'comparison_question_form': comparison_question_form}
-    pag_context = get_pagination(page, questions_of_test_with_filled_forms, 12, 4)
+    # 10, 4 prod
+    pag_context = get_pagination(page, questions_of_test_with_filled_forms, 10, 4)
     context.update(pag_context)
     return context
 
@@ -428,18 +435,11 @@ def questions_of_test(request, test_id):
 
 @login_required
 def new_question(request, test_id, type):
-    # Пустые формы для контекста
-    closed_question_form = ClosedQuestionForm()
-    open_question_form = OpenQuestionForm()
-    sequence_question_form = SequenceQuestionForm()
-    comparison_question_form = ComparisonQuestionForm()
-
     test = get_object_or_404(Test, pk=test_id)
-    questions_of_test = test.questions_of_test.order_by('question_index_number')
     index_number_of_new_test_question = test.questions_of_test.count() + 1
     if type == 'closed':
         if request.method == 'POST':
-            # Form форма с пользовательскими данными
+            # Форма с пользовательскими данными
             closed_question_form = ClosedQuestionForm(request.POST)
             if closed_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
@@ -449,13 +449,10 @@ def new_question(request, test_id, type):
                 new_closed_question_object.question_of_test = new_question_of_test
                 new_closed_question_object.save()
                 return redirect('questions_of_test', test_id=test_id)
-        else:
-            # Пустая форма
-            closed_question_form = ClosedQuestionForm()
 
     if type == 'open':
         if request.method == 'POST':
-            # Form форма с пользовательскими данными
+            # Форма с пользовательскими данными
             open_question_form = OpenQuestionForm(request.POST)
             if open_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
@@ -465,13 +462,10 @@ def new_question(request, test_id, type):
                 new_open_question_object.question_of_test = new_question_of_test
                 new_open_question_object.save()
                 return redirect('questions_of_test', test_id=test_id)
-        else:
-            # Пустая форма
-            open_question_form = OpenQuestionForm()
 
     if type == 'sequence':
         if request.method == 'POST':
-            # Form форма с пользовательскими данными
+            # Форма с пользовательскими данными
             sequence_question_form = SequenceQuestionForm(request.POST)
             if sequence_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
@@ -481,13 +475,10 @@ def new_question(request, test_id, type):
                 new_sequence_question_object.question_of_test = new_question_of_test
                 new_sequence_question_object.save()
                 return redirect('questions_of_test', test_id=test_id)
-        else:
-            # Пустая форма
-            sequence_question_form = SequenceQuestionForm()
 
     if type == 'comparison':
         if request.method == 'POST':
-            # Form форма с пользовательскими данными
+            # Форма с пользовательскими данными
             comparison_question_form = ComparisonQuestionForm(request.POST)
             if comparison_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
@@ -497,15 +488,7 @@ def new_question(request, test_id, type):
                 new_comparison_question_object.question_of_test = new_question_of_test
                 new_comparison_question_object.save()
                 return redirect('questions_of_test', test_id=test_id)
-        else:
-            # Пустая форма
-            comparison_question_form = ComparisonQuestionForm()
-    return render(request, 'octapp/questions_of_test.html', {'test': test,
-                        'questions_of_test': questions_of_test,
-                        'closed_question_form': closed_question_form,
-                        'open_question_form': open_question_form,
-                        'sequence_question_form': sequence_question_form,
-                        'comparison_question_form': comparison_question_form})
+    return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
 
 @login_required
 def question_edit(request, test_id, question_of_test_id):
@@ -543,16 +526,73 @@ def question_edit(request, test_id, question_of_test_id):
 def question_remove(request, test_id, question_of_test_id):
     test = get_object_or_404(Test, pk=test_id)
     question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
-
     # Коррекция порядковых номеров последующих вопросов
     farther_questions = test.questions_of_test.all().order_by('question_index_number')[question_of_test.question_index_number:]
     for father_question in farther_questions:
         father_question.question_index_number -= 1
         father_question.save()
-
     question_of_test.delete()
     return redirect('questions_of_test', test_id=test_id)
 
+@login_required
+def new_options_or_elements(request, test_id, question_of_test_id):
+    test = get_object_or_404(Test, pk=test_id)
+    question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
+    options_or_elements_pattern = r'<p>.+</p>'
+    if question_of_test.type_of_question == 'ClsdQ':
+        if request.method == 'POST':
+            closed_question_options_form = ClosedQuestionOptionForm(request.POST)
+            count_of_new_options = 1
+            farther_options = []
+            option_number = 0
+            if closed_question_options_form.is_valid():
+                if closed_question_options_form.cleaned_data['add_several'] == True:
+                    # Парсим варианты
+                    new_options_contents = re.findall(options_or_elements_pattern, closed_question_options_form.cleaned_data['content'])
+                    count_of_new_options = len(new_options_contents)
+                if closed_question_options_form.cleaned_data['option_number']:
+                    if closed_question_options_form.cleaned_data['option_number'] > question_of_test.closed_question.closed_question_options.count() + 1:
+                        option_number = question_of_test.closed_question.closed_question_options.count() + 1
+                    else:
+                        option_number = closed_question_options_form.cleaned_data['option_number']
+                    # Если вариант ответа с введенным номером уже существует, то
+                    # сдвигаем его номер и номера всех последующих вариантов ответа на количество новых ответов либо на 1,
+                    # если добавляется только 1 вариант ответа
+                    farther_options = question_of_test.closed_question.closed_question_options.all().order_by('option_number')[option_number - 1:]
+                    if ClosedQuestionOption.objects.filter(question=question_of_test.closed_question, option_number=option_number).count() > 0 and count_of_new_options > 1:
+                        for father_option in farther_options:
+                            father_option.option_number += count_of_new_options
+                            father_option.save()
+                    else:
+                        for father_option in farther_options:
+                            father_option.option_number += 1
+                            father_option.save()
+
+                # Если порядковый номер не указан, то добавляем вариант/ы последним/и
+                else:
+                    option_number = question_of_test.closed_question.closed_question_options.all().count() + 1
+                # Теперь можно добавлять один или несколько новых вариантов
+                if count_of_new_options > 1:
+                    counter = 0
+                    for new_option_content in new_options_contents:
+                        ClosedQuestionOption.objects.create(question=question_of_test.closed_question,
+                                option_number=option_number + counter, content=new_option_content)
+                        counter += 1
+                else:
+                    new_closed_qu_option = closed_question_options_form.save(commit=False)
+                    new_closed_qu_option.question = question_of_test.closed_question
+                    new_closed_qu_option.option_number = option_number
+                    new_closed_qu_option.save()
+                return render(request, 'octapp/questions_of_test.html',
+                              get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
+
+    elif question_of_test.type_of_question == 'OpndQ':
+        pass
+    elif question_of_test.type_of_question == 'SqncQ':
+        pass
+    elif question_of_test.type_of_question == 'CmprsnQ':
+        pass
+    return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
 
 @login_required
 def review(request, test_id, user_rate):

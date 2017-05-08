@@ -19,6 +19,8 @@ urlpatterns = [
     url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/edit/$', views.question_edit, name='question_edit'),
     url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/remove/$', views.question_remove, name='question_remove'),
 
+    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/add_options_or_elements/$', views.new_options_or_elements, name='new_options_or_elements'),
+
     # url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/new_option/$', views.new_option, name='new_option'),
 
     url(r'^categories/$', views.categories, name='categories'),

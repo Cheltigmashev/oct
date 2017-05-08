@@ -132,7 +132,7 @@
     </div>
 </div>
     <!-- В случае формы для элементов левого ряда сопоставления, то она будет в переменной option_or_element_form -->
-    {% for qu_of_test, form_for_editing_question, option_or_element_form, comparison_question_right_row_element_form in some_page %}
+    {% for qu_of_test, options_or_elements, form_for_editing_question, option_or_element_form, comparison_question_right_row_element_form in some_page %}
 <div class="question">
     <!-- Кнопки и формы для добавления новых вариантов ответа и редактирования вопросов -->
     <div class="question_buttons">
@@ -141,7 +141,7 @@
     <div class="dropdown inline_block">
         <span title="Нажмите, чтобы добавить новые варианты ответа" id="dLabel5" class="glyphicon glyphicon-plus" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
         <div aria-labelledby="dLabel5" class="dropdown-menu add_new_options_or_elements">
-        <form name="new_option_or_element_form" method="POST" action="">
+        <form name="new_option_form" method="POST" action="{% url 'new_options_or_elements' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
     {% csrf_token %}
     {{ option_or_element_form.option_number.label_tag }}
     {{ option_or_element_form.option_number }}
@@ -169,7 +169,7 @@
     <div class="dropdown inline_block">
         <span title="Нажмите, чтобы добавить новые элементы последовательности" id="dLabel5" class="glyphicon glyphicon-plus" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
         <div aria-labelledby="dLabel5" class="dropdown-menu add_new_options_or_elements">
-        <form name="new_option_or_element_form" method="POST" action="">
+        <form name="new_sequence_element_form" method="POST" action="{% url 'new_options_or_elements' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
     {% csrf_token %}
     {{ option_or_element_form.element_index_number.label_tag }}
     {{ option_or_element_form.element_index_number }}
@@ -197,7 +197,7 @@
     <div class="dropdown inline_block">
         <span title="Нажмите, чтобы добавить новые элементы левого ряда сопоставления" id="dLabel5" class="glyphicon glyphicon-hand-left" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
         <div aria-labelledby="dLabel5" class="dropdown-menu add_left_row_comparison_element">
-        <form name="new_option_or_element_form" method="POST" action="">
+        <form name="new_left_comparison_element_form" method="POST" action="{% url 'new_options_or_elements' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
         {% csrf_token %}
             <label>Содержимое (контент) элемента левого ряда сопоставления:</label>
     {{ option_or_element_form.element_index_number }}
@@ -223,7 +223,7 @@
     <div class="dropdown inline_block">
         <span title="Нажмите, чтобы добавить новые элементы правого ряда сопоставления" id="dLabel5" class="glyphicon glyphicon-hand-down" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
         <div aria-labelledby="dLabel5" class="dropdown-menu add_right_row_comparison_element">
-        <form name="new_option_or_element_form" method="POST" action="">
+        <form name="new_right_comparison_element_form" method="POST" action="{% url 'new_options_or_elements' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
         {% csrf_token %}
             <label>Содержимое (контент) элемента правого ряда сопоставления:</label>
     {{ comparison_question_right_row_element_form.element_index_number }}
@@ -379,8 +379,9 @@
     <p>Вопрос № {{ qu_of_test.question_index_number }} (закрытого типа), правильные варианты: <mark>{{ qu_of_test.closed_question.correct_option_numbers }}</mark></p>
         {{ qu_of_test.closed_question.question_content|safe }}
     <div class="closed_question_options_div">
-            {% for closed_question_options in qu_of.closed_question.closed_question_options %}
-                <p>{{ closed_question_options.option_number }}. {{ closed_question_options }}</p>
+            {% for closed_question_option in options_or_elements %}
+                <p>Вариант ответа № {{ closed_question_option.option_number }}:</p>
+                    {{ closed_question_option.content|safe }}
             {% empty %}
         <p>Вы еще не добавили вариантов ответа на этот вопрос.</p>
             {% endfor %}
@@ -400,7 +401,7 @@
     <p>Вопрос № {{ qu_of_test.question_index_number }} (последовательность), правильная последовательность: <mark>{{ qu_of_test.sequence_question.correct_sequence }}</mark></p>
         {{ qu_of_test.sequence_question.sequence_question_content|safe }}
     <div class="sequence_elements_div">
-            {% for sequence_element in qu_of_test.sequence_elements %}
+            {% for sequence_element in options_or_elements %}
     <span class="sequence_element">{{ sequence_element }}</span>
             {% empty %}
         <p>Вы еще не добавили элементы последовательности</p>
@@ -413,7 +414,7 @@
         {{ qu_of_test.comparison_question.comparison_question_content|safe }}
     <div class="comparing_elements_div">
         <div class="left_row inline_block">
-            {% for left_row_element in left_row_elements %}
+            {% for left_row_element in options_or_elements|first %}
                 <div>{{ left_row_element }}</div>
             {% empty %}
                     <span>Вы еще не добавили элементы <mark>левого ряда</mark> сопоставления</span>
@@ -421,7 +422,7 @@
         </div>
 
         <div class="right_row inline_block">
-            {% for right_row_element in right_row_elements %}
+            {% for right_row_element in options_or_elements|last %}
             <div>{{ right_row_element }}</div>
             {% empty %}
                     <span>Вы еще не добавили элементы <mark>правого ряда</mark> сопоставления</span>
