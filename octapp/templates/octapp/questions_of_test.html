@@ -135,8 +135,19 @@
     <!-- В случае формы для элементов левого ряда сопоставления, то она будет в переменной option_or_element_form -->
     {% for qu_of_test, options_or_elements, form_for_editing_question, option_or_element_form, comparison_question_right_row_element_form in some_page %}
 <div class="question">
-    <!-- Кнопки и формы для добавления новых вариантов ответа и редактирования вопросов -->
+    <!-- Кнопки для каждого вопроса -->
     <div class="question_buttons">
+
+        <a href="{% url 'question_remove' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить вопрос" class="glyphicon glyphicon-remove"></a>
+    {% if qu_of_test.type_of_question != 'OpndQ' and options_or_elements %}
+        {% if qu_of_test.type_of_question == 'CmprsnQ' %}
+                {% if options_or_elements|first or options_or_elements|last %}
+        <a href="{% url 'options_or_elements_of_question_remove_all' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>
+                {% endif %}
+        {% else %}
+        <a href="{% url 'options_or_elements_of_question_remove_all' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>        
+        {% endif %}
+    {% endif %}
 
     {% if qu_of_test.type_of_question == 'ClsdQ' %}
     <div class="dropdown inline_block">
@@ -370,16 +381,6 @@
         {% endif %}
 
     </div> <!-- закрывающий для div.dropdown.inline_block -->
-    {% if qu_of_test.type_of_question != 'OpndQ' and options_or_elements %}
-        {% if qu_of_test.type_of_question == 'CmprsnQ' %}
-                {% if options_or_elements|first or options_or_elements|last %}
-        <a href="{% url 'options_or_elements_of_question_remove_all' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>
-                {% endif %}
-        {% else %}
-        <a href="{% url 'options_or_elements_of_question_remove_all' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>        
-        {% endif %}
-    {% endif %}
-        <a href="{% url 'question_remove' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить вопрос" class="glyphicon glyphicon-remove"></a>
     </div> <!-- закрывающий для div.question_buttons -->
 
         {% if qu_of_test.type_of_question == 'ClsdQ' %}
@@ -422,7 +423,7 @@
         {% endif %}
 
         {% if qu_of_test.type_of_question == 'CmprsnQ' %}
-    <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление), правильная последовательность элементов правого ряда: <mark>{{ qu_of_test.comparison_question.correct_sequence }}</mark></p>
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление), правильные пары элементов левого и правого столбцов (рядов) сопоставления: <mark>{{ qu_of_test.comparison_question.correct_sequence }}</mark></p>
         {{ qu_of_test.comparison_question.comparison_question_content|safe }}
     <div class="comparing_elements_div">
         <div class="row inline_block">
@@ -462,7 +463,3 @@
 
 
 {% endblock %}
-
-
-
-

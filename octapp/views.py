@@ -683,7 +683,6 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                             question_of_test.comparison_question.right_row_elements.create(question=question_of_test.comparison_question,
                                                                      element_index_number=option_number + counter,
                                                                      element_content=new_option_content)
-                        # question_of_test.comparison_question.save()
                         counter += 1
                 else:
                     if row == 'left':
