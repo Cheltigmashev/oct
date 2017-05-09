@@ -145,7 +145,7 @@ class ClosedQuestion(models.Model):
     question_content = RichTextField('Содержимое (контент) вопроса', null=False,
         blank=False, help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.', default='')
     correct_option_numbers = models.CharField('Правильны(й/е) вариант/варианты',
-        max_length=55, blank=False, null=False, help_text='Номера одного или нескольких правильных вариантов через запятую и без пробелов')
+        max_length=55, blank=False, null=False, help_text='Номера одного или нескольких правильных вариантов через запятую.')
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (закрытый) теста ' + self.question_of_test.test.name
@@ -199,7 +199,7 @@ class SequenceQuestion(models.Model):
                                      null=False, blank=False, default='')
     correct_sequence = models.CharField(
         'Правильная последовательность',
-        max_length=70, blank=False, null=False, help_text='Номера элементов последовательности, разделенные запятыми без пробелов.')
+        max_length=70, blank=False, null=False, help_text='Номера элементов последовательности, разделенные запятыми, например 2, 3, 1, 4.')
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (последовательность) теста ' + self.question_of_test.test.name
@@ -239,7 +239,7 @@ class ComparisonQuestion(models.Model):
     right_row_elements = models.ManyToManyField('octapp.ComparisonQuestionElement', related_name='right_comparison_elements',
         verbose_name='Правые элементы сопоставления', blank=True)
     correct_sequence = models.CharField('Правильные пары элементов левого и правого столбцов (рядов) сопоставления',
-        max_length=55, blank=False, null=False, help_text='Перечислите здесь через запятую и без пробелов все правильные пары, например: 1-2, 2-1, 3-4, 4-3.')
+        max_length=55, blank=False, null=False, help_text='Перечислите здесь через запятую все правильные пары, например: 1-2, 2-1, 3-4, 4-3.')
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (сопоставление) теста ' + self.question_of_test.test.name

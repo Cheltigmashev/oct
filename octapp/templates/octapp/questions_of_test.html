@@ -28,17 +28,9 @@
             <small><p>NB! {{ closed_question_form.question_content.help_text }}</p></small>
     {% if closed_question_form.question_content.errors %}<p class="field_with_error">{{ closed_question_form.question_content.errors }}</p>{% endif %}
 
-            <div class="inline_block">
     {{ closed_question_form.correct_option_numbers.label_tag }}
     {{ closed_question_form.correct_option_numbers }}
     {% if closed_question_form.correct_option_numbers.errors %}<p class="field_with_error">{{ closed_question_form.correct_option_numbers.errors }}</p>{% endif %}
-            </div>
-
-            <div class="inline_block">
-    {{ closed_question_form.only_one_right }}
-    {{ closed_question_form.only_one_right.label_tag }}
-    {% if closed_question_form.only_one_right.errors %}<p class="field_with_error">{{ closed_question_form.only_one_right.errors }}</p>{% endif %}
-            </div>
 
             <small><p>NB! {{ closed_question_form.correct_option_numbers.help_text }}</p></small>
 
@@ -272,17 +264,10 @@
             <small><p>NB! {{ form_for_editing_question.question_content.help_text }}</p></small>
     {% if form_for_editing_question.question_content.errors %}<p class="field_with_error">{{ form_for_editing_question.question_content.errors }}</p>{% endif %}
 
-            <div class="inline_block">
     {{ form_for_editing_question.correct_option_numbers.label_tag }}
     {{ form_for_editing_question.correct_option_numbers }}
     {% if form_for_editing_question.correct_option_numbers.errors %}<p class="field_with_error">{{ form_for_editing_question.correct_option_numbers.errors }}</p>{% endif %}
-            </div>
 
-            <div class="inline_block">
-    {{ form_for_editing_question.only_one_right }}
-    {{ form_for_editing_question.only_one_right.label_tag }}
-    {% if form_for_editing_question.only_one_right.errors %}<p class="field_with_error">{{ form_for_editing_question.only_one_right.errors }}</p>{% endif %}
-            </div>
             <small><p>NB! {{ form_for_editing_question.correct_option_numbers.help_text }}</p></small>
             <hr>
     {{ form_for_editing_question.question_index_number.label_tag }}

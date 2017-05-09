@@ -438,53 +438,48 @@ def questions_of_test(request, test_id):
 def new_question(request, test_id, type):
     test = get_object_or_404(Test, pk=test_id)
     index_number_of_new_test_question = test.questions_of_test.count() + 1
-    if type == 'closed':
-        if request.method == 'POST':
+    if request.method == 'POST':
+        if type == 'closed':
             # Форма с пользовательскими данными
             closed_question_form = ClosedQuestionForm(request.POST)
+            option_number_pattern = r'\d+'
             if closed_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
                         type_of_question='ClsdQ', question_index_number=index_number_of_new_test_question)
                 # Пока не сохраняем объект
                 new_closed_question_object = closed_question_form.save(commit=False)
                 new_closed_question_object.question_of_test = new_question_of_test
+                # Если пользователь указал несколько правильных вариантов
+                if len(re.findall(option_number_pattern, closed_question_form.cleaned_data['correct_option_numbers'])) > 1:
+                    new_closed_question_object.only_one_right = False
                 new_closed_question_object.save()
                 return redirect('questions_of_test', test_id=test_id)
 
-    if type == 'open':
-        if request.method == 'POST':
-            # Форма с пользовательскими данными
+        if type == 'open':
             open_question_form = OpenQuestionForm(request.POST)
             if open_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
                         type_of_question='OpndQ', question_index_number=index_number_of_new_test_question)
-                # Пока не сохраняем объект
                 new_open_question_object = open_question_form.save(commit=False)
                 new_open_question_object.question_of_test = new_question_of_test
                 new_open_question_object.save()
                 return redirect('questions_of_test', test_id=test_id)
 
-    if type == 'sequence':
-        if request.method == 'POST':
-            # Форма с пользовательскими данными
+        if type == 'sequence':
             sequence_question_form = SequenceQuestionForm(request.POST)
             if sequence_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
                         type_of_question='SqncQ', question_index_number=index_number_of_new_test_question)
-                # Пока не сохраняем объект
                 new_sequence_question_object = sequence_question_form.save(commit=False)
                 new_sequence_question_object.question_of_test = new_question_of_test
                 new_sequence_question_object.save()
                 return redirect('questions_of_test', test_id=test_id)
 
-    if type == 'comparison':
-        if request.method == 'POST':
-            # Форма с пользовательскими данными
+        if type == 'comparison':
             comparison_question_form = ComparisonQuestionForm(request.POST)
             if comparison_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
                         type_of_question='CmprsnQ', question_index_number=index_number_of_new_test_question)
-                # Пока не сохраняем объект
                 new_comparison_question_object = comparison_question_form.save(commit=False)
                 new_comparison_question_object.question_of_test = new_question_of_test
                 new_comparison_question_object.save()
@@ -499,6 +494,7 @@ def question_edit(request, test_id, question_of_test_id):
     page = int(page)
     if request.method == 'POST':
         if question_of_test.type_of_question == 'ClsdQ':
+            option_number_pattern = r'\d+'
             form = ClosedQuestionForm(request.POST, instance=question_of_test.closed_question)
         elif question_of_test.type_of_question == 'OpndQ':
             form = OpenQuestionForm(request.POST, instance=question_of_test.open_question)
@@ -518,6 +514,9 @@ def question_edit(request, test_id, question_of_test_id):
             certain_type_question_from_form = form.save(commit=False)
             certain_type_question_from_form.question_of_test.question_index_number = new_index
             certain_type_question_from_form.question_of_test.save()
+            if question_of_test.type_of_question == 'ClsdQ':
+                if len(re.findall(option_number_pattern, form.cleaned_data['correct_option_numbers'])) > 1:
+                    certain_type_question_from_form.only_one_right = False
             certain_type_question_from_form.save()
             return redirect('questions_of_test', test_id)
     else:

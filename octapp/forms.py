@@ -86,13 +86,12 @@ class ClosedQuestionForm(forms.ModelForm):
     class Meta:
         model = ClosedQuestion
         fields = ('question_content',
-                  'only_one_right',
                   'correct_option_numbers')
 
         widgets = {
             'correct_option_numbers': TextInput(attrs={'maxlength': 55, 'class': 'form-control',
-                                                       'placeholder': 'Цифры и запятые',
-                                                       'pattern': '[0-9,]*'}),
+                                                       'placeholder': 'Допустимы цифры, запятые и пробел в формате 1, 2, 3',
+                                                       'pattern': '(?:\d+(?:,\s)?)+'}),
         }
 
 class OpenQuestionForm(forms.ModelForm):
@@ -128,8 +127,8 @@ class SequenceQuestionForm(forms.ModelForm):
 
         widgets = {
             'correct_sequence': TextInput(attrs={'maxlength': 70, 'class': 'form-control',
-                                                       'placeholder': 'Цифры и запятые',
-                                                       'pattern': '[0-9,]*'}),
+                                                       'placeholder': 'Допустимы цифры, запятые и пробел в формате 1, 2, 3',
+                                                       'pattern': '(?:\d+(?:,\s)?)+'}),
         }
 
 class ComparisonQuestionForm(forms.ModelForm):
@@ -147,8 +146,8 @@ class ComparisonQuestionForm(forms.ModelForm):
 
         widgets = {
             'correct_sequence': TextInput(attrs={'maxlength': 55, 'class': 'form-control',
-                                                       'placeholder': 'Допустимы цифры, запятые',
-                                                       'pattern': '[0-9,-]*'}),
+                                                       'placeholder': 'Допустимы цифры, запятые, дефис и пробел',
+                                                       'pattern': '(?:[0-9]*-[0-9]*(?:, )?)+'}),
         }
 
 # Формы для вариантов ответа либо элементов последовательности/сопоставления
