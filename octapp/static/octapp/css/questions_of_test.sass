@@ -17,10 +17,27 @@
     .closed_question_options_div, .sequence_elements_div, .comparing_elements_div
       padding: 8px 8px 8px 15px
       border-top: 1px dashed orange
+    .option_or_element
+      padding: 3px
+      margin: 4px 8px
+    .option_or_element_content_span *:first-of-type
+      display: inline
+    .closed_question_options_div
+      border-bottom: 1px dashed gray
     .comparing_elements_div
-      .left_row, .right_row
+      padding: 4px
+      .row
         width: 50%
-        margin-right: -5px
+        margin-left: 1px
+        margin-right: -6px
+        vertical-align: middle
+      .option_or_element
+        border-bottom: 1px dashed gray
+    .sequence_elements_div
+      .option_or_element
+        border-bottom: 1px dashed gray
+        border-left: 1px dashed gray
+        vertical-align: middle
 
     .question_buttons
       top: 5px
@@ -111,11 +128,11 @@
       .dropdown.inline_block
         width: 100%
         .dropdown-menu
-          padding: 5px
+          padding: 5px 6px 5px 5px
         .btn:not(input)
           font-size: 14px
           padding: 5px
-          margin-left: 0
+          margin: 2px 0 0 1px
       .dropdown.inline_block.add_open_question_block
         left: 0
         .dropdown-menu
@@ -127,7 +144,7 @@
       .question_buttons
         .dropdown
           .edit_question
-            right: -80px
+            right: -90px
           .dropdown-menu
             width: 365px
             right: -55px

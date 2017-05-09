@@ -115,6 +115,7 @@ def get_pagination(page, some_page, on_one_page, max_pages_before_or_after_curre
 def tests_lists(request):
     return render(request, 'octapp/tests_lists.html', get_tests_lists_context())
 
+# Хотя и принимает request, но не используется в URL-шаблонах как представление
 def get_filtered_and_sorted_tests_with_pagination(request, tests, on_one_page, max_pages_before_or_after_current):
     q_dict = request.GET.dict()
     context = { }
@@ -406,8 +407,8 @@ def get_questions_of_test_context(test_id, page):
                                                               auto_id='id_for_' + str(question_of_test.question_index_number) + '_%s')
             comparison_question_left_row_element_form = ComparisonQuestionElementForm(auto_id='id_for_new_comp_left_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
             comparison_question_right_row_element_form = ComparisonQuestionElementForm(auto_id='id_for_new_comp_right_el_form_qu_' + str(question_of_test.question_index_number) + '_%s')
-            left_row_elements = question_of_test.comparison_question.comparison_elements.order_by('element_index_number')
-            right_row_elements = question_of_test.comparison_question.comparison_elements.order_by('element_index_number')
+            left_row_elements = question_of_test.comparison_question.left_row_elements.order_by('element_index_number')
+            right_row_elements = question_of_test.comparison_question.right_row_elements.order_by('element_index_number')
             options_or_elements = [left_row_elements, right_row_elements]
             questions_of_test_with_filled_forms.append([question_of_test, options_or_elements, comparison_question_form, comparison_question_left_row_element_form, comparison_question_right_row_element_form])
 
@@ -535,21 +536,27 @@ def question_remove(request, test_id, question_of_test_id):
     return redirect('questions_of_test', test_id=test_id)
 
 @login_required
-def new_options_or_elements(request, test_id, question_of_test_id):
-    test = get_object_or_404(Test, pk=test_id)
+def new_options_or_elements(request, test_id, question_of_test_id, row):
     question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
-    options_or_elements_pattern = r'<p>.+</p>'
-    if question_of_test.type_of_question == 'ClsdQ':
-        if request.method == 'POST':
+    # Контент варианта ответа не должен начинаться с неразрывного HTML-пробела, что бывает, если вводить пустые параграфы, в целях того, чтобы избежать добавления «пустых» вариантов.
+    # (?!&nbsp;) — негативная опережающая проверка
+    options_or_elements_pattern = r'<p>(?!&nbsp;)[^ \t\r\n].*</p>'
+    if request.method == 'POST':
+        count_of_new_options = 0
+        farther_options = []
+        option_number = 0
+        parsed_single_option_content = ''
+
+        if question_of_test.type_of_question == 'ClsdQ':
             closed_question_options_form = ClosedQuestionOptionForm(request.POST)
-            count_of_new_options = 1
-            farther_options = []
-            option_number = 0
-            if closed_question_options_form.is_valid():
-                if closed_question_options_form.cleaned_data['add_several'] == True:
-                    # Парсим варианты
-                    new_options_contents = re.findall(options_or_elements_pattern, closed_question_options_form.cleaned_data['content'])
-                    count_of_new_options = len(new_options_contents)
+            if closed_question_options_form.is_valid() and re.match(options_or_elements_pattern, closed_question_options_form.cleaned_data['content']):
+                # Парсим вариант(ы)
+                new_options_contents = re.findall(options_or_elements_pattern,
+                                                  closed_question_options_form.cleaned_data['content'])
+                count_of_new_options = len(new_options_contents)
+                if not closed_question_options_form.cleaned_data['add_several']:
+                    for content in new_options_contents:
+                        parsed_single_option_content += content
                 if closed_question_options_form.cleaned_data['option_number']:
                     if closed_question_options_form.cleaned_data['option_number'] > question_of_test.closed_question.closed_question_options.count() + 1:
                         option_number = question_of_test.closed_question.closed_question_options.count() + 1
@@ -557,9 +564,9 @@ def new_options_or_elements(request, test_id, question_of_test_id):
                         option_number = closed_question_options_form.cleaned_data['option_number']
                     # Если вариант ответа с введенным номером уже существует, то
                     # сдвигаем его номер и номера всех последующих вариантов ответа на количество новых ответов либо на 1,
-                    # если добавляется только 1 вариант ответа
+                    # если добавляется только 1 вариант ответа. Аналогично для элементов вопросов-последовательностей и вопросов-сопоставлений.
                     farther_options = question_of_test.closed_question.closed_question_options.all().order_by('option_number')[option_number - 1:]
-                    if ClosedQuestionOption.objects.filter(question=question_of_test.closed_question, option_number=option_number).count() > 0 and count_of_new_options > 1:
+                    if ClosedQuestionOption.objects.filter(question=question_of_test.closed_question, option_number=option_number).count() > 0 and count_of_new_options > 1 and closed_question_options_form.cleaned_data['add_several']:
                         for father_option in farther_options:
                             father_option.option_number += count_of_new_options
                             father_option.save()
@@ -567,32 +574,142 @@ def new_options_or_elements(request, test_id, question_of_test_id):
                         for father_option in farther_options:
                             father_option.option_number += 1
                             father_option.save()
-
                 # Если порядковый номер не указан, то добавляем вариант/ы последним/и
                 else:
                     option_number = question_of_test.closed_question.closed_question_options.all().count() + 1
                 # Теперь можно добавлять один или несколько новых вариантов
-                if count_of_new_options > 1:
+                if count_of_new_options > 0 and closed_question_options_form.cleaned_data['add_several']:
                     counter = 0
                     for new_option_content in new_options_contents:
                         ClosedQuestionOption.objects.create(question=question_of_test.closed_question,
                                 option_number=option_number + counter, content=new_option_content)
                         counter += 1
                 else:
-                    new_closed_qu_option = closed_question_options_form.save(commit=False)
-                    new_closed_qu_option.question = question_of_test.closed_question
-                    new_closed_qu_option.option_number = option_number
-                    new_closed_qu_option.save()
-                return render(request, 'octapp/questions_of_test.html',
-                              get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
+                    ClosedQuestionOption.objects.create(question=question_of_test.closed_question,
+                                option_number=option_number, content=parsed_single_option_content)
+                return redirect('questions_of_test', test_id=test_id)
 
-    elif question_of_test.type_of_question == 'OpndQ':
-        pass
-    elif question_of_test.type_of_question == 'SqncQ':
-        pass
-    elif question_of_test.type_of_question == 'CmprsnQ':
-        pass
-    return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
+        elif question_of_test.type_of_question == 'SqncQ':
+            sequence_question_element_form = SequenceQuestionElementForm(request.POST)
+            if sequence_question_element_form.is_valid() and re.match(options_or_elements_pattern, sequence_question_element_form.cleaned_data['element_content']):
+                # Парсим вариант(ы)
+                new_options_contents = re.findall(options_or_elements_pattern, sequence_question_element_form.cleaned_data['element_content'])
+                count_of_new_options = len(new_options_contents)
+                if not sequence_question_element_form.cleaned_data['add_several']:
+                    for content in new_options_contents:
+                        parsed_single_option_content += content
+                if sequence_question_element_form.cleaned_data['element_index_number']:
+                    if sequence_question_element_form.cleaned_data['element_index_number'] > question_of_test.sequence_question.sequence_elements.count() + 1:
+                        option_number = question_of_test.sequence_question.sequence_elements.count() + 1
+                    else:
+                        option_number = sequence_question_element_form.cleaned_data['element_index_number']
+                    farther_options = question_of_test.sequence_question.sequence_elements.all().order_by('element_index_number')[option_number - 1:]
+                    if SequenceQuestionElement.objects.filter(question=question_of_test.sequence_question, element_index_number=option_number).count() > 0 and count_of_new_options > 1 and sequence_question_element_form.cleaned_data['add_several']:
+                        for father_option in farther_options:
+                            father_option.element_index_number += count_of_new_options
+                            father_option.save()
+                    else:
+                        for father_option in farther_options:
+                            father_option.element_index_number += 1
+                            father_option.save()
+                # Если порядковый номер не указан, то добавляем элемент/ы вопроса-последовательности последним/и
+                else:
+                    option_number = question_of_test.sequence_question.sequence_elements.all().count() + 1
+                # Теперь можно добавлять один или несколько новых элементов вопроса-последовательности
+                if count_of_new_options > 0 and sequence_question_element_form.cleaned_data['add_several']:
+                    counter = 0
+                    for new_option_content in new_options_contents:
+                        SequenceQuestionElement.objects.create(question=question_of_test.sequence_question,
+                                element_index_number=option_number + counter, element_content=new_option_content)
+                        counter += 1
+                else:
+                    SequenceQuestionElement.objects.create(question=question_of_test.sequence_question,
+                                element_index_number=option_number, element_content=parsed_single_option_content)
+                return redirect('questions_of_test', test_id=test_id)
+
+        elif question_of_test.type_of_question == 'CmprsnQ':
+            comparison_question_element_form = ComparisonQuestionElementForm(request.POST)
+            if comparison_question_element_form.is_valid() and re.match(options_or_elements_pattern, comparison_question_element_form.cleaned_data['element_content']):
+                # Парсим вариант(ы)
+                new_options_contents = re.findall(options_or_elements_pattern, comparison_question_element_form.cleaned_data['element_content'])
+                count_of_new_options = len(new_options_contents)
+                if not comparison_question_element_form.cleaned_data['add_several']:
+                    for content in new_options_contents:
+                        parsed_single_option_content += content
+                if comparison_question_element_form.cleaned_data['element_index_number']:
+                    if row == 'left':
+                        if comparison_question_element_form.cleaned_data[
+                            'element_index_number'] > question_of_test.comparison_question.left_row_elements.count() + 1:
+                            option_number = question_of_test.comparison_question.left_row_elements.count() + 1
+                        else:
+                            option_number = comparison_question_element_form.cleaned_data['element_index_number']
+                        farther_options = question_of_test.comparison_question.left_row_elements.all().order_by(
+                            'element_index_number')[option_number - 1:]
+                        presence_status = question_of_test.comparison_question.left_row_elements.filter(
+                            question=question_of_test.comparison_question, element_index_number=option_number).count() > 0
+                    elif row == 'right':
+                        if comparison_question_element_form.cleaned_data[
+                            'element_index_number'] > question_of_test.comparison_question.right_row_elements.count() + 1:
+                            option_number = question_of_test.comparison_question.right_row_elements.count() + 1
+                        else:
+                            option_number = comparison_question_element_form.cleaned_data['element_index_number']
+                        farther_options = question_of_test.comparison_question.right_row_elements.all().order_by(
+                            'element_index_number')[option_number - 1:]
+                        presence_status = question_of_test.comparison_question.right_row_elements.filter(
+                            question=question_of_test.comparison_question, element_index_number=option_number).count() > 0
+                    if presence_status and count_of_new_options > 1 and comparison_question_element_form.cleaned_data['add_several']:
+                        for father_option in farther_options:
+                            father_option.element_index_number += count_of_new_options
+                            father_option.save()
+                    else:
+                        for father_option in farther_options:
+                            father_option.element_index_number += 1
+                            father_option.save()
+                # Если порядковый номер не указан, то добавляем элемент/ы ряда последним/и
+                else:
+                    if row == 'left':
+                        option_number = question_of_test.comparison_question.left_row_elements.all().count() + 1
+                    elif row == 'right':
+                        option_number = question_of_test.comparison_question.right_row_elements.all().count() + 1
+                # Теперь можно добавлять один или несколько новых элементов левого либо правого ряда
+                if count_of_new_options > 0 and comparison_question_element_form.cleaned_data['add_several']:
+                    counter = 0
+                    for new_option_content in new_options_contents:
+                        if row == 'left':
+                            question_of_test.comparison_question.left_row_elements.create(question=question_of_test.comparison_question,
+                                                                     element_index_number=option_number + counter,
+                                                                     element_content=new_option_content)
+                        elif row == 'right':
+                            question_of_test.comparison_question.right_row_elements.create(question=question_of_test.comparison_question,
+                                                                     element_index_number=option_number + counter,
+                                                                     element_content=new_option_content)
+                        # question_of_test.comparison_question.save()
+                        counter += 1
+                else:
+                    if row == 'left':
+                        question_of_test.comparison_question.left_row_elements.create(question=question_of_test.comparison_question,
+                                                                 element_index_number=option_number,
+                                                                 element_content=parsed_single_option_content)
+                    elif row == 'right':
+                        question_of_test.comparison_question.right_row_elements.create(question=question_of_test.comparison_question,
+                                                                 element_index_number=option_number,
+                                                                 element_content=parsed_single_option_content)
+                    # question_of_test.comparison_question.save()
+                return redirect('questions_of_test', test_id=test_id)
+
+    # return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
+    return redirect('questions_of_test', test_id=test_id)
+
+@login_required
+def options_or_elements_of_question_remove_all(request, test_id, question_of_test_id):
+    question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
+    if question_of_test.type_of_question == 'ClsdQ':
+        question_of_test.closed_question.closed_question_options.all().delete()
+    if question_of_test.type_of_question == 'SqncQ':
+        question_of_test.sequence_question.sequence_elements.all().delete()        
+    if question_of_test.type_of_question == 'CmprsnQ':
+        question_of_test.comparison_question.comparison_elements.all().delete()  
+    return redirect('questions_of_test', test_id=test_id)
 
 @login_required
 def review(request, test_id, user_rate):

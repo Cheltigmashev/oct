@@ -160,7 +160,7 @@ class ClosedQuestionOption(models.Model):
         blank=False, on_delete=models.CASCADE,
         verbose_name='Вопрос закрытого типа, которому принадлежит данный вариант ответа')
     content = RichTextField('Содержимое (контент) варианта ответа',
-                            help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                            help_text='Используйте сервисы хранения изображений, если требуется добавить картинку. Не вводите пустые параграфы в качестве вариантов/элементов — такие варианты/элементы не будут добавлены. Также не будут добавлены варианты/последовательности, содержащие только пробелы.',
                             null=False, blank=False, default='')
     option_number = models.IntegerField('Порядковый номер варианта ответа на вопрос закр. типа', blank=True, null=False, help_text='Оставьте это поле пустым, чтобы добавить вариант вопроса последним (т.е. номер = кол-во вопросов + 1)')
 
@@ -168,7 +168,7 @@ class ClosedQuestionOption(models.Model):
         return 'Вариант ответа № ' + str(self.option_number) + ' на вопрос № /' + str(self.question.question_of_test.question_index_number) + '/'
 
     class Meta:
-        ordering = ['question']
+        ordering = ['question', 'option_number']
         verbose_name = 'Вариант ответа на вопрос закрытого типа'
         verbose_name_plural = 'Варианты ответа на вопрос закрытого типа'
 
@@ -213,7 +213,7 @@ class SequenceQuestionElement(models.Model):
     question = models.ForeignKey('octapp.SequenceQuestion', related_name='sequence_elements', blank=False,
         on_delete=models.CASCADE, verbose_name='Вопрос на определение последовательности, к которому относится элемент')
     element_content = RichTextField('Содержимое (контент) элемента последовательности',
-                                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку. Не вводите пустые параграфы в качестве вариантов/элементов — такие варианты/элементы не будут добавлены. Также не будут добавлены варианты/последовательности, содержащие только пробелы.',
                                      null=False, blank=False, default='')
     element_index_number = models.IntegerField('Порядковый номер элемента последовательности', blank=True, null=False, help_text='Оставьте это поле пустым, чтобы добавить элемент последним (т.е. номер = кол-во элементов + 1)')
 
@@ -222,7 +222,7 @@ class SequenceQuestionElement(models.Model):
                ' вопроса № ' + str(self.question.question_of_test.question_index_number)
 
     class Meta:
-        ordering = ['question']
+        ordering = ['question', 'element_index_number']
         verbose_name = 'Элемент для вопроса на определение последовательности'
         verbose_name_plural = 'Элементы для вопроса на определение последовательности'
 
@@ -253,7 +253,7 @@ class ComparisonQuestionElement(models.Model):
     question = models.ForeignKey('octapp.ComparisonQuestion', related_name='comparison_elements',
         blank=False, on_delete=models.CASCADE, verbose_name='Вопрос на сопоставление, к которому относится элемент')
     element_content = RichTextField('Содержимое (контент) элемента сопоставления',
-                                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.',
+                                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку. Не вводите пустые параграфы в качестве вариантов/элементов — такие варианты/элементы не будут добавлены. Также не будут добавлены варианты/последовательности, содержащие только пробелы.',
                                      null=False, blank=False, default='')
     element_index_number = models.IntegerField('Порядковый номер элемента сопоставления', blank=True, null=False, help_text='Оставьте это поле пустым, чтобы добавить элемент ряда последним (т.е. номер = кол-во элементов + 1)')
 
@@ -262,7 +262,7 @@ class ComparisonQuestionElement(models.Model):
                ' вопроса /' + self.question.question_of_test.test.name + '/'
 
     class Meta:
-        ordering = ['question']
+        ordering = ['question', 'element_index_number']
         verbose_name = 'Элемент левого или правого ряда в вопросе на сопоставление'
         verbose_name_plural = 'Элементы левого или правого ряда в вопросе на сопоставление'
 
