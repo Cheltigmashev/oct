@@ -30,9 +30,13 @@
 
     {{ closed_question_form.correct_option_numbers.label_tag }}
     {{ closed_question_form.correct_option_numbers }}
+            <small><p>NB! {{ closed_question_form.correct_option_numbers.help_text }}</p></small>
     {% if closed_question_form.correct_option_numbers.errors %}<p class="field_with_error">{{ closed_question_form.correct_option_numbers.errors }}</p>{% endif %}
 
-            <small><p>NB! {{ closed_question_form.correct_option_numbers.help_text }}</p></small>
+    {{ closed_question_form.add_options.label_tag }}
+    {{ closed_question_form.add_options }}
+                <small><p>NB! {{ closed_question_form.add_options.help_text }}</p></small>
+    {% if closed_question_form.add_options.errors %}<p class="field_with_error">{{ closed_question_form.add_options.errors }}</p>{% endif %}
 
             <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
         </form>
@@ -76,20 +80,21 @@
         <form method="POST" action="{% url 'new_question' test_id=test.pk type='comparison' %}">
     {% csrf_token %}
 
-            <div>
     {{ comparison_question_form.comparison_question_content.label_tag }}
     {{ comparison_question_form.comparison_question_content }}
             <small><p>NB! {{ comparison_question_form.comparison_question_content.help_text }}</p></small>
     {% if comparison_question_form.comparison_question_content.errors %}<p class="field_with_error">{{ comparison_question_form.comparison_question_content.errors }}</p>{% endif %}
-            </div>
 
-            <div>
     {{ comparison_question_form.correct_sequence.label_tag }}
     {{ comparison_question_form.correct_sequence }}
             <small><p>NB! {{ comparison_question_form.correct_sequence.help_text }}</p></small>
             <small><p>NB! Порядок пар не имеет значения. При прохождении теста пользователю нужно будет перечислить все правильные пары без учета их порядка, чтобы ответ был расценен как правильный.</p></small>            
     {% if comparison_question_form.correct_sequence.errors %}<p class="field_with_error">{{ comparison_question_form.correct_sequence.errors }}</p>{% endif %}
-            </div>
+
+    {{ comparison_question_form.add_comp_elements.label_tag }}
+    {{ comparison_question_form.add_comp_elements }}
+                <small><p>NB! {{ comparison_question_form.add_comp_elements.help_text }}</p></small>
+    {% if comparison_question_form.add_comp_elements.errors %}<p class="field_with_error">{{ comparison_question_form.add_comp_elements.errors }}</p>{% endif %}            
 
             <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
         </form>
@@ -105,19 +110,20 @@
         <form method="POST" action="{% url 'new_question' test_id=test.pk type='sequence' %}">
     {% csrf_token %}
 
-            <div>
     {{ sequence_question_form.sequence_question_content.label_tag }}
     {{ sequence_question_form.sequence_question_content }}
             <small><p>NB! {{ sequence_question_form.sequence_question_content.help_text }}</p></small>
     {% if sequence_question_form.sequence_question_content.errors %}<p class="field_with_error">{{ sequence_question_form.sequence_question_content.errors }}</p>{% endif %}
-            </div>
 
-            <div>
     {{ sequence_question_form.correct_sequence.label_tag }}
     {{ sequence_question_form.correct_sequence }}
             <small><p>NB! {{ sequence_question_form.correct_sequence.help_text }}</p></small>
     {% if sequence_question_form.correct_sequence.errors %}<p class="field_with_error">{{ sequence_question_form.correct_sequence.errors }}</p>{% endif %}
-            </div>
+
+    {{ sequence_question_form.add_sequ_elements.label_tag }}
+    {{ sequence_question_form.add_sequ_elements }}
+                <small><p>NB! {{ sequence_question_form.add_sequ_elements.help_text }}</p></small>
+    {% if sequence_question_form.add_sequ_elements.errors %}<p class="field_with_error">{{ sequence_question_form.add_sequ_elements.errors }}</p>{% endif %}                        
 
             <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
         </form>
@@ -154,7 +160,7 @@
 
     {{ option_or_element_form.add_several.label_tag }}
     {{ option_or_element_form.add_several }}
-            <small> NB! {{ option_or_element_form.add_several.help_text }}</small>
+            <div><small>NB! {{ option_or_element_form.add_several.help_text }}</small></div>
     {% if option_or_element_form.add_several.errors %}<p class="field_with_error">{{ option_or_element_form.add_several.errors }}</p>{% endif %}
 
             <div class="ckeditor_widget_or_textarea">
@@ -182,7 +188,7 @@
 
     {{ option_or_element_form.add_several.label_tag }}
     {{ option_or_element_form.add_several }}
-            <small> NB! {{ option_or_element_form.add_several.help_text }}</small>
+            <div><small>NB! {{ option_or_element_form.add_several.help_text }}</small></div>
     {% if option_or_element_form.add_several.errors %}<p class="field_with_error">{{ option_or_element_form.add_several.errors }}</p>{% endif %}
 
             <div class="ckeditor_widget_or_textarea">
@@ -210,7 +216,7 @@
 
     {{ option_or_element_form.add_several.label_tag }}
     {{ option_or_element_form.add_several }}
-            <small> NB! {{ option_or_element_form.add_several.help_text }}</small>
+            <div><small>NB! {{ option_or_element_form.add_several.help_text }}</small></div>
     {% if option_or_element_form.add_several.errors %}<p class="field_with_error">{{ option_or_element_form.add_several.errors }}</p>{% endif %}
 
             <div class="ckeditor_widget_or_textarea">
@@ -236,7 +242,7 @@
 
     {{ comparison_question_right_row_element_form.add_several.label_tag }}
     {{ comparison_question_right_row_element_form.add_several }}
-            <small> NB! {{ comparison_question_right_row_element_form.add_several.help_text }}</small>
+            <div><small>NB! {{ comparison_question_right_row_element_form.add_several.help_text }}</small></div>
     {% if comparison_question_right_row_element_form.add_several.errors %}<p class="field_with_error">{{ comparison_question_right_row_element_form.add_several.errors }}</p>{% endif %}
 
             <div class="ckeditor_widget_or_textarea">

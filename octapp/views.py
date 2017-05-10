@@ -413,10 +413,10 @@ def get_questions_of_test_context(test_id, page):
             questions_of_test_with_filled_forms.append([question_of_test, options_or_elements, comparison_question_form, comparison_question_left_row_element_form, comparison_question_right_row_element_form])
 
     # 4 формы для добавления вопросов соответствующих типов
-    closed_question_form = ClosedQuestionForm()
-    open_question_form = OpenQuestionForm()
-    sequence_question_form = SequenceQuestionForm()
-    comparison_question_form = ComparisonQuestionForm()
+    closed_question_form = ClosedQuestionForm(auto_id='id_new_closed_qu_%s')
+    open_question_form = OpenQuestionForm(auto_id='id_new_closed_qu_%s')
+    sequence_question_form = SequenceQuestionForm(auto_id='id_new_closed_qu_%s')
+    comparison_question_form = ComparisonQuestionForm(auto_id='id_new_closed_qu_%s')
 
     context = {'test': test,
                'closed_question_form': closed_question_form,
@@ -438,6 +438,8 @@ def questions_of_test(request, test_id):
 def new_question(request, test_id, type):
     test = get_object_or_404(Test, pk=test_id)
     index_number_of_new_test_question = test.questions_of_test.count() + 1
+    question_content = ''
+    options_or_elements_content = []
     if request.method == 'POST':
         if type == 'closed':
             # Форма с пользовательскими данными
@@ -452,8 +454,36 @@ def new_question(request, test_id, type):
                 # Если пользователь указал несколько правильных вариантов
                 if len(re.findall(option_number_pattern, closed_question_form.cleaned_data['correct_option_numbers'])) > 1:
                     new_closed_question_object.only_one_right = False
-                new_closed_question_object.save()
-                return redirect('questions_of_test', test_id=test_id)
+                # Если вопрос добавляется вместе с вариантами ответа
+                if closed_question_form.cleaned_data['add_options']:
+                    # Парсим контент вопроса и варианты
+                    closed_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:ВАРИАНТЫ))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>ВАРИАНТЫ</p>)'
+                    new_options_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ВАРИАНТЫ))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ВАРИАНТЫ</p>)'
+                    # Контент вопроса
+                    for content in re.findall(closed_question_content_pattern, closed_question_form.cleaned_data['question_content']):
+                        question_content += content
+                    # Контент вариантов
+                    for content in re.findall(new_options_contents_pattern, closed_question_form.cleaned_data['question_content']):
+                        options_or_elements_content.append(content)
+                    # Меняем контент вопроса, т.к. пока в нем содержатся также и варианты
+                    new_closed_question_object.question_content = question_content
+                    new_closed_question_object.question_of_test.save()                    
+                    new_closed_question_object.save()
+
+                    # Добавляем новые варианты ответа
+                    if len(options_or_elements_content) > 1:
+                        counter = 1
+                        for new_option_content in options_or_elements_content:
+                            ClosedQuestionOption.objects.create(question=new_closed_question_object,
+                                    option_number=counter, content=new_option_content)
+                            counter += 1
+                    else:
+                        # Генерируем один вариант
+                        single_option_or_element_content = ''
+                        for content in options_or_elements_content:
+                            single_option_or_element_content += content
+                        ClosedQuestionOption.objects.create(question=new_closed_question_object,
+                                    option_number=1, content=single_option_or_element_content)
 
         if type == 'open':
             open_question_form = OpenQuestionForm(request.POST)
@@ -470,21 +500,105 @@ def new_question(request, test_id, type):
             if sequence_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
                         type_of_question='SqncQ', question_index_number=index_number_of_new_test_question)
+                # Пока не сохраняем объект
                 new_sequence_question_object = sequence_question_form.save(commit=False)
                 new_sequence_question_object.question_of_test = new_question_of_test
-                new_sequence_question_object.save()
-                return redirect('questions_of_test', test_id=test_id)
+                # Если вопрос добавляется вместе с вариантами ответа
+                if sequence_question_form.cleaned_data['add_sequ_elements']:
+                    # Парсим контент вопроса и элементы последовательности
+                    sequ_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЭЛЕМЕНТЫ))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>ЭЛЕМЕНТЫ</p>)'
+                    new_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЭЛЕМЕНТЫ))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ЭЛЕМЕНТЫ</p>)'                    
+                    # Контент вопроса
+                    for content in re.findall(sequ_question_content_pattern, sequence_question_form.cleaned_data['sequence_question_content']):
+                        question_content += content
+                    # Переприсваиваем список контента
+                    options_or_elements_content = []
+                    # Контент вариантов
+                    for content in re.findall(new_elements_contents_pattern, sequence_question_form.cleaned_data['sequence_question_content']):
+                        options_or_elements_content.append(content)
+                    # Меняем контент вопроса, т.к. пока в нем содержатся также и варианты
+                    new_sequence_question_object.sequence_question_content = question_content
+                    new_sequence_question_object.question_of_test.save()                    
+                    new_sequence_question_object.save()
+
+                    # Добавляем новые элементы последовательности
+                    if len(options_or_elements_content) > 1:
+                        counter = 1
+                        for new_option_content in options_or_elements_content:
+                            SequenceQuestionElement.objects.create(question=new_sequence_question_object,
+                                    element_index_number=counter, element_content=new_option_content)
+                            counter += 1
+                    else:
+                        # Генерируем один элемент последовательности
+                        single_option_or_element_content = ''
+                        for content in options_or_elements_content:
+                            single_option_or_element_content += content
+                        SequenceQuestionElement.objects.create(question=new_sequence_question_object,
+                                    element_index_number=1, element_content=single_option_or_element_content)
 
         if type == 'comparison':
             comparison_question_form = ComparisonQuestionForm(request.POST)
             if comparison_question_form.is_valid():
                 new_question_of_test = QuestionOfTest.objects.create(test=test,
                         type_of_question='CmprsnQ', question_index_number=index_number_of_new_test_question)
+                # Пока не сохраняем объект
                 new_comparison_question_object = comparison_question_form.save(commit=False)
                 new_comparison_question_object.question_of_test = new_question_of_test
-                new_comparison_question_object.save()
-                return redirect('questions_of_test', test_id=test_id)
-    return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
+                # Если вопрос добавляется вместе с вариантами ответа
+                if comparison_question_form.cleaned_data['add_comp_elements']:
+                    # Парсим контент вопроса и элементы рядов
+                    comp_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЛЕВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>ЛЕВЫЙ_РЯД</p>)'
+                    new_left_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЛЕВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ЛЕВЫЙ_РЯД</p>)(?=[ \r\n\t\s\w\b<>&;/]*<p>ПРАВЫЙ_РЯД</p>)'
+                    new_right_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ПРАВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ПРАВЫЙ_РЯД</p>)'
+                    # Контент вопроса
+                    for content in re.findall(comp_question_content_pattern, comparison_question_form.cleaned_data['comparison_question_content']):
+                        question_content += content
+                    # Списки с контентом для новых элементов
+                    new_left_elements_contents = []
+                    new_right_elements_contents = []
+                    # Контент элементов левого ряда
+                    for content in re.findall(new_left_elements_contents_pattern, comparison_question_form.cleaned_data['comparison_question_content']):
+                        new_left_elements_contents.append(content)
+                    # Контент элементов правого ряда
+                    for content in re.findall(new_right_elements_contents_pattern, comparison_question_form.cleaned_data['comparison_question_content']):
+                        new_right_elements_contents.append(content)
+
+                    # Меняем контент вопроса, т.к. пока в нем содержатся также и варианты
+                    new_comparison_question_object.comparison_question_content = question_content
+                    new_comparison_question_object.question_of_test.save()                    
+                    new_comparison_question_object.save()
+
+                    # Добавляем новые элементы левого ряда
+                    if len(new_left_elements_contents) > 1:
+                        counter = 1
+                        for new_option_content in new_left_elements_contents:
+                            new_comparison_question_object.left_row_elements.create(question=new_comparison_question_object,
+                                    element_index_number=counter, element_content=new_option_content)
+                            counter += 1
+                    else:
+                        # Генерируем элемент левого ряда
+                        single_option_or_element_content = ''
+                        for content in options_or_elements_content:
+                            single_option_or_element_content += content
+                        new_comparison_question_object.left_row_elements.create(question=new_comparison_question_object,
+                                    element_index_number=1, element_content=single_option_or_element_content)
+
+                    # Добавляем новые элементы правого ряда
+                    if len(new_right_elements_contents) > 1:
+                        counter = 1
+                        for new_option_content in new_right_elements_contents:
+                            new_comparison_question_object.right_row_elements.create(question=new_comparison_question_object,
+                                    element_index_number=counter, element_content=new_option_content)
+                            counter += 1
+                    else:
+                        # Генерируем элемент правого ряда
+                        single_option_or_element_content = ''
+                        for content in options_or_elements_content:
+                            single_option_or_element_content += content
+                        new_comparison_question_object.right_row_elements.create(question=new_comparison_question_object,
+                                    element_index_number=1, element_content=single_option_or_element_content)
+            
+    return redirect('questions_of_test', test_id=test_id)
 
 @login_required
 def question_edit(request, test_id, question_of_test_id):
@@ -544,7 +658,7 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
         count_of_new_options = 0
         farther_options = []
         option_number = 0
-        parsed_single_option_content = ''
+        parsed_single_option_or_element_content = ''
 
         if question_of_test.type_of_question == 'ClsdQ':
             closed_question_options_form = ClosedQuestionOptionForm(request.POST)
@@ -555,7 +669,7 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                 count_of_new_options = len(new_options_contents)
                 if not closed_question_options_form.cleaned_data['add_several']:
                     for content in new_options_contents:
-                        parsed_single_option_content += content
+                        parsed_single_option_or_element_content += content
                 if closed_question_options_form.cleaned_data['option_number']:
                     if closed_question_options_form.cleaned_data['option_number'] > question_of_test.closed_question.closed_question_options.count() + 1:
                         option_number = question_of_test.closed_question.closed_question_options.count() + 1
@@ -585,7 +699,7 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                         counter += 1
                 else:
                     ClosedQuestionOption.objects.create(question=question_of_test.closed_question,
-                                option_number=option_number, content=parsed_single_option_content)
+                                option_number=option_number, content=parsed_single_option_or_element_content)
                 return redirect('questions_of_test', test_id=test_id)
 
         elif question_of_test.type_of_question == 'SqncQ':
@@ -596,7 +710,7 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                 count_of_new_options = len(new_options_contents)
                 if not sequence_question_element_form.cleaned_data['add_several']:
                     for content in new_options_contents:
-                        parsed_single_option_content += content
+                        parsed_single_option_or_element_content += content
                 if sequence_question_element_form.cleaned_data['element_index_number']:
                     if sequence_question_element_form.cleaned_data['element_index_number'] > question_of_test.sequence_question.sequence_elements.count() + 1:
                         option_number = question_of_test.sequence_question.sequence_elements.count() + 1
@@ -623,7 +737,7 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                         counter += 1
                 else:
                     SequenceQuestionElement.objects.create(question=question_of_test.sequence_question,
-                                element_index_number=option_number, element_content=parsed_single_option_content)
+                                element_index_number=option_number, element_content=parsed_single_option_or_element_content)
                 return redirect('questions_of_test', test_id=test_id)
 
         elif question_of_test.type_of_question == 'CmprsnQ':
@@ -634,7 +748,7 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                 count_of_new_options = len(new_options_contents)
                 if not comparison_question_element_form.cleaned_data['add_several']:
                     for content in new_options_contents:
-                        parsed_single_option_content += content
+                        parsed_single_option_or_element_content += content
                 if comparison_question_element_form.cleaned_data['element_index_number']:
                     if row == 'left':
                         if comparison_question_element_form.cleaned_data[
@@ -687,11 +801,11 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                     if row == 'left':
                         question_of_test.comparison_question.left_row_elements.create(question=question_of_test.comparison_question,
                                                                  element_index_number=option_number,
-                                                                 element_content=parsed_single_option_content)
+                                                                 element_content=parsed_single_option_or_element_content)
                     elif row == 'right':
                         question_of_test.comparison_question.right_row_elements.create(question=question_of_test.comparison_question,
                                                                  element_index_number=option_number,
-                                                                 element_content=parsed_single_option_content)
+                                                                 element_content=parsed_single_option_or_element_content)
                     # question_of_test.comparison_question.save()
                 return redirect('questions_of_test', test_id=test_id)
 
