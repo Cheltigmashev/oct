@@ -2,49 +2,53 @@
 // НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В common_form_elements.sass
 @import common_form_elements
 
-.tag
-  ul
-    cursor: default
-    margin: 0
-  li
-    display: inline-block
-    cursor: pointer
-    input
-      display: inline-block    
-      vertical-align: top
+.content
+  .tags_div
+    max-height: 300px
+    overflow: auto
+  .tag
+    ul
+      cursor: default
+      margin: 0
+    li
+      display: inline-block
       cursor: pointer
-.container.flex
-  justify-content: space-around
-  align-items: center
-  div[class*="col"] > label
-    display: block
-    padding: 0
-  div[class*="col"]
-    padding: 6px
-    label
-      cursor: pointer
-    div.form_field_div
-      position: relative
-      padding: 8px
-      border: 2px ridge #aaaaaa
-      border-radius: 6px
-      box-shadow: 4px 4px 4px 1px #999999
+      input
+        display: inline-block    
+        vertical-align: top
+        cursor: pointer
+  .container.flex
+    justify-content: space-around
+    align-items: center
+    div[class*="col"] > label
+      display: block
+      padding: 0
+    div[class*="col"]
+      padding: 6px
       label
-        width: 100%
-    div.field_with_checkbox
-      span
-        user-select: none
-        display: inline
-      input[type="checkbox"]
-        margin: 0
-        position: absolute
-        top: 10px
-        left: 10px
-      span::before
-        position: static
-        content: "AB_"
-        opacity: 0
+        cursor: pointer
+      div.form_field_div
+        position: relative
+        padding: 8px
+        border: 2px ridge #aaaaaa
+        border-radius: 6px
+        box-shadow: 4px 4px 4px 1px #999999
+        label
+          width: 100%
+      div.field_with_checkbox
+        span
+          user-select: none
+          display: inline
+        input[type="checkbox"]
+          margin: 0
+          position: absolute
+          top: 10px
+          left: 10px
+        span::before
+          position: static
+          content: "AB_"
+          opacity: 0
 
-    input:not([type="checkbox"]), select
-      width: 100%
-  
+      input:not([type="checkbox"]), select
+        width: 100%
+    

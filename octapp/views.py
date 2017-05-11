@@ -423,8 +423,8 @@ def get_questions_of_test_context(test_id, page):
                'open_question_form': open_question_form,
                'sequence_question_form': sequence_question_form,
                'comparison_question_form': comparison_question_form}
-    # 10, 4 prod
-    pag_context = get_pagination(page, questions_of_test_with_filled_forms, 10, 4)
+    # 7, 4 prod
+    pag_context = get_pagination(page, questions_of_test_with_filled_forms, 7, 4)
     context.update(pag_context)
     return context
 
@@ -855,3 +855,28 @@ def comment_remove(request, pk):
     test_pk = comment.test.pk
     comment.delete()
     return redirect('test_detail', pk=test_pk)
+
+def test_passing(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    questions = test.questions_of_test.all().order_by('question_index_number')
+    if request.method == 'POST':
+        for question in questions:
+            if question.type_of_question == 'ClsdQ':
+                pass
+            if question.type_of_question == 'OpndQ':
+                pass
+            if question.type_of_question == 'SqncQ':
+                pass
+            if question.type_of_question == 'CmprsnQ':
+                pass
+
+            if request.user.is_authenticated:
+                current_user = request.user
+            else:
+                current_user = None
+
+            # redirect to passing_results
+    else:
+        context = {'test': test, 'questions': questions}
+        return render(request, 'octapp/test_passing.html', context)
+

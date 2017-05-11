@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 from django.utils import timezone
 from ckeditor_uploader.fields import RichTextUploadingField
 from ckeditor.fields import RichTextField
@@ -36,11 +37,11 @@ class Test(models.Model):
         self.save()
 
     def review_positively(self):
-        self.rating += 1
+        self.rating = F('rating') + 1
         self.save()
 
     def review_negatively(self):
-        self.rating -= 1
+        self.rating = F('rating') - 1
         self.save()
 
     def __str__(self):
@@ -283,3 +284,17 @@ class QuestionOfTest(models.Model):
         ordering = ['test']
         verbose_name = 'Вопрос теста'
         verbose_name_plural = 'Вопросы теста'
+
+class Result(models.Model):
+    user = models.ForeignKey('auth.User', related_name='results', on_delete=models.CASCADE, 
+        verbose_name='Пользователь, к которому относится результат прохождения', null=False, blank=False)
+    test = models.ForeignKey('octapp.Test', related_name='results',
+            blank=False, on_delete=models.CASCADE, verbose_name='Тест, к которому относится вопрос')
+    fail_reason = models.CharField('Причина провала теста, если таковой имел место быть',
+            max_length=27, blank=True, null=True,
+            choices=[('выход курсора', 'выход курсора'), ('нажатие alt или ctrl', 'нажатие alt или ctrl'),
+                     ('превышено время прохождения', 'превышено время прохождения')])
+    grade_based_on_scale = models.IntegerField('Оценка по шкале', null=False, blank=False)
+    passing_date = models.DateTimeField('Дата прохождения теста', default=timezone.now, editable=False)
+    # Процент неправильных можно посчитать — [100-correct_answers_percentage], поэтому его можно не хранить
+    correct_answers_percentage = models.IntegerField('Процент правильных ответов в целочисленном формате', null=False, blank=False)

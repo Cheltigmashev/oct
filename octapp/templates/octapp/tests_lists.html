@@ -46,12 +46,20 @@
             <div class="table_row">
                 <div class="table_cell">
         {% for test in left_number_of_new_tests_list %}
+            {% if test.ready_for_passing %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test ready_test">{{ test|truncatechars:50 }}</span></div></a>
+            {% else %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
+            {% endif %}
         {% endfor %}
                 </div>
                 <div class="table_cell">
         {% for test in right_number_of_new_tests_list %}
+            {% if test.ready_for_passing %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test ready_test">{{ test|truncatechars:50 }}</span></div></a>
+            {% else %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
+            {% endif %}
         {% endfor %}
                 </div>
             </div>
@@ -67,7 +75,11 @@
             <div class="table_row">
                 <div class="table_cell">
             {% for test in left_number_of_new_tests_list %}
+                {% if test.ready_for_passing %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test ready_test">{{ test|truncatechars:50 }}</span></div></a>
+                {% else %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
+                {% endif %}
             {% endfor %}
                 </div>
             </div>
@@ -85,12 +97,20 @@
             <div class="table_row">
                 <div class="table_cell">
         {% for test in left_number_of_rating_tests %}
+            {% if test.ready_for_passing %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test ready_test">{{ test|truncatechars:50 }}</span></div></a>
+            {% else %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
+            {% endif %}
         {% endfor %}
                 </div>
                 <div class="table_cell">
         {% for test in right_number_of_rating_tests %}
+            {% if test.ready_for_passing %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test ready_test">{{ test|truncatechars:50 }}</span></div></a>
+            {% else %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
+            {% endif %}
         {% endfor %}
                 </div>
             </div>
@@ -106,7 +126,11 @@
             <div class="table_row">
                 <div class="table_cell">
             {% for test in left_number_of_rating_tests %}
+                {% if test.ready_for_passing %}
+                    <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test ready_test">{{ test|truncatechars:50 }}</span></div></a>
+                {% else %}
                     <a href="{% url 'test_detail' pk=test.pk %}" class="link_to_test"><div class="test_div"><span class="name_of_test">{{ test|truncatechars:50 }}</span></div></a>
+                {% endif %}
             {% endfor %}
                 </div>
             </div>

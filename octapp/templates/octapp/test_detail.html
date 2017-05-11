@@ -107,7 +107,7 @@
 
     {% if test.ready_for_passing %}
         <div class="test_description_element test_description_element_with_buttons">
-            <a href="{% url 'test_detail' pk=test.pk %}" class="btn btn-default start_passing_btn">Приступить к прохождению</a>
+            <a href="{% url 'test_passing' pk=test.pk %}" class="btn btn-default start_passing_btn">Приступить к прохождению</a>
     {% else %}
         <div class="test_description_element">        
             <p class="text-left">Тест еще <mark>не готов</mark> для прохождения</p>
