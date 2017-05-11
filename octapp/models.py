@@ -240,7 +240,7 @@ class ComparisonQuestion(models.Model):
     right_row_elements = models.ManyToManyField('octapp.ComparisonQuestionElement', related_name='right_comparison_elements',
         verbose_name='Правые элементы сопоставления', blank=True)
     correct_sequence = models.CharField('Правильные пары элементов левого и правого столбцов (рядов) сопоставления',
-        max_length=55, blank=False, null=False, help_text='Перечислите здесь через запятую все правильные пары, например: 1-2, 2-1, 3-4, 4-3.')
+        max_length=55, blank=False, null=False, help_text='Перечислите здесь через запятую все правильные пары, например: 1-2, 2-1, 3-4, 4-3 (без точки)')
 
     def __str__(self):
         return 'Вопрос № ' + str(self.question_of_test.question_index_number) + ' (сопоставление) теста ' + self.question_of_test.test.name

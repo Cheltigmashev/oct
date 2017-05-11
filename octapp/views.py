@@ -454,22 +454,25 @@ def new_question(request, test_id, type):
                 # Если пользователь указал несколько правильных вариантов
                 if len(re.findall(option_number_pattern, closed_question_form.cleaned_data['correct_option_numbers'])) > 1:
                     new_closed_question_object.only_one_right = False
+                # Парсим контент вопроса
+                if closed_question_form.cleaned_data['add_options']:
+                    closed_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:ВАРИАНТЫ))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>ВАРИАНТЫ</p>)'
+                else:
+                    closed_question_content_pattern = r'<p>(?!&nbsp;)[^ \t\r\n].*</p>'
+                for content in re.findall(closed_question_content_pattern, closed_question_form.cleaned_data['question_content']):
+                    question_content += content
+                # Задаем контент вопроса
+                new_closed_question_object.question_content = question_content
+                new_question_of_test.save()
+                new_closed_question_object.save()
                 # Если вопрос добавляется вместе с вариантами ответа
                 if closed_question_form.cleaned_data['add_options']:
-                    # Парсим контент вопроса и варианты
-                    closed_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:ВАРИАНТЫ))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>ВАРИАНТЫ</p>)'
+                    # Парсим контент вариантов
                     new_options_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ВАРИАНТЫ))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ВАРИАНТЫ</p>)'
-                    # Контент вопроса
-                    for content in re.findall(closed_question_content_pattern, closed_question_form.cleaned_data['question_content']):
-                        question_content += content
-                    # Контент вариантов
                     for content in re.findall(new_options_contents_pattern, closed_question_form.cleaned_data['question_content']):
                         options_or_elements_content.append(content)
-                    # Меняем контент вопроса, т.к. пока в нем содержатся также и варианты
-                    new_closed_question_object.question_content = question_content
-                    new_closed_question_object.question_of_test.save()                    
+                    new_closed_question_object.question_of_test.save()
                     new_closed_question_object.save()
-
                     # Добавляем новые варианты ответа
                     if len(options_or_elements_content) > 1:
                         counter = 1
@@ -503,24 +506,27 @@ def new_question(request, test_id, type):
                 # Пока не сохраняем объект
                 new_sequence_question_object = sequence_question_form.save(commit=False)
                 new_sequence_question_object.question_of_test = new_question_of_test
-                # Если вопрос добавляется вместе с вариантами ответа
+                # Парсим контент вопроса
                 if sequence_question_form.cleaned_data['add_sequ_elements']:
-                    # Парсим контент вопроса и элементы последовательности
                     sequ_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЭЛЕМЕНТЫ))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>ЭЛЕМЕНТЫ</p>)'
-                    new_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЭЛЕМЕНТЫ))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ЭЛЕМЕНТЫ</p>)'                    
-                    # Контент вопроса
-                    for content in re.findall(sequ_question_content_pattern, sequence_question_form.cleaned_data['sequence_question_content']):
-                        question_content += content
+                else:
+                    sequ_question_content_pattern = r'<p>(?!&nbsp;)[^ \t\r\n].*</p>'
+                for content in re.findall(sequ_question_content_pattern, sequence_question_form.cleaned_data['sequence_question_content']):
+                    question_content += content
+                # Задаем контент вопроса
+                new_sequence_question_object.sequence_question_content = question_content
+                new_question_of_test.save()
+                new_question_of_test.save()
+                # Если вопрос добавляется вместе с элементами последовательности
+                if sequence_question_form.cleaned_data['add_sequ_elements']:
                     # Переприсваиваем список контента
                     options_or_elements_content = []
-                    # Контент вариантов
+                    # Парсим контент вариантов
+                    new_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЭЛЕМЕНТЫ))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ЭЛЕМЕНТЫ</p>)'
                     for content in re.findall(new_elements_contents_pattern, sequence_question_form.cleaned_data['sequence_question_content']):
                         options_or_elements_content.append(content)
-                    # Меняем контент вопроса, т.к. пока в нем содержатся также и варианты
-                    new_sequence_question_object.sequence_question_content = question_content
-                    new_sequence_question_object.question_of_test.save()                    
-                    new_sequence_question_object.save()
-
+                    new_sequence_question_object.question_of_test.save()
+                    new_question_of_test.save()
                     # Добавляем новые элементы последовательности
                     if len(options_or_elements_content) > 1:
                         counter = 1
@@ -544,15 +550,22 @@ def new_question(request, test_id, type):
                 # Пока не сохраняем объект
                 new_comparison_question_object = comparison_question_form.save(commit=False)
                 new_comparison_question_object.question_of_test = new_question_of_test
-                # Если вопрос добавляется вместе с вариантами ответа
+                # Парсим контент вопроса
                 if comparison_question_form.cleaned_data['add_comp_elements']:
-                    # Парсим контент вопроса и элементы рядов
                     comp_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЛЕВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>ЛЕВЫЙ_РЯД</p>)'
+                else:
+                    comp_question_content_pattern = r'<p>(?!&nbsp;)[^ \t\r\n].*</p>'
+                for content in re.findall(comp_question_content_pattern, comparison_question_form.cleaned_data['comparison_question_content']):
+                    question_content += content
+                # Задаем контент вопроса
+                new_comparison_question_object.comparison_question_content = question_content
+                new_comparison_question_object.save()
+                new_question_of_test.save()
+                # Если вопрос добавляется вместе с элементами рядов
+                if comparison_question_form.cleaned_data['add_comp_elements']:
+                    # Парсим элементы рядов
                     new_left_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЛЕВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ЛЕВЫЙ_РЯД</p>)(?=[ \r\n\t\s\w\b<>&;/]*<p>ПРАВЫЙ_РЯД</p>)'
                     new_right_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ПРАВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ПРАВЫЙ_РЯД</p>)'
-                    # Контент вопроса
-                    for content in re.findall(comp_question_content_pattern, comparison_question_form.cleaned_data['comparison_question_content']):
-                        question_content += content
                     # Списки с контентом для новых элементов
                     new_left_elements_contents = []
                     new_right_elements_contents = []
@@ -562,12 +575,8 @@ def new_question(request, test_id, type):
                     # Контент элементов правого ряда
                     for content in re.findall(new_right_elements_contents_pattern, comparison_question_form.cleaned_data['comparison_question_content']):
                         new_right_elements_contents.append(content)
-
-                    # Меняем контент вопроса, т.к. пока в нем содержатся также и варианты
-                    new_comparison_question_object.comparison_question_content = question_content
                     new_comparison_question_object.question_of_test.save()                    
-                    new_comparison_question_object.save()
-
+                    new_question_of_test.save()
                     # Добавляем новые элементы левого ряда
                     if len(new_left_elements_contents) > 1:
                         counter = 1
@@ -597,7 +606,7 @@ def new_question(request, test_id, type):
                             single_option_or_element_content += content
                         new_comparison_question_object.right_row_elements.create(question=new_comparison_question_object,
                                     element_index_number=1, element_content=single_option_or_element_content)
-            
+                    
     return redirect('questions_of_test', test_id=test_id)
 
 @login_required
@@ -860,9 +869,24 @@ def test_passing(request, pk):
     test = get_object_or_404(Test, pk=pk)
     questions = test.questions_of_test.all().order_by('question_index_number')
     if request.method == 'POST':
+        correct_qu_amount = 0
+        wrong_qu_amount = 0
+        total_qu_amount = questions.count()
+        counter = 1
         for question in questions:
             if question.type_of_question == 'ClsdQ':
-                pass
+                # Вопрос закрытого типа с 1 вариантом ответа
+                if question.closed_question.only_one_right:
+                    try:
+                        # Получаем номер варианта, выбранного пользователем
+                        user_answer = request.POST['qu' + str(counter)]
+                        if user_answer == question.closed_question.correct_option_numbers:
+                            correct_qu_amount += 1
+                    except (KeyError, Choice.DoesNotExist):
+                        # Пользователь не ответил на вопрос
+                        wrong_qu_amount += 1
+                else:
+                    pass
             if question.type_of_question == 'OpndQ':
                 pass
             if question.type_of_question == 'SqncQ':

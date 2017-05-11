@@ -5,6 +5,8 @@
 
 /*============    СПИСКИ ТЕСТОВ, ГЛАВНАЯ СТРАНИЦА    ===========*/
 .content
+  h2
+    color: #1010a5
   .tests_list
     padding: 4px 4px 8px 4px
     // flex container properties
@@ -12,6 +14,8 @@
     align-items: stretch
     .table_cell:not(:only-of-type)
       width: 50%
+    .table_cell
+      padding: 0 3px
   .tests_list:nth-of-type(3), .tests_list:nth-of-type(4)
     .badge:last-child:not(:only-child)
       background-color: #f4f4f4
