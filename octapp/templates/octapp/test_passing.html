@@ -39,7 +39,6 @@
                 <p>Вы еще не добавили вариантов ответа на этот вопрос.</p>
             {% endfor %}
             </div>
-        {% endif %}
 
         {% elif qu_of_test.type_of_question == 'OpndQ' %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (открытого типа)</p>
@@ -51,7 +50,6 @@
             {% endspaceless %}
             {% endwith %}
             {{ qu_of_test.open_question.question_content_after_blank|linebreaksbr }}
-        {% endif %}
 
         {% elif qu_of_test.type_of_question == 'SqncQ' %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (последовательность)</p>
@@ -69,7 +67,6 @@
             </div>
             Можете указать непосредственный порядок элементов вручную: 
             <input value="{{ qu_of_test.question_index_number }}" type="text" pattern="(?:\d+(?:,\s)?)+" placeholder="Допустимы цифры, запятые и пробел в формате 1, 2, 3" name="q{{ qu_of_test.question_index_number }}">
-        {% endif %}
 
         {% else %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление)</p>
@@ -77,7 +74,7 @@
             <div class="comparing_elements_div">
                 <div class="row inline_block">
                     {% for left_row_element in options_or_elements|first %}
-                    <div class="option_or_element" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }_left{{ left_row_element.option_number }}">
+                    <div class="option_or_element" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }}_left{{ left_row_element.option_number }}">
                         <span class="option_or_element_number_span">{{ left_row_element.element_index_number }}. </span>
                         <span class="option_or_element_content_span">{{ left_row_element.element_content|safe }}</span>
                     </div>
@@ -97,6 +94,7 @@
                     {% endfor %}
                     </div>
             </div>
+        {% endif %}
 
         </div> <!-- закрывающий для div.question -->
 
