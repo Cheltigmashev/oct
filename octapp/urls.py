@@ -24,9 +24,8 @@ urlpatterns = [
     url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/options_or_elements_of_question_remove_all/$',
         views.options_or_elements_of_question_remove_all, name='options_or_elements_of_question_remove_all'),
 
-    url(r'^test/(?P<pk>\d+)/passing/$', views.test_passing, name='test_passing'),    
-
-    # url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/new_option/$', views.new_option, name='new_option'),
+    url(r'^test/(?P<pk>\d+)/passing/$', views.test_passing, name='test_passing'),
+    url(r'^test/(?P<pk>\d+)/passing_results/$', views.test_passing_results, name='test_passing_results'),
 
     url(r'^categories/$', views.categories, name='categories'),
     url(r'^tags/$', views.tags, name='tags'),

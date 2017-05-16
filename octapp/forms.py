@@ -57,7 +57,7 @@ class TestForm(forms.ModelForm):
     class Meta:
         model = Test
         fields = ('category', 'result_scale', 'tags', 'name',
-                  'description', 'controlling', 'time_restricting', 'anonymous_loader')
+                  'description', 'controlling', 'time_restricting', 'anonymous_loader', 'show_answers', 'single_passing')
         # Переопределение стандартного виджета, подробнее на https://djbook.ru/rel1.9/topics/forms/modelforms.html#overriding-the-default-fields
         widgets = {
             'tags': CheckboxSelectMultiple,

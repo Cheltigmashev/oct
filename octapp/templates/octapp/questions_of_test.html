@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block before_pagination %}
-<h2>Вопросы к тесту <q>{{ test }}</q></h2>
+<h2>ВОПРОСЫ К ТЕСТУ <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}"><q>{{ test|upper }}</q></a></h2>
 
 <h3 class="text-left">Добавить новый вопрос:</h3>
 <div class="adding_questions_btns">

@@ -25,7 +25,7 @@ p
 * 
   font-family: 'Roboto Condensed', sans-serif
 
-h1, h2, h3, h4, h5, h6, .title-font, h1 > *, h2 > *, h3 > *, h4 > *, h5 > *, h6
+h1, h2, h3, h4, h5, h6, .title-font, h1 *, h2 *, h3 *, h4 *, h5 *, h6 *
   font-family: 'Neucha', serif
 
 .mono-font, pre, code
@@ -79,7 +79,12 @@ h1, h2, h3, h4, h5, h6
   background-color: yellow
 .auto_width
   width: auto
-  
+a.some_text_link, a.some_text_link *
+  color: orange
+  border-bottom: 1px dashed orangered
+a.some_text_link:hover, a.some_text_link:hover *
+  font-weight: bold
+
 /*============    КНОПКИ    ===========*/
 .btn
   padding: 5px

@@ -1,0 +1,56 @@
+@charset "utf-8"
+// НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В single_question.sass
+@import single_question
+
+.content
+  div.passing_area
+    padding: 0 15px 5px 15px
+    border: 1px solid red
+  .question:hover
+    transition: all ease 0.5s
+    box-shadow: 1px 1px 1px 1px darkgray
+
+  .question
+    transition: all ease 0.5s
+    user-select: none
+    .closed_question_options_div, .sequence_elements_div, .comparing_elements_div
+      padding: 0
+    .option_or_element
+      margin: 0
+      padding: 0
+    label
+      padding: 4px
+      font-weight: normal
+      transition: all ease 0.4s
+    label, input[type="radio"]
+      cursor: pointer
+      width: 100%
+    input[type="text"]
+      width: auto
+      display: inline-block
+    input[type="radio"]
+      display: none
+
+    input[type="radio"] + label::before
+      content: "\2713"
+      font-size: 30px
+      transition: all ease 0.5s
+      vertical-align: middle
+      display: inline-block
+      font-weight: bolder
+      margin-top: -18px
+      padding: 0
+      opacity: 0
+      height: 22px
+      width: 22px
+
+    input[type="radio"]:checked + label::before
+      transition: all ease 0.5s
+      opacity: 1
+
+    input[type="radio"]:checked + label
+      transition: all ease 0.4s
+      font-weight: bold
+      background-color: yellow
+    input[type="radio"]:not(:checked) + label:hover
+      background-color: lighten(gray, 40%)

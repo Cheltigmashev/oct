@@ -123,6 +123,26 @@
             </label>
         </div>
 
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
+            <label for="id_show_answers">
+                <div class="field_with_checkbox form_field_div">
+    {{ form.show_answers }}
+                <span>Показывать ответы после прохождения.</span>
+    {% if form.show_answers.errors %}<p class="field_with_error">Ошибка: {{ form.show_answers.errors }}</p>{% endif %}
+                </div>
+            </label>
+        </div>
+
+        <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
+            <label for="id_single_passing">
+                <div class="field_with_checkbox form_field_div">
+    {{ form.single_passing }}
+                <span>Допускается пройти тест только один раз.</span>
+    {% if form.single_passing.errors %}<p class="field_with_error">Ошибка: {{ form.single_passing.errors }}</p>{% endif %}
+                </div>
+            </label>
+        </div>        
+
         <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
             <div class="form_field_div">
     {{ form.description.label_tag }}

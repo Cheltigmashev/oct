@@ -2,10 +2,111 @@
 {% load staticfiles %}
 
 {% block page_style %}
-<link rel="stylesheet" href="{% static 'octapp/css/test_edit.css' %}">
+<link rel="stylesheet" href="{% static 'octapp/css/test_passing.css' %}">
 {% endblock %}
 
-{% block content %}
 
+{% block content %}
+<h2>ПРОХОЖДЕНИЕ ТЕСТА <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}"><q>{{ test|upper }}</q></a></h2>
+
+    {% if test.controlling %}
+<div class="passing_area">
+    {% endif %}
+
+    <form name="answers" method="POST" action="{% url 'test_passing_results' pk=test.pk %}">
+    {% csrf_token %}
+    {% for qu_of_test, options_or_elements in questions_and_options %}
+
+        <div class="question" id="q{{ qu_of_test.question_index_number }}">
+
+        {% if qu_of_test.type_of_question == 'ClsdQ' %}
+            <p>Вопрос № {{ qu_of_test.question_index_number }} (закрытого типа)</p>
+        {{ qu_of_test.closed_question.question_content|safe }}
+            <div class="closed_question_options_div">
+            {% for closed_question_option in options_or_elements %}
+                <div class="option_or_element">
+                {% if qu_of_test.closed_question.only_one_right %}
+                    <input type="radio" value="{{ qu_of_test.question_index_number }}" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }}o{{ closed_question_option.option_number }}">
+                {% else %}
+                    <input type="checkbox" value="{{ qu_of_test.question_index_number }}" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }}o{{ closed_question_option.option_number }}">
+                {% endif %}
+                    <label for="q{{ qu_of_test.question_index_number }}o{{ closed_question_option.option_number }}">
+                        <span class="option_or_element_number_span">{{ closed_question_option.option_number }}. </span>
+                        <span class="option_or_element_content_span">{{ closed_question_option.content|safe }}</span>
+                    </label>
+                </div>
+            {% empty %}
+                <p>Вы еще не добавили вариантов ответа на этот вопрос.</p>
+            {% endfor %}
+            </div>
+        {% endif %}
+
+        {% elif qu_of_test.type_of_question == 'OpndQ' %}
+            <p>Вопрос № {{ qu_of_test.question_index_number }} (открытого типа)</p>
+            {% with qu_of_test.open_question.correct_option|length|add:"4" as correct_answer_length %}
+        {{ qu_of_test.open_question.question_content|safe }}
+            {% spaceless %}
+            {{ qu_of_test.open_question.question_content_before_blank|linebreaksbr }}
+            <input type="text" name="q{{ qu_of_test.question_index_number }}" maxlength="120" class="form-control" size="{{ correct_answer_length }}">
+            {% endspaceless %}
+            {% endwith %}
+            {{ qu_of_test.open_question.question_content_after_blank|linebreaksbr }}
+        {% endif %}
+
+        {% elif qu_of_test.type_of_question == 'SqncQ' %}
+            <p>Вопрос № {{ qu_of_test.question_index_number }} (последовательность)</p>
+            <small><p>Упорядочите (отсортируйте) элементы последовательности, перетаскивая их либо напрямую указывая их порядок в поле ниже.</p></small>
+        {{ qu_of_test.sequence_question.question_content|safe }}
+            <div class="sequence_elements_div" id="q{{ qu_of_test.question_index_number }}_sorting_elements">
+            {% for sequence_element in options_or_elements %}
+                <div class="option_or_element inline_block" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }}o{{ sequence_element.option_number }}">
+                    <span class="option_or_element_number_span">{{ sequence_element.element_index_number }}. </span>
+                    <span class="option_or_element_content_span">{{ sequence_element.element_content|safe }}</span>
+                </div>
+            {% empty %}
+                <p>Автор теста не добавил вариантов ответа на этот вопрос.</p>
+            {% endfor %}
+            </div>
+            Можете указать непосредственный порядок элементов вручную: 
+            <input value="{{ qu_of_test.question_index_number }}" type="text" pattern="(?:\d+(?:,\s)?)+" placeholder="Допустимы цифры, запятые и пробел в формате 1, 2, 3" name="q{{ qu_of_test.question_index_number }}">
+        {% endif %}
+
+        {% else %}
+            <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление)</p>
+        {{ qu_of_test.comparison_question.comparison_question_content|safe }}
+            <div class="comparing_elements_div">
+                <div class="row inline_block">
+                    {% for left_row_element in options_or_elements|first %}
+                    <div class="option_or_element" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }_left{{ left_row_element.option_number }}">
+                        <span class="option_or_element_number_span">{{ left_row_element.element_index_number }}. </span>
+                        <span class="option_or_element_content_span">{{ left_row_element.element_content|safe }}</span>
+                    </div>
+                    {% empty %}
+                            <span>Автор теста не добавил элементы <mark>левого ряда</mark> сопоставления</span>
+                    {% endfor %}
+                </div>
+
+                <div class="row inline_block" id="q{{ qu_of_test.question_index_number }}_sorting_elements">
+                    {% for right_row_element in options_or_elements|last %}
+                    <div class="option_or_element" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }}_right{{ right_row_element.option_number }}">
+                        <span class="option_or_element_number_span">{{ right_row_element.element_index_number }}. </span>
+                        <span class="option_or_element_content_span">{{ right_row_element.element_content|safe }}</span>
+                    </div>
+                    {% empty %}
+                            <span>Автор теста не добавил элементы <mark>правого ряда</mark> сопоставления</span>
+                    {% endfor %}
+                    </div>
+            </div>
+
+        </div> <!-- закрывающий для div.question -->
+
+    {% endfor %}
+
+    <input type="submit" class="btn btn-default btn-block btn-lg" value="Получить результаты прохождения теста">
+    </form>
+
+    {% if test.controlling %}
+</div>
+    {% endif %}
 
 {% endblock %}

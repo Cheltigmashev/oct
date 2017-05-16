@@ -85,7 +85,23 @@
     {% if test.time_restricting %}
             <p class="text-left">Лимит времени прохождения — <mark>{{ test.time_restricting }} мин.</mark></p>
     {% else %}
-            <p class="text-left">Без ограничения на время прохождения</p>    
+            <p class="text-left">Без ограничения на время прохождения</p>
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
+    {% if test.show_answers %}
+            <p class="text-left">После прохождения <mark>отображаются</mark> ответы</p>
+    {% else %}
+            <p class="text-left">После прохождения <mark>ответы не отображаются</mark></p>    
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
+    {% if test.single_passing %}
+            <p class="text-left">Для данного теста результат прохождения сохраняется только <mark>один раз</mark></p>
+    {% else %}
+            <p class="text-left">Для данного теста результат прохождения сохраняется <mark>многократно</mark></p>
     {% endif %}
         </div>
 
@@ -105,11 +121,17 @@
     {% endif %}
         </div>
 
-    {% if test.ready_for_passing %}
+    {% if already_passed %}
+        <div class="test_description_element">
+            <p class="text-left">Вы <mark>уже прошли</mark> данный тест</p>
+        </div>
+    {% endif %}
+
+    {% if test.ready_for_passing and not already_passed %}
         <div class="test_description_element test_description_element_with_buttons">
             <a href="{% url 'test_passing' pk=test.pk %}" class="btn btn-default start_passing_btn">Приступить к прохождению</a>
     {% else %}
-        <div class="test_description_element">        
+        <div class="test_description_element">
             <p class="text-left">Тест еще <mark>не готов</mark> для прохождения</p>
     {% endif %}
         </div>
@@ -125,9 +147,9 @@
         <div class="test_description_element">    
     Вы оценили тест
         {% if rate_of_current_user.like %}
-                положительно<br>
+                <mark>положительно</mark><br>
         {% else %}
-                отрицательно<br>
+                <mark>отрицательно</mark><br>
         {% endif %}
         </div>
     {% endif %}

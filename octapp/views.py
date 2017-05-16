@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm, ClosedQuestionOptionForm, SequenceQuestionElementForm, ComparisonQuestionElementForm
-from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest, ClosedQuestionOption, SequenceQuestionElement, ComparisonQuestionElement
+from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest, ClosedQuestionOption, SequenceQuestionElement, Result
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import QueryDict
@@ -316,12 +316,13 @@ def test_detail(request, pk):
     if not request.user.is_authenticated:
         return render(request, 'octapp/test_detail.html', {'test': test })
     else:
+        already_passed = Result.objects.filter(user=request.user, test=test).exists()
         try:
             rate_of_current_user = TestRate.objects.get(test=test, reviewer=request.user)
-            return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author, 'rate_of_current_user': rate_of_current_user })
+            return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author, 'rate_of_current_user': rate_of_current_user, 'already_passed': already_passed })
         # Пользователь еще не ставил оценку данному тесту
         except TestRate.DoesNotExist:
-            return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author })
+            return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author, 'already_passed': already_passed })
 
 @login_required
 def test_edit(request, pk):
@@ -362,7 +363,14 @@ def test_make_ready_for_passing(request, pk):
 @login_required
 def test_remove(request, pk, through_user_tests):
     test = get_object_or_404(Test, pk=pk)
+    tags = test.tags.all()
     test.delete()
+    category = test.category
+    for tag in tags:
+        if tag.tests.count() < 1:
+            tag.delete()
+    if category.tests.count() < 1:
+        category.delete()
     if through_user_tests == 'True':
         return redirect('user_tests', pk=pk)
     else:
@@ -471,7 +479,6 @@ def new_question(request, test_id, type):
                     new_options_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ВАРИАНТЫ))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ВАРИАНТЫ</p>)'
                     for content in re.findall(new_options_contents_pattern, closed_question_form.cleaned_data['question_content']):
                         options_or_elements_content.append(content)
-                    new_closed_question_object.question_of_test.save()
                     new_closed_question_object.save()
                     # Добавляем новые варианты ответа
                     if len(options_or_elements_content) > 1:
@@ -516,7 +523,6 @@ def new_question(request, test_id, type):
                 # Задаем контент вопроса
                 new_sequence_question_object.sequence_question_content = question_content
                 new_question_of_test.save()
-                new_question_of_test.save()
                 # Если вопрос добавляется вместе с элементами последовательности
                 if sequence_question_form.cleaned_data['add_sequ_elements']:
                     # Переприсваиваем список контента
@@ -525,8 +531,8 @@ def new_question(request, test_id, type):
                     new_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЭЛЕМЕНТЫ))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ЭЛЕМЕНТЫ</p>)'
                     for content in re.findall(new_elements_contents_pattern, sequence_question_form.cleaned_data['sequence_question_content']):
                         options_or_elements_content.append(content)
-                    new_sequence_question_object.question_of_test.save()
                     new_question_of_test.save()
+                    new_sequence_question_object.save()
                     # Добавляем новые элементы последовательности
                     if len(options_or_elements_content) > 1:
                         counter = 1
@@ -575,8 +581,8 @@ def new_question(request, test_id, type):
                     # Контент элементов правого ряда
                     for content in re.findall(new_right_elements_contents_pattern, comparison_question_form.cleaned_data['comparison_question_content']):
                         new_right_elements_contents.append(content)
-                    new_comparison_question_object.question_of_test.save()                    
                     new_question_of_test.save()
+                    new_comparison_question_object.save()                    
                     # Добавляем новые элементы левого ряда
                     if len(new_left_elements_contents) > 1:
                         counter = 1
@@ -866,41 +872,134 @@ def comment_remove(request, pk):
     return redirect('test_detail', pk=test_pk)
 
 def test_passing(request, pk):
+    """
+    Передает шаблону список отсортированных вопросов теста и вариантов ответа.
+    """
     test = get_object_or_404(Test, pk=pk)
-    questions = test.questions_of_test.all().order_by('question_index_number')
-    if request.method == 'POST':
-        correct_qu_amount = 0
-        wrong_qu_amount = 0
-        total_qu_amount = questions.count()
-        counter = 1
-        for question in questions:
-            if question.type_of_question == 'ClsdQ':
-                # Вопрос закрытого типа с 1 вариантом ответа
-                if question.closed_question.only_one_right:
-                    try:
-                        # Получаем номер варианта, выбранного пользователем
-                        user_answer = request.POST['qu' + str(counter)]
-                        if user_answer == question.closed_question.correct_option_numbers:
-                            correct_qu_amount += 1
-                    except (KeyError, Choice.DoesNotExist):
-                        # Пользователь не ответил на вопрос
+    questions = test.questions_of_test.order_by('question_index_number')
+    questions_and_options = []
+    for question in questions:
+        if question.type_of_question == 'ClsdQ':
+            options = question.closed_question.closed_question_options.order_by('option_number')
+            questions_and_options.append([question, options])
+        elif question.type_of_question == 'OpndQ':
+            questions_and_options.append([question, None])
+        elif question.type_of_question == 'SqncQ':
+            elements = question.sequence_question.sequence_elements.order_by('element_index_number')
+            questions_and_options.append([question, elements])
+        else:
+            left_elements = question.comparison_question.left_row_elements.order_by('element_index_number')
+            right_elements = question.comparison_question.right_row_elements.order_by('element_index_number')
+            questions_and_options.append([question, [left_elements, right_elements]])
+    context = {'test': test, 'questions_and_options': questions_and_options}
+    return render(request, 'octapp/test_passing.html', context)
+
+def test_passing_results(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    questions = test.questions_of_test.order_by('question_index_number')
+    correct_qu_amount = 0
+    wrong_qu_amount = 0
+    counter = 1
+    if test.show_answers:
+        # Список правильных вариантов и выбранных пользователем вариантов
+        variants = []
+    for question in questions:
+        if question.type_of_question == 'ClsdQ':
+            # Вопрос закрытого типа с 1 вариантом ответа
+            if question.closed_question.only_one_right:
+                if request.POST['qu' + str(counter)]:
+                    # Получаем номер варианта, выбранного пользователем
+                    user_answer = request.POST['qu' + str(counter)]
+                    if user_answer == question.closed_question.correct_option_numbers:
+                        correct_qu_amount += 1
+                    else:
                         wrong_qu_amount += 1
+                    if test.show_answers:
+                        variants.append([question.correct_option_numbers[0], user_answer])
                 else:
-                    pass
-            if question.type_of_question == 'OpndQ':
-                pass
-            if question.type_of_question == 'SqncQ':
-                pass
-            if question.type_of_question == 'CmprsnQ':
-                pass
-
-            if request.user.is_authenticated:
-                current_user = request.user
+                    # Пользователь не ответил на вопрос
+                    wrong_qu_amount += 1
+                    if test.show_answers:
+                        variants.append([question.correct_option_numbers[0], None])
             else:
-                current_user = None
+                if request.POST['qu' + str(counter)]:
+                    user_options_set = set(request.POST['qu' + str(counter)].split(', '))
+                    correct_options_set = set(question.closed_question.correct_option_numbers.split(', '))
+                    if not user_options_set.symmetric_difference(correct_options_set):
+                        correct_qu_amount += 1
+                    else:
+                        wrong_qu_amount += 1
+                    if test.show_answers:
+                        variants.append([question.correct_option_numbers[0], user_options_set])
+                else:
+                    wrong_qu_amount += 1
+                    if test.show_answers:
+                        variants.append([question.correct_option_numbers[0], None])
 
-            # redirect to passing_results
-    else:
-        context = {'test': test, 'questions': questions}
-        return render(request, 'octapp/test_passing.html', context)
+        elif question.type_of_question == 'OpndQ':
+            if request.POST['qu' + str(counter)]:
+                if question.open_question.correct_option.lower().strip(' ') == request.POST[
+                            'qu' + str(counter)].lower.strip(' '):
+                    correct_qu_amount += 1
+                else:
+                    wrong_qu_amount += 1
+                if test.show_answers:
+                    variants.append([question.open_question.correct_option.lower().strip(' '), request.POST[
+                            'qu' + str(counter)].lower.strip(' ')])
+            else:
+                wrong_qu_amount += 1
+                if test.show_answers:
+                    variants.append([question.open_question.correct_option.lower().strip(' '), None])
 
+        elif question.type_of_question == 'SqncQ':
+            if request.POST['qu' + str(counter)]:
+                if question.open_question.correct_option == request.POST['qu' + str(counter)]:
+                    correct_qu_amount += 1
+                else:
+                    wrong_qu_amount += 1
+                if test.show_answers:
+                    variants.append([question.open_question.correct_option, request.POST['qu' + str(counter)]])
+            else:
+                wrong_qu_amount += 1
+                if test.show_answers:
+                    variants.append([question.open_question.correct_option, None])
+        else:
+            if request.POST['qu' + str(counter)]:
+                user_pairs_set = set(request.POST['qu' + str(counter)].split(', '))
+                correct_pairs_set = question.comparison_question.correct_sequence.split(', ')
+                if not user_pairs_set.symmetric_difference(correct_pairs_set):
+                    correct_qu_amount += 1
+                else:
+                    wrong_qu_amount += 1
+                if test.show_answers:
+                    variants.append([question.comparison_question.correct_sequence, request.POST['qu' + str(counter)].split(', ')])
+            else:
+                wrong_qu_amount += 1
+                if test.show_answers:
+                    variants.append([question.comparison_question.correct_sequence, None])
+
+        correct_answers_percentage =  correct_qu_amount / questions.count() * 100
+        steps_of_scale = re.findall(r'\d+', test.result_scale.divisions_layout)
+        counter = 1
+        grade_based_on_scale = 1
+        for step in steps_of_scale:
+            if correct_answers_percentage > int(step):
+                grade_based_on_scale = counter + 1
+            counter += 1
+
+    context = {'test': test,
+                'correct_qu_amount': correct_qu_amount,
+                'wrong_qu_amount': wrong_qu_amount,
+                'correct_answers_percentage': correct_answers_percentage,
+                'grade_based_on_scale': grade_based_on_scale}
+    if test.show_answers:
+        context['variants'] = variants
+
+    if request.user.is_authenticated:
+        # Сохраняем результат
+        new_result = Result.objects.create(user=request.user, test=test,
+                                            grade_based_on_scale=grade_based_on_scale,
+                                            passing_date=timezone.now(),
+                                            correct_answers_percentage=correct_answers_percentage)
+
+    return render(request, 'octapp/test_passing_results.html', context)
