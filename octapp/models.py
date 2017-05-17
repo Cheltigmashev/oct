@@ -293,9 +293,6 @@ class Result(models.Model):
         verbose_name='Пользователь, к которому относится результат прохождения', null=False, blank=False)
     test = models.ForeignKey('octapp.Test', related_name='results',
             blank=False, on_delete=models.CASCADE, verbose_name='Тест, к которому относится вопрос')
-    fail_reason = models.CharField('Причина провала теста, если таковой имел место быть',
-            max_length=27, blank=True, null=True,
-            choices=[('выход курсора', 'выход курсора'), ('нажатие alt или ctrl', 'нажатие alt или ctrl')])
     grade_based_on_scale = models.IntegerField('Оценка по шкале', null=False, blank=False)
     passing_date = models.DateTimeField('Дата прохождения теста', default=timezone.now, editable=False)
     # Процент неправильных можно посчитать — [100-correct_answers_percentage], поэтому его можно не хранить
