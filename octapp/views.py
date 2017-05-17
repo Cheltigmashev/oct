@@ -925,9 +925,9 @@ def test_passing_results(request, pk):
         if question.type_of_question == 'ClsdQ':
             # Вопрос закрытого типа с 1 вариантом ответа
             if question.closed_question.only_one_right:
-                if request.POST.get('q' + str(counter), False):
+                if request.POST.get('q' + str(question.question_index_number), False):
                     # Получаем номер варианта, выбранного пользователем
-                    user_answer = request.POST.get('q' + str(counter), False)
+                    user_answer = request.POST.get('q' + str(question.question_index_number), False)
                     if user_answer == question.closed_question.correct_option_numbers:
                         correct_qu_amount += 1
                     else:
@@ -940,50 +940,49 @@ def test_passing_results(request, pk):
                     if test.show_answers:
                         variants.append([question.closed_question.correct_option_numbers[0], None])
             else:
-                if request.POST.get('q' + str(counter), False):
-                    user_options_set = set(re.findall(r'\d+', request.POST.get('q' + str(counter), False)))
+                if request.POST.get('q' + str(question.question_index_number), False):
+                    user_options_set = set(re.findall(r'\d+', request.POST.get('q' + str(question.question_index_number), False)))
                     correct_options_set = set(re.findall(r'\d+', question.closed_question.correct_option_numbers))
                     if not user_options_set.symmetric_difference(correct_options_set):
                         correct_qu_amount += 1
                     else:
                         wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.closed_question.correct_option_numbers[0], request.POST.get('q' + str(counter), False)])
+                        variants.append([question.closed_question.correct_option_numbers[0], request.POST.get('q' + str(question.question_index_number), False)])
                 else:
                     wrong_qu_amount += 1
                     if test.show_answers:
                         variants.append([question.closed_question.correct_option_numbers[0], None])
 
         elif question.type_of_question == 'OpndQ':
-            if request.POST.get('q' + str(counter), False):
-                if question.open_question.correct_option.lower().strip(' ') == request.POST[
-                            'q' + str(counter)].lower().strip(' '):
+            if request.POST.get('q' + str(question.question_index_number), False):
+                if question.open_question.correct_option.lower().strip(' ') == request.POST['q' + str(question.question_index_number)].lower().strip(' '):
                     correct_qu_amount += 1
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
                     variants.append([question.open_question.correct_option.lower().strip(' '), request.POST[
-                            'q' + str(counter)].lower().strip(' ')])
+                            'q' + str(question.question_index_number)].lower().strip(' ')])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:
                     variants.append([question.open_question.correct_option.lower().strip(' '), None])
 
         elif question.type_of_question == 'SqncQ':
-            if request.POST.get('q' + str(counter), False):
-                if question.sequence_question.correct_sequence == request.POST.get('q' + str(counter), False):
+            if request.POST.get('q' + str(question.question_index_number), False):
+                if question.sequence_question.correct_sequence == request.POST.get('q' + str(question.question_index_number), False):
                     correct_qu_amount += 1
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.sequence_question.correct_sequence, request.POST.get('q' + str(counter), False)])
+                    variants.append([question.sequence_question.correct_sequence, request.POST.get('q' + str(question.question_index_number), False)])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:
                     variants.append([question.sequence_question.correct_sequence, None])
         else:
-            if request.POST.get('q' + str(counter), False):
-                user_pairs_str = request.POST.get('q' + str(counter), False)
+            if request.POST.get('q' + str(question.question_index_number), False):
+                user_pairs_str = request.POST.get('q' + str(question.question_index_number), False)
                 user_pairs_list = re.findall(comparison_pattern, user_pairs_str)
                 user_pairs_set = set(user_pairs_list)
                 correct_pairs_str = question.comparison_question.correct_sequence
@@ -994,7 +993,7 @@ def test_passing_results(request, pk):
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.comparison_question.correct_sequence, request.POST.get('q' + str(counter), False).split(', ')])
+                    variants.append([question.comparison_question.correct_sequence, request.POST.get('q' + str(question.question_index_number), False).split(', ')])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:

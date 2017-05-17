@@ -24,4 +24,14 @@ $(document).ready(() => {
       }
     });
   });
+
+  $('.closed_question_multiple').each(function(i) {
+    $(this).change( function() {
+      let selected = '';
+      $(this).children().children('input:checked').each(function(i) {
+        selected += ($(this).attr('value') + '|');
+      });
+      $(this).next().attr('value', selected);
+    });
+  });
 });

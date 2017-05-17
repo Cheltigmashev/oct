@@ -15,7 +15,7 @@
     {% if test.controlling %}
 <div class="passing_area">
     <script src="{% static 'octapp/js/test_controlling.js' %}"></script>
-    <input type="text" value="Причина провала" class="hidden_form_element form-control" name="fail_reason" id="fail_reason">
+    <input type="text" value="Причина провала" class="hidden_form_element" name="fail_reason" id="fail_reason">
     {% endif %}
 
     <form id="answers_form" name="answers_form" method="POST" action="{% url 'test_passing_results' pk=test.pk %}">
@@ -35,13 +35,19 @@
         {% if qu_of_test.type_of_question == 'ClsdQ' %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (закрытого типа)</p>
         {{ qu_of_test.closed_question.question_content|safe }}
+
+            {% if not qu_of_test.closed_question.only_one_right %}
+            <div class="closed_question_options_div closed_question_multiple">
+            {% else %}
             <div class="closed_question_options_div">
+            {% endif %}
+
             {% for closed_question_option in options_or_elements %}
                 <div class="option_or_element">
                 {% if qu_of_test.closed_question.only_one_right %}
                     <input type="radio" value="{{ closed_question_option.option_number }}" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }}o{{ closed_question_option.option_number }}">
                 {% else %}
-                    <input type="checkbox" value="{{ closed_question_option.option_number }}" name="q{{ qu_of_test.question_index_number }}" id="q{{ qu_of_test.question_index_number }}o{{ closed_question_option.option_number }}">
+                    <input type="checkbox" value="{{ closed_question_option.option_number }}" id="q{{ qu_of_test.question_index_number }}o{{ closed_question_option.option_number }}">
                 {% endif %}
                     <label for="q{{ qu_of_test.question_index_number }}o{{ closed_question_option.option_number }}">
                         <span class="option_or_element_number_span">{{ closed_question_option.option_number }}. </span>
@@ -52,6 +58,11 @@
                 <p>Вы еще не добавили вариантов ответа на этот вопрос.</p>
             {% endfor %}
             </div>
+            <!-- Поскольку через POST отправляется лишь один из отмеченных для вопроса input'ов, с помощью js (test_passing.js)
+            генерируется список отмеченных input'ов, который затем отправляется в приведенный ниже input -->
+            {% if not qu_of_test.closed_question.only_one_right %}
+            <input class="hidden_form_element" type="text" name="q{{ qu_of_test.question_index_number }}">
+            {% endif %}
 
         {% elif qu_of_test.type_of_question == 'OpndQ' %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (открытого типа)</p>
