@@ -917,6 +917,7 @@ def test_passing_results(request, pk):
     correct_qu_amount = 0
     wrong_qu_amount = 0
     counter = 1
+    comparison_pattern = r'((\d+-\d+)(, )?)+'
     if test.show_answers:
         # Список правильных вариантов и выбранных пользователем вариантов
         variants = []
@@ -970,20 +971,24 @@ def test_passing_results(request, pk):
 
         elif question.type_of_question == 'SqncQ':
             if request.POST.get('q' + str(counter), False):
-                if question.open_question.correct_option == request.POST.get('q' + str(counter), False):
+                if question.sequence_question.correct_sequence == request.POST.get('q' + str(counter), False):
                     correct_qu_amount += 1
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.open_question.correct_option, request.POST.get('q' + str(counter), False)])
+                    variants.append([question.sequence_question.correct_sequence, request.POST.get('q' + str(counter), False)])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.open_question.correct_option, None])
+                    variants.append([question.sequence_question.correct_sequence, None])
         else:
             if request.POST.get('q' + str(counter), False):
-                user_pairs_set = set(request.POST.get('q' + str(counter), False).split(', '))
-                correct_pairs_set = question.comparison_question.correct_sequence.split(', ')
+                user_pairs_str = request.POST.get('q' + str(counter), False)
+                user_pairs_list = re.findall(comparison_pattern, user_pairs_str)
+                user_pairs_set = set(user_pairs_list)
+                correct_pairs_str = question.comparison_question.correct_sequence
+                correct_pairs_list = re.findall(comparison_pattern, correct_pairs_str)
+                correct_pairs_set = set(correct_pairs_list)
                 if not user_pairs_set.symmetric_difference(correct_pairs_set):
                     correct_qu_amount += 1
                 else:

@@ -542,7 +542,7 @@ class QuestionsOfTestsViewTests(TestCase):
         то и в контексте их быть не должно.
         """
         past_test_with_no_questions = create_test(category=None,
-                    tags=[], name='Некий опубликованный тест',
+                    tags=[], name='НЕКИЙ ОПУБЛИКОВАННЫЙ ТЕСТ',
                     publishing_days_offset=-30)
 
         # Авторизация (т.к. представление требует, чтобы пользователь был авторизован)
@@ -552,7 +552,7 @@ class QuestionsOfTestsViewTests(TestCase):
         response = self.c.get(reverse('questions_of_test', args=(past_test_with_no_questions.id,)))
         # Должно выводиться название теста, чтобы пользователь был в курсе,
         # к какому тесту он добавляет вопросы (или редактирует, просматривает их
-        self.assertContains(response, u'Некий опубликованный тест')
+        self.assertContains(response, u'НЕКИЙ ОПУБЛИКОВАННЫЙ ТЕСТ')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, u'Вы еще не добавили никаких вопросов для данного теста.')
 
@@ -578,7 +578,7 @@ class QuestionsOfTestsViewTests(TestCase):
         Если для данного теста было добавлено 2 вопроса закрытого типа
         """
         past_test_with_2_closed_questions = create_test(category=None,
-                    tags=[], name='Некий опубликованный тест',
+                    tags=[], name='НЕКИЙ ОПУБЛИКОВАННЫЙ ТЕСТ',
                     publishing_days_offset=-30)
 
         clsd1 = create_closed_question(test=past_test_with_2_closed_questions,
@@ -598,7 +598,7 @@ class QuestionsOfTestsViewTests(TestCase):
 
         # Должно выводиться название теста, чтобы пользователь был в курсе,
         # к какому тесту он добавляет вопросы (или редактирует, просматривает их
-        self.assertContains(response, u'Некий опубликованный тест')
+        self.assertContains(response, u'НЕКИЙ ОПУБЛИКОВАННЫЙ ТЕСТ')
         # Должны выводиться сами вопросы, их условия, порядковые номера в списке вопросов
         self.assertContains(response, u'Первый вопрос закрытого типа')
         self.assertContains(response, u'Вопрос № 1 (закрытого типа)')
@@ -637,7 +637,7 @@ class QuestionsOfTestsViewTests(TestCase):
         Если для данного теста было добавлено 2 вопроса закрытого типа
         """
         published_test = create_test(category=None,
-                    tags=[], name='Некий опубликованный тест',
+                    tags=[], name='НЕКИЙ ОПУБЛИКОВАННЫЙ ТЕСТ',
                     publishing_days_offset=-30)
 
         ClsdQ = create_closed_question(test=published_test,
@@ -659,7 +659,7 @@ class QuestionsOfTestsViewTests(TestCase):
 
         # Должно выводиться название теста, чтобы пользователь был в курсе,
         # к какому тесту он добавляет вопросы (или редактирует, просматривает их
-        self.assertContains(response, u'Некий опубликованный тест')
+        self.assertContains(response, u'НЕКИЙ ОПУБЛИКОВАННЫЙ ТЕСТ')
 
         # Должны выводиться сами вопросы, их условия, порядковые номера в списке вопросов
         self.assertContains(response, u'Вопрос закрытого типа')

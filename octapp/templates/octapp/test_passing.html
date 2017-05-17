@@ -5,6 +5,9 @@
 <link rel="stylesheet" href="{% static 'octapp/css/test_passing.css' %}">
 {% endblock %}
 
+<style type="text/css">
+    .sortContainer {border: 1px dashed orange;background-color: gray;width: auto;}
+</style>
 
 {% block content %}
 <h2>ПРОХОЖДЕНИЕ ТЕСТА <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}"><q>{{ test|upper }}</q></a></h2>
@@ -53,9 +56,8 @@
         {% elif qu_of_test.type_of_question == 'OpndQ' %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (открытого типа)</p>
             {% with qu_of_test.open_question.correct_option|length|add:"4" as correct_answer_length %}
-        {{ qu_of_test.open_question.question_content|safe }}
             {% spaceless %}
-            {{ qu_of_test.open_question.question_content_before_blank|linebreaksbr }}
+                {{ qu_of_test.open_question.question_content_before_blank|linebreaksbr }}
             <input type="text" name="q{{ qu_of_test.question_index_number }}" maxlength="120" class="form-control" size="{{ correct_answer_length }}">
             {% endspaceless %}
             {% endwith %}
@@ -63,11 +65,10 @@
 
         {% elif qu_of_test.type_of_question == 'SqncQ' %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (последовательность)</p>
-            <small><p>Упорядочите (отсортируйте) элементы последовательности, перетаскивая их либо напрямую указывая их порядок в поле ниже.</p></small>
         {{ qu_of_test.sequence_question.question_content|safe }}
-            <div class="sequence_elements_div sortContainer">
+            <div class="sequence_elements_div sortContainer" title="Упорядочите (отсортируйте) элементы последовательности, перетаскивая их либо напрямую указывая их порядок в поле ниже.">
             {% for sequence_element in options_or_elements %}
-                <div class="option_or_element inline_block" id="{{ sequence_element.option_number }}">
+                <div class="option_or_element" id="{{ sequence_element.element_index_number }}">
                     <span class="option_or_element_number_span">{{ sequence_element.element_index_number }}. </span>
                     <span class="option_or_element_content_span">{{ sequence_element.element_content|safe }}</span>
                 </div>
@@ -83,28 +84,28 @@
         {{ qu_of_test.comparison_question.comparison_question_content|safe }}
             <div class="comparing_elements_div">
                 <div class="row inline_block">
-                    {% for left_row_element in options_or_elements|first %}
+            {% for left_row_element in options_or_elements|first %}
                     <div class="option_or_element">
                         <span class="option_or_element_number_span">{{ left_row_element.element_index_number }}. </span>
                         <span class="option_or_element_content_span">{{ left_row_element.element_content|safe }}</span>
                     </div>
-                    {% empty %}
-                            <span>Автор теста не добавил элементы <mark>левого ряда</mark> сопоставления</span>
-                    {% endfor %}
+            {% empty %}
+                    <span>Автор теста не добавил элементы <mark>левого ряда</mark> сопоставления</span>
+            {% endfor %}
                 </div>
 
-                <div class="row inline_block sortContainer" id="{{ sequence_element.option_number }}">
-                    {% for right_row_element in options_or_elements|last %}
-                    <div class="option_or_element">
+                <div class="row inline_block sortContainer">
+            {% for right_row_element in options_or_elements|last %}
+                    <div class="option_or_element" id="{{ right_row_element.element_index_number }}">
                         <span class="option_or_element_number_span">{{ right_row_element.element_index_number }}. </span>
                         <span class="option_or_element_content_span">{{ right_row_element.element_content|safe }}</span>
                     </div>
-                    {% empty %}
-                            <span>Автор теста не добавил элементы <mark>правого ряда</mark> сопоставления</span>
-                    {% endfor %}
+            {% empty %}
+                    <span>Автор теста не добавил элементы <mark>правого ряда</mark> сопоставления</span>
+            {% endfor %}
                 </div>
                 Можете указать непосредственный порядок элементов правого столбца вручную: 
-                <input class="form-control" type="text" pattern="(?:\d+(?:,\s)?)+" placeholder="Допустимы цифры, запятые и пробел в формате 1, 2, 3" id="q{{ qu_of_test.question_index_number }}" name="q{{ qu_of_test.question_index_number }}">
+                <input class="form-control" type="text" pattern="(?:[0-9]*-[0-9]*(?:, )?)+" placeholder="Допустимы цифры, запятые и пробел в формате 1, 2, 3" id="q{{ qu_of_test.question_index_number }}" name="q{{ qu_of_test.question_index_number }}">
             </div>
         {% endif %}
 

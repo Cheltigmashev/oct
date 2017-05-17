@@ -2,10 +2,20 @@
 // НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В single_question.sass
 @import single_question
 
+.placeholder_for_sorting
+  border: 1px ivory dashed
+  width: 100%
+  height: 27px
+  margin: 0
+  background-color: yellow
+  border-radius: 10px
+  margin: 5px 0
+
 .content
   div.passing_area
     padding: 0 15px 5px 15px
-    border: 4px ridge orange
+    border: 2px solid orange
+    border-radius: 10px
   .hidden_form_element
     position: fixed
     top: 105px
@@ -22,23 +32,33 @@
     transition: all ease 0.5s
     user-select: none
     padding-bottom: 8px
-    .comparing_elements_div, .sequence_elements_div
-      input[type="text"]
-        width: 100%
+    .sequence_elements_div .option_or_element:hover
+      font-weight: bold
     .comparing_elements_div
       .sortContainer .option_or_element
         cursor: pointer
+      .sortContainer .option_or_element:hover
+        font-weight: bold
+      .row
+        padding: 0 8px
+      input[type="text"]
+        width: 100%
     .sequence_elements_div .option_or_element
       cursor: pointer
+      border: none
+      border-bottom: 1px dashed gray
+    .sequence_elements_div ~ input[type="text"]
+      width: 100%
     .closed_question_options_div, .sequence_elements_div, .comparing_elements_div
-      padding: 4px 0 0 0
+      padding: 0
     .closed_question_options_div
       padding: 0
       .option_or_element
         padding: 0
-        margin: 0
     .option_or_element
-      padding: 2px
+      white-space: nowrap
+      padding: 3px
+      margin: 5px 0
     label
       padding: 4px
       font-weight: normal
@@ -64,11 +84,9 @@
       opacity: 0
       height: 22px
       width: 22px
-
     input[type="radio"]:checked + label::before
       transition: all ease 0.5s
       opacity: 1
-
     input[type="radio"]:checked + label
       transition: all ease 0.4s
       font-weight: bold
