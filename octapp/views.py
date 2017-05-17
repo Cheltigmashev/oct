@@ -314,15 +314,30 @@ def test_detail(request, pk):
         if not is_author:
             return redirect('tests_lists')
     if not request.user.is_authenticated:
-        return render(request, 'octapp/test_detail.html', {'test': test })
+        can_pass = True if not test.only_registered_can_pass else False
+        return render(request, 'octapp/test_detail.html', {'test': test, 'can_pass': can_pass })
     else:
         already_passed = Result.objects.filter(user=request.user, test=test).exists()
+        if test.single_passing:
+            # Т.е. если еще не прошел и тест готов для прохождения, то можешь пройти
+            can_pass = not already_passed and test.ready_for_passing
+        else:
+            can_pass = test.ready_for_passing
         try:
             rate_of_current_user = TestRate.objects.get(test=test, reviewer=request.user)
-            return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author, 'rate_of_current_user': rate_of_current_user, 'already_passed': already_passed })
+            return render(request, 'octapp/test_detail.html',
+            {'test': test,
+            'is_author': is_author,
+            'rate_of_current_user': rate_of_current_user,
+            'already_passed': already_passed,
+            'can_pass': can_pass })
         # Пользователь еще не ставил оценку данному тесту
         except TestRate.DoesNotExist:
-            return render(request, 'octapp/test_detail.html', {'test': test, 'is_author': is_author, 'already_passed': already_passed })
+            return render(request, 'octapp/test_detail.html',
+            {'test': test,
+            'is_author': is_author,
+            'already_passed': already_passed,
+            'can_pass': can_pass })
 
 @login_required
 def test_edit(request, pk):
@@ -876,6 +891,8 @@ def test_passing(request, pk):
     Передает шаблону список отсортированных вопросов теста и вариантов ответа.
     """
     test = get_object_or_404(Test, pk=pk)
+    if not request.user.is_authenticated and test.only_registered_can_pass:
+        return redirect('test_detail', pk=pk)    
     questions = test.questions_of_test.order_by('question_index_number')
     questions_and_options = []
     for question in questions:

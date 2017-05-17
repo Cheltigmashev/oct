@@ -99,9 +99,17 @@
 
         <div class="test_description_element">
     {% if test.single_passing %}
-            <p class="text-left">Для данного теста результат прохождения сохраняется только <mark>один раз</mark></p>
+            <p class="text-left">Результат прохождения сохраняется только <mark>один раз</mark></p>
     {% else %}
-            <p class="text-left">Для данного теста результат прохождения сохраняется <mark>многократно</mark></p>
+            <p class="text-left">Результат прохождения сохраняется <mark>многократно</mark></p>
+    {% endif %}
+        </div>
+
+        <div class="test_description_element">
+    {% if test.only_registered_can_pass %}
+            <p class="text-left">Прохождение доступно только <mark>авторизованным</mark> пользователям</p>
+    {% else %}
+            <p class="text-left">Прохождение доступно <mark>всем пользователям</mark></p>
     {% endif %}
         </div>
 
@@ -123,18 +131,19 @@
 
     {% if already_passed %}
         <div class="test_description_element">
-            <p class="text-left">Вы <mark>уже прошли</mark> данный тест</p>
+            <p class="text-left">Вы <mark>уже проходили</mark> данный тест</p>
         </div>
     {% endif %}
 
-    {% if test.ready_for_passing and not already_passed %}
+    {% if can_pass %}
         <div class="test_description_element test_description_element_with_buttons">
             <a href="{% url 'test_passing' pk=test.pk %}" class="btn btn-default start_passing_btn">Приступить к прохождению</a>
+        </div>
     {% else %}
         <div class="test_description_element">
             <p class="text-left">Тест еще <mark>не готов</mark> для прохождения</p>
-    {% endif %}
         </div>
+    {% endif %}
 
     {% if user.is_authenticated and not rate_of_current_user %}
         <div class="test_description_element test_description_element_with_buttons">
@@ -163,7 +172,7 @@
             </span>
         </a>
     {% empty %}
-    <p>Для данного теста какие-либо теги не назначены :(</p>
+    <p>Ракие-либо теги не назначены :(</p>
     {% endfor %}
     </p>
     <hr>

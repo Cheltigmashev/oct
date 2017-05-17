@@ -25,6 +25,7 @@ class Test(models.Model):
     ready_for_passing = models.BooleanField('Готовность теста для прохождения другими пользователями', default=False, blank=True, editable=False)
     show_answers = models.BooleanField('Показывать ответы после прохождения', default=True, blank=True)
     single_passing = models.BooleanField('Допускается пройти тест только один раз', default=False, blank=True)
+    only_registered_can_pass = models.BooleanField('Только зарегистрированные и авторизованные пользователи могут проходить тест', default=False, blank=True)
 
     def publish(self):
         self.published_date = timezone.now()
