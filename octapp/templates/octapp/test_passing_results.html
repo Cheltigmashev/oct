@@ -10,7 +10,7 @@
 
 <p>Правильных ответов: {{ correct_qu_amount }}</p>
 <p>Неправильных ответов: {{ wrong_qu_amount }}</p>
-<p>Процент правильных: {{ correct_answers_percentage }}</p>
+<p>Процент правильных: {{ correct_answers_percentage|floatformat:2 }}%</p>
 <p>Оценка по шкале теста: {{ grade_based_on_scale }}</p>
 
 {% endblock %}

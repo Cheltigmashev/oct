@@ -907,72 +907,72 @@ def test_passing_results(request, pk):
         if question.type_of_question == 'ClsdQ':
             # Вопрос закрытого типа с 1 вариантом ответа
             if question.closed_question.only_one_right:
-                if request.POST['qu' + str(counter)]:
+                if request.POST.get('q' + str(counter), False):
                     # Получаем номер варианта, выбранного пользователем
-                    user_answer = request.POST['qu' + str(counter)]
+                    user_answer = request.POST.get('q' + str(counter), False)
                     if user_answer == question.closed_question.correct_option_numbers:
                         correct_qu_amount += 1
                     else:
                         wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.correct_option_numbers[0], user_answer])
+                        variants.append([question.closed_question.correct_option_numbers[0], user_answer])
                 else:
                     # Пользователь не ответил на вопрос
                     wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.correct_option_numbers[0], None])
+                        variants.append([question.closed_question.correct_option_numbers[0], None])
             else:
-                if request.POST['qu' + str(counter)]:
-                    user_options_set = set(request.POST['qu' + str(counter)].split(', '))
+                if request.POST.get('q' + str(counter), False):
+                    user_options_set = set(request.POST.get('q' + str(counter), False).split(', '))
                     correct_options_set = set(question.closed_question.correct_option_numbers.split(', '))
                     if not user_options_set.symmetric_difference(correct_options_set):
                         correct_qu_amount += 1
                     else:
                         wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.correct_option_numbers[0], user_options_set])
+                        variants.append([question.closed_question.correct_option_numbers[0], user_options_set])
                 else:
                     wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.correct_option_numbers[0], None])
+                        variants.append([question.closed_question.correct_option_numbers[0], None])
 
         elif question.type_of_question == 'OpndQ':
-            if request.POST['qu' + str(counter)]:
+            if request.POST.get('q' + str(counter), False):
                 if question.open_question.correct_option.lower().strip(' ') == request.POST[
-                            'qu' + str(counter)].lower.strip(' '):
+                            'q' + str(counter)].lower().strip(' '):
                     correct_qu_amount += 1
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
                     variants.append([question.open_question.correct_option.lower().strip(' '), request.POST[
-                            'qu' + str(counter)].lower.strip(' ')])
+                            'q' + str(counter)].lower().strip(' ')])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:
                     variants.append([question.open_question.correct_option.lower().strip(' '), None])
 
         elif question.type_of_question == 'SqncQ':
-            if request.POST['qu' + str(counter)]:
-                if question.open_question.correct_option == request.POST['qu' + str(counter)]:
+            if request.POST.get('q' + str(counter), False):
+                if question.open_question.correct_option == request.POST.get('q' + str(counter), False):
                     correct_qu_amount += 1
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.open_question.correct_option, request.POST['qu' + str(counter)]])
+                    variants.append([question.open_question.correct_option, request.POST.get('q' + str(counter), False)])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:
                     variants.append([question.open_question.correct_option, None])
         else:
-            if request.POST['qu' + str(counter)]:
-                user_pairs_set = set(request.POST['qu' + str(counter)].split(', '))
+            if request.POST.get('q' + str(counter), False):
+                user_pairs_set = set(request.POST.get('q' + str(counter), False).split(', '))
                 correct_pairs_set = question.comparison_question.correct_sequence.split(', ')
                 if not user_pairs_set.symmetric_difference(correct_pairs_set):
                     correct_qu_amount += 1
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.comparison_question.correct_sequence, request.POST['qu' + str(counter)].split(', ')])
+                    variants.append([question.comparison_question.correct_sequence, request.POST.get('q' + str(counter), False).split(', ')])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:

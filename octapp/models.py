@@ -300,3 +300,11 @@ class Result(models.Model):
     passing_date = models.DateTimeField('Дата прохождения теста', default=timezone.now, editable=False)
     # Процент неправильных можно посчитать — [100-correct_answers_percentage], поэтому его можно не хранить
     correct_answers_percentage = models.IntegerField('Процент правильных ответов в целочисленном формате', null=False, blank=False)
+
+    def __str__(self):
+        return self.user.username + ' прошел тест ' + self.test.name + ' с оценкой ' + str(self.grade_based_on_scale)
+
+    class Meta:
+        ordering = ['user', 'test']
+        verbose_name = 'Результат прохождения теста'
+        verbose_name_plural = 'Результаты прохождения тестов'
