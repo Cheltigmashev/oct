@@ -941,14 +941,14 @@ def test_passing_results(request, pk):
                         variants.append([question.closed_question.correct_option_numbers[0], None])
             else:
                 if request.POST.get('q' + str(counter), False):
-                    user_options_set = set(request.POST.get('q' + str(counter), False).split(', '))
-                    correct_options_set = set(question.closed_question.correct_option_numbers.split(', '))
+                    user_options_set = set(re.findall(r'\d+', request.POST.get('q' + str(counter), False)))
+                    correct_options_set = set(re.findall(r'\d+', question.closed_question.correct_option_numbers))
                     if not user_options_set.symmetric_difference(correct_options_set):
                         correct_qu_amount += 1
                     else:
                         wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.closed_question.correct_option_numbers[0], user_options_set])
+                        variants.append([question.closed_question.correct_option_numbers[0], request.POST.get('q' + str(counter), False)])
                 else:
                     wrong_qu_amount += 1
                     if test.show_answers:

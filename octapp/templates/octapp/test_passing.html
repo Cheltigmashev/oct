@@ -23,7 +23,7 @@
 
     {% if test.time_restricting %}
         <div class="hidden_form_element" id="timer_block"><span>У вас<br>осталось</span><br><span id="timer_span">{{ test.time_restricting }}</span> мин.
-        <br><input class="form-control" min="0" type="text" value="{{ test.time_restricting }}" name="left_time" id="timer_input">
+            <br><input class="form-control" min="0" type="text" value="{{ test.time_restricting }}" name="left_time" id="timer_input">
         </div>
         <script src="{% static 'octapp/js/test_passing_timing.js' %}"></script>
     {% endif %}
@@ -65,7 +65,7 @@
 
         {% elif qu_of_test.type_of_question == 'SqncQ' %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (последовательность)</p>
-        {{ qu_of_test.sequence_question.question_content|safe }}
+        {{ qu_of_test.sequence_question.sequence_question_content|safe }}
             <div class="sequence_elements_div sortContainer" title="Упорядочите (отсортируйте) элементы последовательности, перетаскивая их либо напрямую указывая их порядок в поле ниже.">
             {% for sequence_element in options_or_elements %}
                 <div class="option_or_element" id="{{ sequence_element.element_index_number }}">

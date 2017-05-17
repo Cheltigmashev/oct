@@ -17,13 +17,14 @@
     border: 2px solid orange
     border-radius: 10px
   .hidden_form_element
+    visibility: hidden
     position: fixed
-    top: 105px
-    left: 5px
+    // top: 105px
+    // left: 5px
   #timer_input
     width: 50px
   #fail_reason
-    top: 195px
+    // top: 195px
     width: 95px
   .question:hover
     transition: all ease 0.5s
@@ -49,12 +50,13 @@
       border-bottom: 1px dashed gray
     .sequence_elements_div ~ input[type="text"]
       width: 100%
-    .closed_question_options_div, .sequence_elements_div, .comparing_elements_div
+    .sequence_elements_div, .comparing_elements_div
       padding: 0
     .closed_question_options_div
       padding: 0
       .option_or_element
         padding: 0
+        margin: 0
     .option_or_element
       white-space: nowrap
       padding: 3px
@@ -69,10 +71,9 @@
     input[type="text"]
       width: auto
       display: inline-block
-    input[type="radio"]
+    input[type="radio"], input[type="checkbox"]
       display: none
-
-    input[type="radio"] + label::before
+    input[type="radio"] + label::before, input[type="checkbox"] + label::before
       content: "\2713"
       font-size: 30px
       transition: all ease 0.5s
@@ -84,12 +85,12 @@
       opacity: 0
       height: 22px
       width: 22px
-    input[type="radio"]:checked + label::before
+    input[type="radio"]:checked + label::before, input[type="checkbox"]:checked + label::before
       transition: all ease 0.5s
       opacity: 1
-    input[type="radio"]:checked + label
+    input[type="radio"]:checked + label, input[type="checkbox"]:checked + label
       transition: all ease 0.4s
       font-weight: bold
       background-color: yellow
-    input[type="radio"]:not(:checked) + label:hover
+    input[type="radio"]:not(:checked) + label:hover, input[type="checkbox"]:not(:checked) + label:hover
       background-color: lighten(gray, 40%)
