@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block before_pagination %}
-<h3 class="text-center">Категории по убыванию количества тестов</h3>
+<h3 class="text-center">КАТЕГОРИИ ПО УБЫВАНИЮ КОЛИЧЕСТВА ТЕСТОВ</h3>
     {% for category, count_of_published_tests in some_page %}
         <a href="{% url 'tests' %}?selected_category={{ category.pk }}" class="tag_or_category">
             <span class="badge">

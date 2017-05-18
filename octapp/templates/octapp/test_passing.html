@@ -10,14 +10,14 @@
 </style>
 
 {% block content %}
-<h2>ПРОХОЖДЕНИЕ ТЕСТА <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}"><q>{{ test|upper }}</q></a></h2>
+<h2>ПРОХОЖДЕНИЕ ТЕСТА <a href="{% url 'test_detail' pk=test.pk %}"><q class="some_text_link">{{ test|upper }}</q></a></h2>
 
     {% if test.controlling %}
 <div class="passing_area">
     <script src="{% static 'octapp/js/test_controlling.js' %}"></script>
     <ul><p>NB! Для теста задано использование контроля прохождения, поэтому:</p>
         <li><p>перемещение курсора мыши за пределы области с вопросами приведет к немедленному и принудительному завершению прохождения;</p>
-        <li><p>нажатие правой клавиши мыши либо клавиш ctrl, windows, tab, alt приведет к немедленному и принудительному завершению прохождения;</p>
+        <li><p>нажатие правой клавиши мыши либо клавиш ctrl, windows, tab приведет к немедленному и принудительному завершению прохождения;</p>
     </ul>
     {% endif %}
 
@@ -25,9 +25,9 @@
     {% csrf_token %}
 
     {% if test.time_restricting %}
-        <p>NB! Время прохождения теста ограничено и указано слева. Если вы не успеете пройти тест за отведенное время, то прохождение будет завершено принудительно.</p>
-        <div id="timer_block"><span>Осталось<br>времени:</span><br><span id="timer_span">{{ test.time_restricting }}</span> мин.
-            <br><input class="form-control hidden_form_element" min="0" type="text" value="{{ test.time_restricting }}" name="left_time" id="timer_input">
+        <p>NB! Время прохождения теста ограничено и указано слева либо ниже. Если вы не успеете пройти тест за отведенное время, то прохождение будет завершено принудительно.</p>
+        <div id="timer_block"><span>Осталось времени: </span><span id="timer_span">{{ test.time_restricting }}</span> мин.
+            <br><input class="form-control hidden_form_element" id="timer_input" min="0" type="text" value="{{ test.time_restricting }}" name="left_time">
         </div>
         <script src="{% static 'octapp/js/test_passing_timing.js' %}"></script>
     {% endif %}
@@ -59,7 +59,7 @@
                     </label>
                 </div>
             {% empty %}
-                <p>Вы еще не добавили вариантов ответа на этот вопрос.</p>
+                <p>Автор теста не добавил вариантов ответа на этот вопрос.</p>
             {% endfor %}
             </div>
             <!-- Поскольку через POST отправляется лишь один из отмеченных для вопроса input'ов, с помощью js (test_passing.js)
@@ -73,7 +73,8 @@
             {% with qu_of_test.open_question.correct_option|length|add:"4" as correct_answer_length %}
             {% spaceless %}
                 {{ qu_of_test.open_question.question_content_before_blank|linebreaksbr }}
-            <input type="text" name="q{{ qu_of_test.question_index_number }}" maxlength="120" class="form-control" size="{{ correct_answer_length }}">
+            <!-- Автодополнение вызывает событие mouseleave при наведении курсора на предлагаемые варианты, поэтому нужно его отключить -->
+            <input autocomplete="off" type="text" name="q{{ qu_of_test.question_index_number }}" maxlength="120" class="form-control" size="{{ correct_answer_length }}">
             {% endspaceless %}
             {% endwith %}
             {{ qu_of_test.open_question.question_content_after_blank|linebreaksbr }}
@@ -88,7 +89,7 @@
                     <span class="option_or_element_content_span">{{ sequence_element.element_content|safe }}</span>
                 </div>
             {% empty %}
-                <p>Автор теста не добавил вариантов ответа на этот вопрос.</p>
+                <p>Автор теста не добавил вариантов ответа (элементов последовательности) на этот вопрос.</p>
             {% endfor %}
             </div>
             Можете указать непосредственный порядок элементов вручную: 

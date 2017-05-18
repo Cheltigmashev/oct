@@ -19,17 +19,17 @@
   .hidden_form_element
     visibility: hidden
     position: fixed
-    // top: 105px
-    // left: 5px
-  #timer_input
-    width: 50px
   #timer_block
     position: fixed
-    top: 105px
-    left: 5px
-  #fail_reason
-    // top: 195px
-    width: 95px
+    bottom: 35px
+    left: 2px
+    // Чтобы слова и span'ы в таймере переносились и не перекрывали вопросы
+    width: 62px
+    z-index: 30
+    background-color: yellow
+    padding: 2px
+    border: 1px solid gray
+    border-radius: 5px
   .question:hover
     transition: all ease 0.5s
     box-shadow: 1px 1px 1px 1px darkgray
@@ -62,7 +62,6 @@
         padding: 0
         margin: 0
     .option_or_element
-      white-space: nowrap
       padding: 3px
       margin: 5px 0
     label
@@ -98,3 +97,21 @@
       background-color: yellow
     input[type="radio"]:not(:checked) + label:hover, input[type="checkbox"]:not(:checked) + label:hover
       background-color: lighten(gray, 40%)
+
+// На этом диапазоне header статичен, поэтому таймер также делаем нефиксированным
+@media(min-width:0px) and (max-width:991px)
+  .content
+    #timer_block
+      position: static
+      top: 105px
+      left: 5px
+      // Чтобы слова и span'ы в таймере переносились и не перекрывали вопросы
+      width: auto
+
+// На узких экранах содержимое-подпись не помещается полностью в кнопке
+@media(min-width:0px) and (max-width:767px)
+  .content
+    form
+      input[type="submit"]
+        font-size: 14px
+        

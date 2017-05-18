@@ -28,8 +28,13 @@ $(document).ready(() => {
   $('.closed_question_multiple').each(function(i) {
     $(this).change( function() {
       let selected = '';
-      $(this).children().children('input:checked').each(function(i) {
-        selected += ($(this).attr('value') + '|');
+      length = $(this).children().children('input:checked').length;
+      $(this).children().children('input:checked').each(function(j) {
+        if (j === length - 1) {
+          selected += ($(this).attr('value'));
+        } else {
+          selected += ($(this).attr('value') + ', ');
+        }
       });
       $(this).next().attr('value', selected);
     });

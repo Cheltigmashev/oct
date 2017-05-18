@@ -8,7 +8,7 @@
 {% block content %}
 <div class="row flex">
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href="{% url 'categories' %}"><h2>КАТЕГОРИИ ТЕСТОВ</h2></a>
+        <a href="{% url 'categories' %}"><h2 class="some_text_link">КАТЕГОРИИ ТЕСТОВ</h2></a>
         <div>
             <a href="{% url 'tests' %}?selected_category=unconfirmed" class="tag_or_category"><span class="badge">Тесты с неподтвержденными категориями ({{ count_of_published_tests_with_unconf_cat }} шт.)</span></a>
             <a href="{% url 'tests' %}?selected_category=null" class="tag_or_category"><span class="badge">Тесты без категории ({{ count_of_tests_without_category }} шт.)</span></a>            
@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href="{% url 'tags' %}"><h2>ТЕГИ</h2></a>
+        <a href="{% url 'tags' %}"><h2 class="some_text_link">ТЕГИ</h2></a>
         <div>
             <a href="{% url 'tests' %}?selected_tag=null" class="tag_or_category"><span class="badge">Тесты без тегов ({{ count_of_tests_without_tags }} шт.)</span></a>            
     {% for tag, count_of_published_tests in showing_tags_and_count_of_published_tests %}
@@ -40,7 +40,7 @@
     </div>
 
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href="{% url 'tests' %}?sorting=published_date_desc"><h2>НОВЫЕ ТЕСТЫ</h2></a>
+        <a href="{% url 'tests' %}?sorting=published_date_desc"><h2 class="some_text_link">НОВЫЕ ТЕСТЫ</h2></a>
     {% if left_number_of_new_tests_list and right_number_of_new_tests_list %}
         <div class="table">
             <div class="table_row">
@@ -91,7 +91,7 @@
     {% endif %}
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12 col-lg-3 tests_list">
-        <a href="{% url 'tests' %}?sorting=rating_desc"><h2>РЕЙТИНГОВЫЕ ТЕСТЫ</h2></a>
+        <a href="{% url 'tests' %}?sorting=rating_desc"><h2 class="some_text_link">РЕЙТИНГОВЫЕ ТЕСТЫ</h2></a>
     {% if left_number_of_rating_tests and right_number_of_rating_tests %}
         <div class="table">
             <div class="table_row">

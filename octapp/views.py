@@ -917,12 +917,13 @@ def test_passing_results(request, pk):
     correct_qu_amount = 0
     wrong_qu_amount = 0
     counter = 1
-    comparison_pattern = r'((\d+-\d+)(, )?)+'
+    comparison_pattern = r'(\d+-\d+)+'
     if test.show_answers:
         # Список правильных вариантов и выбранных пользователем вариантов
-        variants = []
+        questions_and_options = []
     for question in questions:
         if question.type_of_question == 'ClsdQ':
+            options_or_elements = question.closed_question.closed_question_options.order_by('option_number')
             # Вопрос закрытого типа с 1 вариантом ответа
             if question.closed_question.only_one_right:
                 if request.POST.get('q' + str(question.question_index_number), False):
@@ -933,26 +934,25 @@ def test_passing_results(request, pk):
                     else:
                         wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.closed_question.correct_option_numbers[0], user_answer])
+                        questions_and_options.append([question, options_or_elements, question.closed_question.correct_option_numbers[0], user_answer])
                 else:
                     # Пользователь не ответил на вопрос
                     wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.closed_question.correct_option_numbers[0], None])
+                        questions_and_options.append([question, options_or_elements, question.closed_question.correct_option_numbers[0], None])
             else:
                 if request.POST.get('q' + str(question.question_index_number), False):
-                    user_options_set = set(re.findall(r'\d+', request.POST.get('q' + str(question.question_index_number), False)))
-                    correct_options_set = set(re.findall(r'\d+', question.closed_question.correct_option_numbers))
-                    if not user_options_set.symmetric_difference(correct_options_set):
+                    generated_user_variants_array = request.POST.get('q' + str(question.question_index_number))
+                    if question.closed_question.correct_option_numbers == generated_user_variants_array:
                         correct_qu_amount += 1
                     else:
                         wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.closed_question.correct_option_numbers[0], request.POST.get('q' + str(question.question_index_number), False)])
+                        questions_and_options.append([question, options_or_elements, question.closed_question.correct_option_numbers, generated_user_variants_array])
                 else:
                     wrong_qu_amount += 1
                     if test.show_answers:
-                        variants.append([question.closed_question.correct_option_numbers[0], None])
+                        questions_and_options.append([question, options_or_elements, question.closed_question.correct_option_numbers, None])
 
         elif question.type_of_question == 'OpndQ':
             if request.POST.get('q' + str(question.question_index_number), False):
@@ -961,28 +961,32 @@ def test_passing_results(request, pk):
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.open_question.correct_option.lower().strip(' '), request.POST[
+                    questions_and_options.append([question, None, question.open_question.correct_option.lower().strip(' '), request.POST[
                             'q' + str(question.question_index_number)].lower().strip(' ')])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.open_question.correct_option.lower().strip(' '), None])
+                    questions_and_options.append([question, None, question.open_question.correct_option.lower().strip(' '), None])
 
         elif question.type_of_question == 'SqncQ':
+            options_or_elements = question.sequence_question.sequence_elements.order_by('element_index_number')
             if request.POST.get('q' + str(question.question_index_number), False):
-                if question.sequence_question.correct_sequence == request.POST.get('q' + str(question.question_index_number), False):
+                if question.sequence_question.correct_sequence == request.POST.get('q' + str(question.question_index_number)):
                     correct_qu_amount += 1
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.sequence_question.correct_sequence, request.POST.get('q' + str(question.question_index_number), False)])
+                    questions_and_options.append([question, options_or_elements, question.sequence_question.correct_sequence, request.POST.get('q' + str(question.question_index_number))])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.sequence_question.correct_sequence, None])
+                    questions_and_options.append([question, options_or_elements, question.sequence_question.correct_sequence, None])
         else:
+            left_row_elements = question.comparison_question.left_row_elements.order_by('element_index_number')
+            right_row_elements = question.comparison_question.right_row_elements.order_by('element_index_number')
+            options_or_elements = [left_row_elements, right_row_elements]
             if request.POST.get('q' + str(question.question_index_number), False):
-                user_pairs_str = request.POST.get('q' + str(question.question_index_number), False)
+                user_pairs_str = request.POST.get('q' + str(question.question_index_number))
                 user_pairs_list = re.findall(comparison_pattern, user_pairs_str)
                 user_pairs_set = set(user_pairs_list)
                 correct_pairs_str = question.comparison_question.correct_sequence
@@ -993,11 +997,11 @@ def test_passing_results(request, pk):
                 else:
                     wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.comparison_question.correct_sequence, request.POST.get('q' + str(question.question_index_number), False).split(', ')])
+                    questions_and_options.append([question, options_or_elements, correct_pairs_str, user_pairs_str])
             else:
                 wrong_qu_amount += 1
                 if test.show_answers:
-                    variants.append([question.comparison_question.correct_sequence, None])
+                    questions_and_options.append([question, options_or_elements, question.comparison_question.correct_sequence, None])
 
         correct_answers_percentage =  correct_qu_amount / questions.count() * 100
         steps_of_scale = re.findall(r'\d+', test.result_scale.divisions_layout)
@@ -1014,7 +1018,7 @@ def test_passing_results(request, pk):
                 'correct_answers_percentage': correct_answers_percentage,
                 'grade_based_on_scale': grade_based_on_scale}
     if test.show_answers:
-        context['variants'] = variants
+        context['questions_and_options'] = questions_and_options
 
     if request.user.is_authenticated:
         # Сохраняем результат

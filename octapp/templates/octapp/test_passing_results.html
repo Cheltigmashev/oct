@@ -2,11 +2,12 @@
 {% load staticfiles %}
 
 {% block page_style %}
+<link rel="stylesheet" href="{% static 'octapp/css/questions_of_test.css' %}">
 {% endblock %}
 
 
 {% block content %}
-<h2>РЕЗУЛЬТАТЫ ПРОХОЖДЕНИЯ ТЕСТА <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}"><q>{{ test|upper }}</q></a></h2>
+<h2>РЕЗУЛЬТАТЫ ПРОХОЖДЕНИЯ ТЕСТА <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}">«{{ test|upper }}»</a></h2>
 
 <p>Правильных ответов: {{ correct_qu_amount }}</p>
 <p>Неправильных ответов: {{ wrong_qu_amount }}</p>
@@ -14,6 +15,103 @@
 <p>Оценка по шкале теста: {{ grade_based_on_scale }}</p>
 
 {% if test.show_answers %}
+    {% for qu_of_test, options_or_elements, correct_option, user_answer in questions_and_options %}
+<div class="question">
+        {% if qu_of_test.type_of_question == 'ClsdQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (закрытого типа), правильные варианты: <mark>{{ qu_of_test.closed_question.correct_option_numbers }}</mark></p>
+        {{ qu_of_test.closed_question.question_content|safe }}
+    <div class="closed_question_options_div">
+            {% for closed_question_option in options_or_elements %}
+        <div class="option_or_element">
+            <span class="option_or_element_number_span">{{ closed_question_option.option_number }}. </span>
+            <span class="option_or_element_content_span">{{ closed_question_option.content|safe }}</span>
+        </div>
+            {% empty %}
+        <p>Вы еще не добавили вариантов ответа на этот вопрос.</p>
+            {% endfor %}
+
+        <hr style="margin: 8px 0">
+            {% if user_answer == correct_option %}<p>Вы дали <mark>верный</mark> ответ.</p>
+            {% elif not user_answer %}<p>Вы <mark>не ответили</mark> на этот вопрос.</p>
+            {% else %}<p>Вы дали <mark>неверный</mark> ответ — {{ user_answer }}</p>
+            {% endif %}
+    </div>
+        {% endif %}
+
+        {% if qu_of_test.type_of_question == 'OpndQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (открытого типа), правильный ответ: <mark>{{ qu_of_test.open_question.correct_option }}</mark></p>
+            {% spaceless %}
+        {{ qu_of_test.open_question.question_content_before_blank|linebreaksbr }}
+    <mark>__ПРОПУСК__</mark>
+        {{ qu_of_test.open_question.question_content_after_blank|linebreaksbr }}
+            {% endspaceless %}
+    
+    <hr style="margin: 8px 0">
+            {% if user_answer == correct_option %}<p>Вы дали <mark>верный</mark> ответ.</p>
+            {% elif not user_answer %}<p>Вы <mark>не ответили</mark> на этот вопрос.</p>
+            {% else %}<p>Вы дали <mark>неверный</mark> ответ — {{ user_answer }}</p>
+            {% endif %}            
+        {% endif %}
+
+        {% if qu_of_test.type_of_question == 'SqncQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (последовательность), правильная последовательность: <mark>{{ qu_of_test.sequence_question.correct_sequence }}</mark></p>
+        {{ qu_of_test.sequence_question.sequence_question_content|safe }}
+    <div class="sequence_elements_div">
+        {% for sequence_element in options_or_elements %}
+        <div class="option_or_element inline_block">
+            <span class="option_or_element_number_span">{{ sequence_element.element_index_number }}. </span>
+            <span class="option_or_element_content_span">{{ sequence_element.element_content|safe }}</span>
+        </div>
+            {% empty %}
+        <p>Вы еще не добавили элементы последовательности</p>
+            {% endfor %}
+
+        <hr style="margin: 8px 0">
+            {% if user_answer == correct_option %}<p>Вы дали <mark>верный</mark> ответ.</p>
+            {% elif not user_answer %}<p>Вы <mark>не ответили</mark> на этот вопрос.</p>
+            {% else %}<p>Вы дали <mark>неверный</mark> ответ — {{ user_answer }}</p>
+            {% endif %}            
+    </div>
+        {% endif %}
+
+        {% if qu_of_test.type_of_question == 'CmprsnQ' %}
+    <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление), правильные пары элементов левого и правого столбцов (рядов) сопоставления: <mark>{{ correct_option }}</mark></p>
+        {{ qu_of_test.comparison_question.comparison_question_content|safe }}
+    <div class="comparing_elements_div">
+        <div class="row inline_block">
+            {% for left_row_element in options_or_elements|first %}
+            <div class="option_or_element">
+                <span class="option_or_element_number_span">{{ left_row_element.element_index_number }}. </span>
+                <span class="option_or_element_content_span">{{ left_row_element.element_content|safe }}</span>
+            </div>
+            {% empty %}
+                    <span>Вы еще не добавили элементы <mark>левого ряда</mark> сопоставления</span>
+            {% endfor %}
+        </div>
+
+        <div class="row inline_block">
+            {% for right_row_element in options_or_elements|last %}
+            <div class="option_or_element">
+                <span class="option_or_element_number_span">{{ right_row_element.element_index_number }}. </span>
+                <span class="option_or_element_content_span">{{ right_row_element.element_content|safe }}</span>
+            </div>
+            {% empty %}
+                    <span>Вы еще не добавили элементы <mark>правого ряда</mark> сопоставления</span>
+            {% endfor %}
+        </div>
+
+        <hr style="margin: 8px 0">
+            {% if user_answer == correct_option %}<p>Вы дали <mark>верный</mark> ответ.</p>
+            {% elif not user_answer %}<p>Вы <mark>не ответили</mark> на этот вопрос.</p>
+            {% else %}<p>Вы дали <mark>неверный</mark> ответ — {{ user_answer }}</p>
+            {% endif %}        
+    </div>
+        {% endif %}
+</div>
+    {% endfor %}
+
+{% else %}
+<p>Для данного теста отключен показ ответов после прохождения.</p>
 {% endif %}
 
 {% endblock %}

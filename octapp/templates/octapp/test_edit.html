@@ -8,7 +8,7 @@
 {% block content %}
 
 {% if test %}
-<h2>РЕДАКТИРОВАНИЕ ТЕСТА <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}"><q>{{ test|upper }}</q></a></h2>
+<h2>РЕДАКТИРОВАНИЕ ТЕСТА <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}">«{{ test|upper }}»</a></h2>
 {% else %}
 <h2>ДОБАВЛЕНИЕ НОВОГО ТЕСТА</h2>
 {% endif %}

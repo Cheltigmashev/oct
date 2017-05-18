@@ -9,8 +9,8 @@ $(document).ready(() => {
       document.getElementById('answers_form').submit();
     });
   $('body').keydown((e) => {
-      if (e.keyCode === 17 || e.keyCode === 91 || e.keyCode === 9 || e.keyCode === 18) {
-          alert('Нажатие клавиш ctrl, windows, tab, alt заблокировано контролем прохождения, прохождение теста будет принудительно завершено.');
+      if (e.keyCode === 17 || e.keyCode === 91 || e.keyCode === 9) {
+          alert('Нажатие клавиш ctrl, windows, tab заблокировано контролем прохождения, прохождение теста будет принудительно завершено.');
           document.getElementById('answers_form').submit();
         }
     });
