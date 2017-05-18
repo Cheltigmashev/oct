@@ -20,7 +20,6 @@
 {% block page_style %}
 {% endblock %}
         
-
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -117,8 +116,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- If user is admin - администрирование, if moderator - модерирование -->
-                <div class="admin_moder_button_container"><a href="#" class="btn btn-default btn-sm">Модерирование</a></div>
+                <div class="admin_moder_button_container"><a href="#" class="btn btn-default btn-sm">Все результаты</a></div>
 {% else %}
                 <div class="authorization_div">
                     <form name="login_form" method="POST" action="{% url 'auth_login' %}">

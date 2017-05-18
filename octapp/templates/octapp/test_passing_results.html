@@ -11,7 +11,7 @@
 
 <p>Правильных ответов: <mark>{{ correct_qu_amount }}</mark></p>
 <p>Неправильных ответов: <mark>{{ wrong_qu_amount }}</mark></p>
-<p>Процент правильных: <mark>{{ correct_answers_percentage|floatformat:2 }}</mark>%</p>
+<p>Процент правильных: <mark>{{ correct_answers_percentage|floatformat:2 }}%</mark></p>
 <p>Оценка по шкале теста: <mark>{{ grade_based_on_scale }}</mark></p>
 
 {% if test.show_answers %}

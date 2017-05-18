@@ -2,6 +2,7 @@ $(document).ready(() => {
   $('.sortContainer').each(function(i) {
     $(this).sortable({
       placeholder: 'placeholder_for_sorting',
+      forcePlaceholderSize: true,
       update: function(event, ui) {
         const order = $(this).sortable("toArray");
         let orderStr = '';

@@ -33,6 +33,5 @@ urlpatterns = [
     #url(r'^categories_confirming/(?P<pk>\d+)/publish/$', permission_required("octapp.can_confirm")
     # (views.categories_confirming, name='categories_confirming')),
 
-    #url(r'^test/(?P<pk>\d+)/comment/$', views.add_comment_to_test, name='add_comment_to_test'),
-    #url(r'^comment/(?P<pk>\d+)/remove/$', views.comment_remove, name='comment_remove'),
+    url(r'^test/(?P<pk>\d+)/new_comment/$', views.comment_new, name='comment_new'),
 ]

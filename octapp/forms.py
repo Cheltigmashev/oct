@@ -217,3 +217,8 @@ class ComparisonQuestionElementForm(forms.ModelForm):
         widgets = {
             'element_index_number': NumberInput(attrs={'class': 'form-control', 'min': 1}),
         }
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content',)

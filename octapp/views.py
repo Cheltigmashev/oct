@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm, ClosedQuestionOptionForm, SequenceQuestionElementForm, ComparisonQuestionElementForm
+from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm, ClosedQuestionOptionForm, SequenceQuestionElementForm, ComparisonQuestionElementForm, CommentForm
 from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest, ClosedQuestionOption, SequenceQuestionElement, Result
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -301,6 +301,7 @@ def test_new(request):
 
 def test_detail(request, pk):
     test = get_object_or_404(Test, pk=pk)
+    comment_form = CommentForm()
     if request.user == test.author:
         is_author = True
     else:
@@ -313,31 +314,27 @@ def test_detail(request, pk):
     else:
         if not is_author:
             return redirect('tests_lists')
+    context = { 'test': test }
     if not request.user.is_authenticated:
         can_pass = True if not test.only_registered_can_pass else False
-        return render(request, 'octapp/test_detail.html', {'test': test, 'can_pass': can_pass })
+        context['can_pass'] = can_pass
+        return render(request, 'octapp/test_detail.html', context)
     else:
+        context['comment_form'] = comment_form
         already_passed = Result.objects.filter(user=request.user, test=test).exists()
         if test.single_passing:
-            # Т.е. если еще не прошел и тест готов для прохождения, то можешь пройти
+            # Т.е. если пользователь еще не прошел и тест готов для прохождения, то можно пройти
             can_pass = not already_passed and test.ready_for_passing
         else:
             can_pass = test.ready_for_passing
+        context.update({'is_author': is_author,
+            'already_passed': already_passed, 'can_pass': can_pass})
         try:
-            rate_of_current_user = TestRate.objects.get(test=test, reviewer=request.user)
-            return render(request, 'octapp/test_detail.html',
-            {'test': test,
-            'is_author': is_author,
-            'rate_of_current_user': rate_of_current_user,
-            'already_passed': already_passed,
-            'can_pass': can_pass })
+            context['rate_of_current_user'] = TestRate.objects.get(test=test, reviewer=request.user)
+            return render(request, 'octapp/test_detail.html', context)
         # Пользователь еще не ставил оценку данному тесту
         except TestRate.DoesNotExist:
-            return render(request, 'octapp/test_detail.html',
-            {'test': test,
-            'is_author': is_author,
-            'already_passed': already_passed,
-            'can_pass': can_pass })
+            return render(request, 'octapp/test_detail.html', context)
 
 @login_required
 def test_edit(request, pk):
@@ -880,11 +877,13 @@ def review(request, test_id, user_rate):
         return redirect('user_tests')
 
 @login_required
-def comment_remove(request, pk):
-    comment = get_object_or_404(Comment, pk=pk)
-    test_pk = comment.test.pk
-    comment.delete()
-    return redirect('test_detail', pk=test_pk)
+def comment_new(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    comment_form = CommentForm(request.POST)
+    if comment_form.is_valid():
+        Comment.objects.create(test=test, author=request.user,
+            content=comment_form.cleaned_data['content'], created_date=timezone.now())
+    return redirect('test_detail', pk=pk)
 
 def test_passing(request, pk):
     """
@@ -908,7 +907,7 @@ def test_passing(request, pk):
             left_elements = question.comparison_question.left_row_elements.order_by('element_index_number')
             right_elements = question.comparison_question.right_row_elements.order_by('element_index_number')
             questions_and_options.append([question, [left_elements, right_elements]])
-    context = {'test': test, 'questions_and_options': questions_and_options}
+    context = { 'test': test, 'questions_and_options': questions_and_options }
     return render(request, 'octapp/test_passing.html', context)
 
 def test_passing_results(request, pk):

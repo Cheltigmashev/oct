@@ -67,7 +67,7 @@ class Comment(models.Model):
         return 'Комментарий пользователя «' + self.author.username + '» к тесту ' + self.test.name
 
     class Meta:
-        ordering = ['created_date']
+        ordering = ['test', 'created_date']
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 

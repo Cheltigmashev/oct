@@ -1,13 +1,14 @@
 @charset "utf-8"
+// НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В custom_thumbnail.sass
+@import custom_thumbnail
+$comment_padding: 10px
 
 .content
-  mark
-    background-color: yellow
   p
     margin-bottom: 0
   hr
     margin: 8px 0
-  div.dropdown
+  div.dropdown:not(.new_comment_dropdown)
     display: inline-block
   div.test_block
     border: 2px ridge #aaaaaa
@@ -15,7 +16,7 @@
     padding: 10px 30px 10px 20px
     box-shadow: 4px 4px 6px 1px gray
     background-color: ivory
-  .dropdown-menu
+  .dropdown-menu:not(.new_comment_dropdown_menu)
     padding: 12px
     width: 418px
     .btn
@@ -46,7 +47,8 @@
     position: relative
     padding-left: 22px
     overflow: hidden
-    background-color: ivory
+    box-shadow: 1px 1px 1px 1px gray
+    background-color: yellow
     color: black
     span.bullet
       position: absolute
@@ -55,11 +57,47 @@
       font-size: 26px
   a.tag_or_category:hover .badge
     font-weight: bold
-    background-color: orange
+    background-color: lighten(yellow, 20%)
     transition: all ease 0.2s
-    transform: scale(1.1)
+    transform: scale(1.05)
+    box-shadow: 2px 2px 2px 2px gray
+  .new_comment_dropdown
+    .new_comment_dropdown_menu
+      top: -285px
+      width: 100%
+      text-align: center
+      padding: 4px 6px 3px 4px
+  .comment
+    margin: 10px 0
+    padding: 32px $comment_padding $comment_padding + 5px $comment_padding
+    position: relative
+    border: 1px solid gray
+    box-shadow: 2px 2px 2px 2px gray
+    border-radius: 10px
+    min-height: $full_width_of_resized_avatar + $comment_padding * 2
+    .author_username, .comment_date
+      position: absolute
+    .author_username
+      top: $comment_padding
+      left: $full_width_of_resized_avatar + 38px
+      font-weight: bold
+    .author_avatar
+      min-height: $full_width_of_resized_avatar
+      min-width: $full_width_of_resized_avatar
+      float: left
+      margin: -25px 8px 0 0
+    .comment_date
+      color: #555555
+      bottom: 0
+      right: 14px
+    .comment_content
+      padding: 0 4px 0 4px
 
 /*============    	АДАПТИВ    ===========*/
+
+@media(min-width:0px) and (max-width:410px)
+  .content .comment
+    padding-top: 50px
 
 @media(min-width:0px) and (max-width:767px)
   .test_description_element
@@ -70,7 +108,7 @@
       font-size: 20px
     h3
       font-size: 18px
-    .dropdown-menu
+    .dropdown-menu:not(.new_comment_dropdown_menu)
       width: 310px
       .btn
         width: 100%
