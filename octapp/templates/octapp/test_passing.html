@@ -10,7 +10,7 @@
 </style>
 
 {% block content %}
-<h2>ПРОХОЖДЕНИЕ ТЕСТА <a href="{% url 'test_detail' pk=test.pk %}"><q class="some_text_link">{{ test|upper }}</q></a></h2>
+<h2>ПРОХОЖДЕНИЕ ТЕСТА <a class="some_text_link" href="{% url 'test_detail' pk=test.pk %}">«{{ test|upper }}»</a></h2>
 
     {% if test.controlling %}
 <div class="passing_area">
