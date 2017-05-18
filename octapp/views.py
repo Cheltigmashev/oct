@@ -573,7 +573,7 @@ def new_question(request, test_id, type):
                 new_comparison_question_object.question_of_test = new_question_of_test
                 # Парсим контент вопроса
                 if comparison_question_form.cleaned_data['add_comp_elements']:
-                    comp_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЛЕВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>ЛЕВЫЙ_РЯД</p>)'
+                    comp_question_content_pattern = r'(<p>(?!(?:&nbsp;)|(?:СЛЕВА))[^ \t\r\n].*</p>)+(?=[ \r\n\t\s\w\b<>&;/]*<p>СЛЕВА</p>)'
                 else:
                     comp_question_content_pattern = r'<p>(?!&nbsp;)[^ \t\r\n].*</p>'
                 for content in re.findall(comp_question_content_pattern, comparison_question_form.cleaned_data['comparison_question_content']):
@@ -585,8 +585,8 @@ def new_question(request, test_id, type):
                 # Если вопрос добавляется вместе с элементами рядов
                 if comparison_question_form.cleaned_data['add_comp_elements']:
                     # Парсим элементы рядов
-                    new_left_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ЛЕВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ЛЕВЫЙ_РЯД</p>)(?=[ \r\n\t\s\w\b<>&;/]*<p>ПРАВЫЙ_РЯД</p>)'
-                    new_right_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:ПРАВЫЙ_РЯД))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>ПРАВЫЙ_РЯД</p>)'
+                    new_left_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:СЛЕВА))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>СЛЕВА</p>)(?=[ \r\n\t\s\w\b<>&;/]*<p>СПРАВА</p>)'
+                    new_right_elements_contents_pattern = r'(<p>(?!(?:&nbsp;)|(?:СПРАВА))[^ \t\r\n].*</p>)+(?![ \r\n\t\s\w\b<>&;/]*<p>СПРАВА</p>)'
                     # Списки с контентом для новых элементов
                     new_left_elements_contents = []
                     new_right_elements_contents = []
