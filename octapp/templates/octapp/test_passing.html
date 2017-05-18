@@ -93,7 +93,7 @@
             {% endfor %}
             </div>
             Можете указать непосредственный порядок элементов вручную: 
-            <input class="form-control" type="text" pattern="(?:\d+(?:,\s)?)+" placeholder="Допустимы цифры, запятые и пробел в формате 1, 2, 3" id="q{{ qu_of_test.question_index_number }}" name="q{{ qu_of_test.question_index_number }}">
+            <input autocomplete="off" class="form-control" type="text" pattern="(?:\d+(?:,\s)?)+" placeholder="Допустимы цифры, запятые и пробел в формате 1, 2, 3" id="q{{ qu_of_test.question_index_number }}" name="q{{ qu_of_test.question_index_number }}">
 
         {% else %}
             <p>Вопрос № {{ qu_of_test.question_index_number }} (сопоставление)</p>
@@ -121,7 +121,7 @@
             {% endfor %}
                 </div>
                 Можете указать непосредственный порядок элементов правого столбца вручную: 
-                <input class="form-control" type="text" pattern="(?:[0-9]*-[0-9]*(?:, )?)+" placeholder="Допустимы цифры, запятые и пробел в формате 1, 2, 3" id="q{{ qu_of_test.question_index_number }}" name="q{{ qu_of_test.question_index_number }}">
+                <input autocomplete="off" class="form-control" type="text" pattern="(?:[0-9]*-[0-9]*(?:, )?)+" placeholder="Допустимы цифры, запятые и пробел в формате 1, 2, 3" id="q{{ qu_of_test.question_index_number }}" name="q{{ qu_of_test.question_index_number }}">
             </div>
         {% endif %}
 
