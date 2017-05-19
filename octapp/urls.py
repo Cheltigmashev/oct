@@ -14,14 +14,14 @@ urlpatterns = [
     url(r'^test/(?P<pk>\d+)/remove/(?P<through_user_tests>(True)|(False))/$', views.test_remove, name='test_remove'),
     url(r'^tests/$', views.tests, name='tests'),
 
-    url(r'^test/(?P<test_id>\d+)/questions/$', views.questions_of_test, name='questions_of_test'),
-    url(r'^test/(?P<test_id>\d+)/new_question/(?P<type>(closed)|(open)|(sequence)|(comparison))/$', views.new_question, name='new_question'),
-    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/edit/$', views.question_edit, name='question_edit'),
-    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/remove/$', views.question_remove, name='question_remove'),
+    url(r'^test/(?P<test_id>\d+)/questions/(\?page=\d+)?$', views.questions_of_test, name='questions_of_test'),
+    url(r'^test/(?P<test_id>\d+)/new_question/(?P<type>(closed)|(open)|(sequence)|(comparison))/(\?page=\d+)?$', views.new_question, name='new_question'),
+    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/edit/(\?page=\d+)?$', views.question_edit, name='question_edit'),
+    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/remove/(\?page=\d+)?$', views.question_remove, name='question_remove'),
 
-    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/add_options_or_elements/(?P<row>(left)|(right)|(none))$',
+    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/add_options_or_elements/(?P<row>(left)|(right)|(none))/(\?page=\d+)?$',
         views.new_options_or_elements, name='new_options_or_elements'),
-    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/options_or_elements_of_question_remove_all/$',
+    url(r'^test/(?P<test_id>\d+)/question/(?P<question_of_test_id>\d+)/options_or_elements_of_question_remove_all/(\?page=\d+)?$',
         views.options_or_elements_of_question_remove_all, name='options_or_elements_of_question_remove_all'),
 
     url(r'^test/(?P<pk>\d+)/passing/$', views.test_passing, name='test_passing'),
@@ -32,6 +32,6 @@ urlpatterns = [
 
     #url(r'^categories_confirming/(?P<pk>\d+)/publish/$', permission_required("octapp.can_confirm")
     # (views.categories_confirming, name='categories_confirming')),
-
     url(r'^test/(?P<pk>\d+)/new_comment/$', views.comment_new, name='comment_new'),
+    url(r'^all_results/$', views.all_results, name='all_results'),
 ]

@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm, ClosedQuestionOptionForm, SequenceQuestionElementForm, ComparisonQuestionElementForm, CommentForm
 from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest, ClosedQuestionOption, SequenceQuestionElement, Result
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import QueryDict
+from django.http import QueryDict, HttpResponseRedirect
 import re
 
 # Модель пользователя
@@ -84,7 +85,11 @@ def get_pagination(page, some_page, on_one_page, max_pages_before_or_after_curre
     try:
         some_page = paginator.page(page)
     except PageNotAnInteger:
-        some_page = paginator.page(1)
+        # Попытаться получить предыдущую относительно данной страницу
+        try:
+            some_page = paginator.page(page - 1)
+        except PageNotAnInteger:
+            some_page = paginator.page(1)
     except EmptyPage:
         some_page = paginator.page(paginator.num_pages)
     # Все страницы меньше текущей будут отображены
@@ -193,10 +198,6 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests, on_one_page, m
     context.update({'categories_for_filtering_of_tests': categories_for_filtering_of_tests, 'tags_for_filtering_of_tests': tags_for_filtering_of_tests})
 
     q = QueryDict(mutable=True)
-    # В навигационных ссылках добавляется &page=X, поэтому если в запросе уже есть page,
-    # добавленный после перехода по страницам, то нужно его удалить
-    if 'page' in q_dict:
-        q_dict.pop('page')
     q.update(q_dict)
     context['HTTPparameters'] = '?' + q.urlencode()
     return context
@@ -226,7 +227,7 @@ def tests(request):
     tags = Tag.objects.order_by('name')    
     tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
     # 25, 5 prod
-    context = get_filtered_and_sorted_tests_with_pagination(request, tests, 15, 5)
+    context = get_filtered_and_sorted_tests_with_pagination(request, tests, 25, 5)
     context['categories_for_filtering_of_tests'] = categories_with_count_of_published_tests
     context['tags_for_filtering_of_tests'] = tags_with_count_of_published_tests
     return render(request, 'octapp/tests.html', context)
@@ -443,8 +444,8 @@ def get_questions_of_test_context(test_id, page):
                'open_question_form': open_question_form,
                'sequence_question_form': sequence_question_form,
                'comparison_question_form': comparison_question_form}
-    # 7, 4 prod
-    pag_context = get_pagination(page, questions_of_test_with_filled_forms, 7, 4)
+    # 5, 4 prod
+    pag_context = get_pagination(page, questions_of_test_with_filled_forms, 5, 4)
     context.update(pag_context)
     return context
 
@@ -456,6 +457,8 @@ def questions_of_test(request, test_id):
 
 @login_required
 def new_question(request, test_id, type):
+    page = request.POST['page']
+    page = int(page)
     test = get_object_or_404(Test, pk=test_id)
     index_number_of_new_test_question = test.questions_of_test.count() + 1
     question_content = ''
@@ -515,7 +518,9 @@ def new_question(request, test_id, type):
                 new_open_question_object = open_question_form.save(commit=False)
                 new_open_question_object.question_of_test = new_question_of_test
                 new_open_question_object.save()
-                return redirect('questions_of_test', test_id=test_id)
+                return HttpResponseRedirect('/my_long_url/%s/?q=something', x)
+                return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
+                # return redirect('questions_of_test', test_id=test_id)
 
         if type == 'sequence':
             sequence_question_form = SequenceQuestionForm(request.POST)
@@ -608,7 +613,7 @@ def new_question(request, test_id, type):
                         for content in options_or_elements_content:
                             single_option_or_element_content += content
                         new_comparison_question_object.left_row_elements.create(question=new_comparison_question_object,
-                                    element_index_number=1, element_content=single_option_or_element_content)
+                            element_index_number=1, element_content=single_option_or_element_content)
 
                     # Добавляем новые элементы правого ряда
                     if len(new_right_elements_contents) > 1:
@@ -623,9 +628,8 @@ def new_question(request, test_id, type):
                         for content in options_or_elements_content:
                             single_option_or_element_content += content
                         new_comparison_question_object.right_row_elements.create(question=new_comparison_question_object,
-                                    element_index_number=1, element_content=single_option_or_element_content)
-                    
-    return redirect('questions_of_test', test_id=test_id)
+                            element_index_number=1, element_content=single_option_or_element_content)
+    return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
 
 @login_required
 def question_edit(request, test_id, question_of_test_id):
@@ -659,12 +663,14 @@ def question_edit(request, test_id, question_of_test_id):
                 if len(re.findall(option_number_pattern, form.cleaned_data['correct_option_numbers'])) > 1:
                     certain_type_question_from_form.only_one_right = False
             certain_type_question_from_form.save()
-            return redirect('questions_of_test', test_id)
+            return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
     else:
         return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, page))
 
 @login_required
 def question_remove(request, test_id, question_of_test_id):
+    page = request.GET.get('page', '1')
+    page = int(page)
     test = get_object_or_404(Test, pk=test_id)
     question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
     # Коррекция порядковых номеров последующих вопросов
@@ -673,10 +679,13 @@ def question_remove(request, test_id, question_of_test_id):
         father_question.question_index_number -= 1
         father_question.save()
     question_of_test.delete()
-    return redirect('questions_of_test', test_id=test_id)
+    return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
+    # return redirect('questions_of_test', test_id=test_id)
 
 @login_required
 def new_options_or_elements(request, test_id, question_of_test_id, row):
+    page = request.GET.get('page', '1')
+    page = int(page)
     question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
     # Контент варианта ответа не должен начинаться с неразрывного HTML-пробела, что бывает, если вводить пустые параграфы, в целях того, чтобы избежать добавления «пустых» вариантов.
     # (?!&nbsp;) — негативная опережающая проверка
@@ -727,7 +736,8 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                 else:
                     ClosedQuestionOption.objects.create(question=question_of_test.closed_question,
                                 option_number=option_number, content=parsed_single_option_or_element_content)
-                return redirect('questions_of_test', test_id=test_id)
+                return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
+                # return redirect('questions_of_test', test_id=test_id)
 
         elif question_of_test.type_of_question == 'SqncQ':
             sequence_question_element_form = SequenceQuestionElementForm(request.POST)
@@ -765,7 +775,8 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                 else:
                     SequenceQuestionElement.objects.create(question=question_of_test.sequence_question,
                                 element_index_number=option_number, element_content=parsed_single_option_or_element_content)
-                return redirect('questions_of_test', test_id=test_id)
+                return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
+                # return redirect('questions_of_test', test_id=test_id)
 
         elif question_of_test.type_of_question == 'CmprsnQ':
             comparison_question_element_form = ComparisonQuestionElementForm(request.POST)
@@ -834,13 +845,17 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                                                                  element_index_number=option_number,
                                                                  element_content=parsed_single_option_or_element_content)
                     # question_of_test.comparison_question.save()
-                return redirect('questions_of_test', test_id=test_id)
+                return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
+                # return redirect('questions_of_test', test_id=test_id)
 
     # return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
-    return redirect('questions_of_test', test_id=test_id)
+    return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
+    # return redirect('questions_of_test', test_id=test_id)
 
 @login_required
 def options_or_elements_of_question_remove_all(request, test_id, question_of_test_id):
+    page = request.GET.get('page', '1')
+    page = int(page)
     question_of_test = get_object_or_404(QuestionOfTest, pk=question_of_test_id)
     if question_of_test.type_of_question == 'ClsdQ':
         question_of_test.closed_question.closed_question_options.all().delete()
@@ -848,7 +863,8 @@ def options_or_elements_of_question_remove_all(request, test_id, question_of_tes
         question_of_test.sequence_question.sequence_elements.all().delete()        
     if question_of_test.type_of_question == 'CmprsnQ':
         question_of_test.comparison_question.comparison_elements.all().delete()  
-    return redirect('questions_of_test', test_id=test_id)
+    return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
+    # return redirect('questions_of_test', test_id=test_id)
 
 @login_required
 def review(request, test_id, user_rate):
@@ -1025,5 +1041,54 @@ def test_passing_results(request, pk):
                                             grade_based_on_scale=grade_based_on_scale,
                                             passing_date=timezone.now(),
                                             correct_answers_percentage=correct_answers_percentage)
-
     return render(request, 'octapp/test_passing_results.html', context)
+
+def all_results(request):
+    results = Result.objects.all().order_by('-passing_date')
+    page = request.GET.get('page', '1')
+    page = int(page)
+    q_dict = request.GET.dict()
+    if request.GET.get('sorting', '') == 'username':
+        results = Result.objects.all().order_by('user__username', 'test__name')
+        
+        # results_and_usernames = []
+        # for result in results:
+        #     results_and_usernames.append([result, result.user.username])
+        # # Сортируем по алфавиту имен пользователей, соответствующих результатам прохождения
+        # results_and_usernames.sort(key=lambda i: i[1], reverse=False)
+        # # Извлекаем из двумерного массива только результаты
+        # sorted_results = []
+        # for result_and_username in results_and_usernames:
+        #     sorted_results.append(result_and_username[1])
+        # results = sorted_results
+
+        # Передаем тип сортировки в контекст, чтобы в шаблоне подставлять т`екущую сортировку в <select>
+        context['sorting'] = 'username'
+    elif request.GET.get('sorting', '') == 'passing_date':
+        results = results.order_by('-passing_date')
+        context['sorting'] = 'passing_date'
+    elif request.GET.get('sorting', '') == 'test_name':
+        results = Result.objects.all().order_by('test__name', 'user__username')        
+
+        # results_and_test_names = []
+        # for result in results:
+        #     results_and_test_names.append([result, result.test.name])
+        # # Сортируем по алфавиту наименований тестов, соответствующих результатам прохождения
+        # results_and_test_names.sort(key=lambda i: i[1], reverse=False)
+        # # Извлекаем из двумерного массива только результаты
+        # sorted_results = []
+        # for result_and_username in results_and_test_names:
+        #     sorted_results.append(result_and_username[1])
+        # results = sorted_results
+        
+        # Передаем тип сортировки в контекст, чтобы в шаблоне подставлять текущую сортировку в <select>
+        context['sorting'] = 'test_name'
+
+    context = get_pagination(page, results, 25, 5)
+
+    q = QueryDict(mutable=True)
+    q.update(q_dict)
+    context['HTTPparameters'] = '?' + q.urlencode()
+
+    return render(request, 'octapp/all_results.html', context)
+    

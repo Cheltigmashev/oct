@@ -19,7 +19,7 @@
                 <!-- Для списка тегов и списка категорий фильтрации и сортировки нет,
                 поэтому их представления не передают переменную контекста HTTPparameters,
                 для остальных ссылок аналогично -->
-                <a class="previous" href="{{ HTTPparameters }}?page={{ previous }}" aria-label="Previous">
+                <a class="previous" href="?page={{ previous }}" aria-label="Previous">
                     {% endif %}
                 <span aria-hidden="true">&laquo;</span></a></li>
         {% endif %}
@@ -27,7 +27,7 @@
                 <li>{% if HTTPparameters %}
                 <a href="{{ HTTPparameters }}&page={{ prev_link }}" aria-label="Previous">
                     {% else %}
-                <a href="{{ HTTPparameters }}?page={{ prev_link }}" aria-label="Previous">
+                <a href="?page={{ prev_link }}" aria-label="Previous">
                     {% endif %}
                 {{ prev_link }}
                 </a></li>
@@ -41,7 +41,7 @@
                 <li>{% if HTTPparameters %}
                 <a href="{{ HTTPparameters }}&page={{ next_link }}" aria-label="Next">
                     {% else %}
-                <a href="{{ HTTPparameters }}?page={{ next_link }}" aria-label="Next">
+                <a href="?page={{ next_link }}" aria-label="Next">
                     {% endif %}
                 {{ next_link }}
                 </a></li>
@@ -50,7 +50,7 @@
                 <li>{% if HTTPparameters %}
                 <a class="next" href="{{ HTTPparameters }}&page={{ next }}" aria-label="Next">
                     {% else %}
-                <a class="next" href="{{ HTTPparameters }}?page={{ next }}" aria-label="Next">
+                <a class="next" href="?page={{ next }}" aria-label="Next">
                     {% endif %}
                 <span aria-hidden="true">&raquo;</span></a></li>
         {% endif %}

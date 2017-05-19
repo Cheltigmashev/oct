@@ -7,8 +7,7 @@
   min-height: 740px
   min-width: 365px
   .question_buttons
-    top: 5px
-    right: 5px
+    margin-top: 4px
     float: right
     user-select: none
     text-align: right
@@ -19,22 +18,18 @@
       cursor: pointer
       margin: 0 3px
     .glyphicon-remove
-      color: #822222
       margin-right: 5px
     .glyphicon:hover
+      text-shadow: 4px 4px 4px #777777, 0 0 1px black
       transition: all ease 0.2s
-      color: darkorange
+      color: yellow
     .glyphicon-remove:hover
-      color: red
+      color: #ff2222
+      text-shadow: 4px 4px 4px #aa3333, 0 0 1px black
     .dropdown
-      .edit_question
-        right: 0
-        .edit_open_question_block
-          right: 0
       .dropdown-menu
         padding: 10px 12px 10px 10px
         width: 800px
-        top: 40px
         right: 0
         left: auto
         opacity: 0.98
@@ -48,6 +43,8 @@
           padding-left: 20px
         hr
           margin: 2px 0
+      .edit_question
+        right: 0
       .edit_open_question_block
         right: 0
         width: 950px
@@ -132,7 +129,7 @@
             width: 350px
             right: -15px
           .edit_open_question_block
-            // Не знаю почему, но right выше не работает для него
+            // По неизвестной причине right выше не работает для него
             right: -15px
             .ckeditor_widget_or_textarea, .ckeditor_widget_or_textarea textarea
               display: block

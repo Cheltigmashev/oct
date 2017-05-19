@@ -31,24 +31,12 @@
 
     {% if sorting == 'name_asc' %}
                 <option value="name_asc" selected>Наименованию (А-Я)</option>
-        <!-- Эта тавтология - не ошибка. После добавления сортировки по количеству тестов
-        она пригодится. -->
     {% elif not sorting %}
                 <option value="name_asc" selected>Наименованию (А-Я)</option>
     {% else %}
                 <option value="name_asc">Наименованию (А-Я)</option>
     {% endif %}
             </select>
-
-    {% comment %}
-        После добавления вопросов к тестам раскомментировать и протестировать
-    {% if sorting == 'questions_amount' %}
-                <option value="questions_amount" selected>Возрастанию количества вопросов</option>
-    {% else %}
-                <option value="questions_amount">Возрастанию количества вопросов</option>
-    {% endif %}
-            </select>
-    {% endcomment %}        
 
             <br>
             <label class="relative" for="filter_ready_for_passing">Только готовые для прохождения
@@ -124,8 +112,9 @@
     {% endblock %}
 
             <hr>
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
             <div><input type="submit" value="Выполнить" class="btn btn-block btn-default btn-lg"></input></div>
-
         </form>
     </div>
 

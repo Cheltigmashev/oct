@@ -81,6 +81,7 @@ $comment_padding: 10px
       top: $comment_padding
       left: $full_width_of_resized_avatar + 38px
       font-weight: bold
+      padding-right: $comment_padding
     .author_avatar
       min-height: $full_width_of_resized_avatar
       min-width: $full_width_of_resized_avatar
@@ -96,8 +97,11 @@ $comment_padding: 10px
 /*============    	АДАПТИВ    ===========*/
 
 @media(min-width:0px) and (max-width:410px)
-  .content .comment
-    padding-top: 50px
+  .content
+    .comment
+      padding-top: 50px
+      .author_avatar
+        margin-top: -43px
 
 @media(min-width:0px) and (max-width:767px)
   .test_description_element

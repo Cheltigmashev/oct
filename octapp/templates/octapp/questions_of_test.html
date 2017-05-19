@@ -10,6 +10,7 @@
 <p>NB! Будьте внимательны, когда указываете правильные ответы.</p>
 <p>NB! Рекомендуется добавлять вопросы сразу с вариантами либо с элементами последовательности / рядов сопоставления.</p>
 <p>NB! Если у вас не выходит добавить новые вопросы либо варианты/элементы, то проверьте, чтобы они были обернуты в теги p. Для этого используйте кнопку «Источник» редактора. Это может случиться при копировании текста.</p>
+<p>NB! Используйте сервисы для хранения изображений либо облачные сервисы наподобие Яндекс.Диск, чтобы добавить в вопросы либо варианты ответа картинки (через размещение ссылки на картинку — Ctrl + L либо кнопка в редакторе).</p>
 <h3 class="text-left">Добавить новый вопрос:</h3>
 <div class="adding_questions_btns">
     <div class="dropdown inline_block add_closed_question_block">
@@ -27,7 +28,6 @@
 
     {{ closed_question_form.question_content.label_tag }}
     {{ closed_question_form.question_content }}
-            <small><p>NB! {{ closed_question_form.question_content.help_text }}</p></small>
     {% if closed_question_form.question_content.errors %}<p class="field_with_error">{{ closed_question_form.question_content.errors }}</p>{% endif %}
 
     {{ closed_question_form.correct_option_numbers.label_tag }}
@@ -39,8 +39,9 @@
     {{ closed_question_form.add_options }}
                 <small><p>NB! {{ closed_question_form.add_options.help_text }}</p></small>
     {% if closed_question_form.add_options.errors %}<p class="field_with_error">{{ closed_question_form.add_options.errors }}</p>{% endif %}
-
-            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default"></input>
         </form>
         </div>
     </div>
@@ -68,7 +69,9 @@
         {% endif %}
         {% if field.errors %}<p class="field_with_error">{{ field.errors }}</p>{% endif %}
     {% endfor %}
-            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default"></input>
         </form>
         </div>
     </div>
@@ -84,7 +87,6 @@
 
     {{ comparison_question_form.comparison_question_content.label_tag }}
     {{ comparison_question_form.comparison_question_content }}
-            <small><p>NB! {{ comparison_question_form.comparison_question_content.help_text }}</p></small>
     {% if comparison_question_form.comparison_question_content.errors %}<p class="field_with_error">{{ comparison_question_form.comparison_question_content.errors }}</p>{% endif %}
 
     {{ comparison_question_form.correct_sequence.label_tag }}
@@ -97,8 +99,9 @@
     {{ comparison_question_form.add_comp_elements }}
                 <small><p>NB! {{ comparison_question_form.add_comp_elements.help_text }}</p></small>
     {% if comparison_question_form.add_comp_elements.errors %}<p class="field_with_error">{{ comparison_question_form.add_comp_elements.errors }}</p>{% endif %}            
-
-            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default"></input>
         </form>
         </div>
     </div>
@@ -114,7 +117,6 @@
 
     {{ sequence_question_form.sequence_question_content.label_tag }}
     {{ sequence_question_form.sequence_question_content }}
-            <small><p>NB! {{ sequence_question_form.sequence_question_content.help_text }}</p></small>
     {% if sequence_question_form.sequence_question_content.errors %}<p class="field_with_error">{{ sequence_question_form.sequence_question_content.errors }}</p>{% endif %}
 
     {{ sequence_question_form.correct_sequence.label_tag }}
@@ -126,8 +128,9 @@
     {{ sequence_question_form.add_sequ_elements }}
                 <small><p>NB! {{ sequence_question_form.add_sequ_elements.help_text }}</p></small>
     {% if sequence_question_form.add_sequ_elements.errors %}<p class="field_with_error">{{ sequence_question_form.add_sequ_elements.errors }}</p>{% endif %}                        
-
-            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Добавить вопрос" class="btn btn-block btn-default"></input>
         </form>
         </div>
     </div>
@@ -138,14 +141,14 @@
     <!-- Кнопки для каждого вопроса -->
     <div class="question_buttons">
 
-        <a href="{% url 'question_remove' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить вопрос" class="glyphicon glyphicon-remove"></a>
+        <a href="{% url 'question_remove' test_id=test.pk question_of_test_id=qu_of_test.pk %}?page={{ some_page.number }}" title="Нажмите, чтобы удалить вопрос" class="glyphicon glyphicon-remove"></a>
     {% if qu_of_test.type_of_question != 'OpndQ' and options_or_elements %}
         {% if qu_of_test.type_of_question == 'CmprsnQ' %}
                 {% if options_or_elements|first or options_or_elements|last %}
-        <a href="{% url 'options_or_elements_of_question_remove_all' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>
+        <a href="{% url 'options_or_elements_of_question_remove_all' test_id=test.pk question_of_test_id=qu_of_test.pk %}?page={{ some_page.number }}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>
                 {% endif %}
         {% else %}
-        <a href="{% url 'options_or_elements_of_question_remove_all' test_id=test.pk question_of_test_id=qu_of_test.pk %}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>        
+        <a href="{% url 'options_or_elements_of_question_remove_all' test_id=test.pk question_of_test_id=qu_of_test.pk %}?page={{ some_page.number }}" title="Нажмите, чтобы удалить все варианты ответа либо все элементы последовательности / рядов сопоставления" class="glyphicon glyphicon-trash"></a>        
         {% endif %}
     {% endif %}
 
@@ -168,10 +171,11 @@
             <div class="ckeditor_widget_or_textarea">
     {{ option_or_element_form.content.label_tag }}
     {{ option_or_element_form.content }}
-            <small><p>NB! {{ option_or_element_form.content.help_text }}</p></small>
     {% if option_or_element_form.content.errors %}<p class="field_with_error">{{ option_or_element_form.content.errors }}</p>{% endif %}
             </div>
-            <input type="submit" value="Добавить новый вариант ответа" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Добавить новый вариант ответа" class="btn btn-block btn-default"></input>
         </form>
         </div>
     </div>
@@ -181,7 +185,7 @@
     <div class="dropdown inline_block">
         <span title="Нажмите, чтобы добавить новые элементы последовательности" id="dLabel5" class="glyphicon glyphicon-plus" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
         <div aria-labelledby="dLabel5" class="dropdown-menu add_new_options_or_elements">
-        <form name="new_sequence_element_form" method="POST" action="{% url 'new_options_or_elements' test_id=test.pk question_of_test_id=qu_of_test.pk row='none' %}">
+        <form name="new_sequence_element_form" method="POST" action="{% url 'new_options_or_elements' test_id=test.pk question_of_test_id=qu_of_test.pk row='none' %}?page={{ some_page.number }}">
     {% csrf_token %}
     {{ option_or_element_form.element_index_number.label_tag }}
     {{ option_or_element_form.element_index_number }}
@@ -196,10 +200,11 @@
             <div class="ckeditor_widget_or_textarea">
     {{ option_or_element_form.element_content.label_tag }}
     {{ option_or_element_form.element_content }}
-            <small><p>NB! {{ option_or_element_form.element_content.help_text }}</p></small>
     {% if option_or_element_form.element_content.errors %}<p class="field_with_error">{{ option_or_element_form.element_content.errors }}</p>{% endif %}
             </div>
-            <input type="submit" value="Добавить новый элемент последовательности" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Добавить новый элемент последовательности" class="btn btn-block btn-default"></input>
         </form>
         </div>
     </div>
@@ -224,10 +229,11 @@
             <div class="ckeditor_widget_or_textarea">
     {{ option_or_element_form.element_content.label_tag }}
     {{ option_or_element_form.element_content }}
-            <small><p>NB! {{ option_or_element_form.element_content.help_text }}</p></small>
     {% if option_or_element_form.element_content.errors %}<p class="field_with_error">{{ option_or_element_form.element_content.errors }}</p>{% endif %}
             </div>
-            <input type="submit" value="Добавить новый элемент левого ряда сопоставления" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Добавить новый элемент левого ряда сопоставления" class="btn btn-block btn-default"></input>
         </form>
         </div>
     </div>
@@ -235,7 +241,7 @@
     <div class="dropdown inline_block">
         <span title="Нажмите, чтобы добавить новые элементы правого ряда сопоставления" id="dLabel5" class="glyphicon glyphicon-hand-down" type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"></span>
         <div aria-labelledby="dLabel5" class="dropdown-menu add_right_row_comparison_element">
-        <form name="new_right_comparison_element_form" method="POST" action="{% url 'new_options_or_elements' test_id=test.pk question_of_test_id=qu_of_test.pk row='right' %}">
+        <form name="new_right_comparison_element_form" method="POST" action="{% url 'new_options_or_elements' test_id=test.pk question_of_test_id=qu_of_test.pk row='right' %}?page={{ some_page.number }}">
         {% csrf_token %}
             <label>Порядковый номер элемента правого ряда сопоставления:</label>
     {{ comparison_question_right_row_element_form.element_index_number }}
@@ -250,10 +256,11 @@
             <div class="ckeditor_widget_or_textarea">
     {{ comparison_question_right_row_element_form.element_content.label_tag }}
     {{ comparison_question_right_row_element_form.element_content }}
-            <small><p>NB! {{ comparison_question_right_row_element_form.element_content.help_text }}</p></small>
     {% if comparison_question_right_row_element_form.element_content.errors %}<p class="field_with_error">{{ comparison_question_right_row_element_form.element_content.errors }}</p>{% endif %}
             </div>
-            <input type="submit" value="Добавить новый элемент правого ряда сопоставления" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Добавить новый элемент правого ряда сопоставления" class="btn btn-block btn-default"></input>
         </form>
         </div>
     </div>    
@@ -264,12 +271,11 @@
 
         {% if qu_of_test.type_of_question == 'ClsdQ' %}
         <div aria-labelledby="dLabel6" class="dropdown-menu edit_question edit_closed_question_block">
-        <form name="closed_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
+        <form name="closed_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}?page={{ some_page.number }}">
     {% csrf_token %}
 
     {{ form_for_editing_question.question_content.label_tag }}
     {{ form_for_editing_question.question_content }}
-            <small><p>NB! {{ form_for_editing_question.question_content.help_text }}</p></small>
     {% if form_for_editing_question.question_content.errors %}<p class="field_with_error">{{ form_for_editing_question.question_content.errors }}</p>{% endif %}
 
     {{ form_for_editing_question.correct_option_numbers.label_tag }}
@@ -282,8 +288,9 @@
     {{ form_for_editing_question.question_index_number }}
             <small><p>NB! {{ form_for_editing_question.question_index_number.help_text }}</p></small>
     {% if form_for_editing_question.question_index_number.errors %}<p class="field_with_error">{{ form_for_editing_question.question_index_number.errors }}</p>{% endif %}
-
-            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default"></input>
         </form>
         </div>
         {% endif %}
@@ -291,7 +298,7 @@
 
         {% if qu_of_test.type_of_question == 'OpndQ' %}
         <div aria-labelledby="dLabe6" class="dropdown-menu edit_question edit_open_question_block">
-        <form name="open_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
+        <form name="open_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}?page={{ some_page.number }}">
     {% csrf_token %}
 
             <div class="ckeditor_widget_or_textarea">
@@ -315,8 +322,9 @@
     {{ form_for_editing_question.question_index_number }}
             <small><p>NB! {{ form_for_editing_question.question_index_number.help_text }}</p></small>
     {% if form_for_editing_question.question_index_number.errors %}<p class="field_with_error">{{ form_for_editing_question.question_index_number.errors }}</p>{% endif %}
-
-            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default"></input>
         </form>
         </div>
         {% endif %}
@@ -324,12 +332,11 @@
 
         {% if qu_of_test.type_of_question == 'SqncQ' %}
         <div aria-labelledby="dLabe6" class="dropdown-menu edit_question">
-        <form name="sequence_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
+        <form name="sequence_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}?page={{ some_page.number }}">
     {% csrf_token %}
 
     {{ form_for_editing_question.sequence_question_content.label_tag }}
     {{ form_for_editing_question.sequence_question_content }}
-            <small><p>NB! {{ form_for_editing_question.sequence_question_content.help_text }}</p></small>
     {% if form_for_editing_question.sequence_question_content.errors %}<p class="field_with_error">{{ form_for_editing_question.sequence_question_content.errors }}</p>{% endif %}
 
     {{ form_for_editing_question.correct_sequence.label_tag }}
@@ -341,8 +348,9 @@
     {{ form_for_editing_question.question_index_number }}
             <small><p>NB! {{ form_for_editing_question.question_index_number.help_text }}</p></small>
     {% if form_for_editing_question.question_index_number.errors %}<p class="field_with_error">{{ form_for_editing_question.question_index_number.errors }}</p>{% endif %}
-
-            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default"></input>
         </form>
         </div>
         {% endif %}
@@ -350,12 +358,11 @@
 
         {% if qu_of_test.type_of_question == 'CmprsnQ' %}
         <div aria-labelledby="dLabe6" class="dropdown-menu edit_question">
-        <form name="comparison_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}">
+        <form name="comparison_question_edit" method="POST" action="{% url 'question_edit' test_id=test.pk question_of_test_id=qu_of_test.pk %}?page={{ some_page.number }}">
     {% csrf_token %}
 
     {{ form_for_editing_question.comparison_question_content.label_tag }}
     {{ form_for_editing_question.comparison_question_content }}
-            <small><p>NB! {{ form_for_editing_question.comparison_question_content.help_text }}</p></small>
     {% if form_for_editing_question.comparison_question_content.errors %}<p class="field_with_error">{{ form_for_editing_question.comparison_question_content.errors }}</p>{% endif %}
 
     {{ form_for_editing_question.correct_sequence.label_tag }}
@@ -367,8 +374,9 @@
     {{ form_for_editing_question.question_index_number }}
             <small><p>NB! {{ form_for_editing_question.question_index_number.help_text }}</p></small>
     {% if form_for_editing_question.question_index_number.errors %}<p class="field_with_error">{{ form_for_editing_question.question_index_number.errors }}</p>{% endif %}
-
-            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default">
+            <!-- Не отображаемое поле для передачи номера текущей страницы -->
+            <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+            <input type="submit" value="Отправить новые данные (изменить вопрос)" class="btn btn-block btn-default"></input>
         </form>
         </div>
         {% endif %}

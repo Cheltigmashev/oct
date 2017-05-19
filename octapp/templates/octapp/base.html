@@ -116,7 +116,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="admin_moder_button_container"><a href="#" class="btn btn-default btn-sm">Все результаты</a></div>
+                <div class="admin_moder_button_container"><a href="{% url 'all_results' %}" class="btn btn-default btn-sm">Все результаты</a></div>
 {% else %}
                 <div class="authorization_div">
                     <form name="login_form" method="POST" action="{% url 'auth_login' %}">
