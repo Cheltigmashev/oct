@@ -231,7 +231,7 @@
 
     {% for comment in test.comments.all %}
     <div class="comment">
-        <div class="author_username">{{ comment.author.username }}{% if comment.author == test.author %}, загрузивший данный тест{% endif %}</div>
+        <div class="author_username title_font">{{ comment.author.username }}{% if comment.author == test.author %}, загрузивший данный тест{% endif %}</div>
         <div class="author_avatar">{% avatar comment.author class="scaled_custom_thumbnail" %}</div>        
         <div class="comment_date">{{ comment.created_date }}, {{ comment.created_date|naturaltime }}</div>
         

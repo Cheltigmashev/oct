@@ -30,8 +30,9 @@ urlpatterns = [
     url(r'^categories/$', views.categories, name='categories'),
     url(r'^tags/$', views.tags, name='tags'),
 
+    url(r'^test/(?P<pk>\d+)/new_comment/$', views.comment_new, name='comment_new'),
+    url(r'^results/$', views.results, name='results'),
+
     #url(r'^categories_confirming/(?P<pk>\d+)/publish/$', permission_required("octapp.can_confirm")
     # (views.categories_confirming, name='categories_confirming')),
-    url(r'^test/(?P<pk>\d+)/new_comment/$', views.comment_new, name='comment_new'),
-    url(r'^all_results/$', views.all_results, name='all_results'),
 ]

@@ -1,0 +1,121 @@
+{% extends 'octapp/list_with_pagination.html' %}
+{% load staticfiles %}
+{% load avatar_tags humanize %}
+
+{% block page_style %}
+<link rel="stylesheet" href="{% static 'octapp/css/sorting_and_pagination.css' %}">
+<link rel="stylesheet" href="{% static 'octapp/css/results.css' %}">
+{% endblock %}
+
+{% block before_pagination %}
+
+<h2>РЕЗУЛЬТАТЫ ПРОХОЖДЕНИЯ ТЕСТОВ</h2>
+<div class="dropdown inline_block">
+
+    <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown btn btn-block btn-default btn-lg">
+        Фильтрация и сортировка
+        <span class="caret"></span>
+    </button>
+
+    <form aria-labelledby="dLabel" class="dropdown-menu sort_filter_form" method="GET" action="">
+        <label for="sorting">Сортировать по:</label>
+        <select id="sorting" name="sorting" class="form-control">
+    {% if sorting == 'username' %}
+            <option value="username" selected>Именам пользователей (А-Я/A-Z), а затем по тесту и дате прохождения</option>
+    {% else %}
+            <option value="username">Именам пользователей (А-Я/A-Z), а затем по тесту и дате прохождения</option>
+    {% endif %}
+
+    {% if sorting == 'test_name' %}
+            <option value="test_name" selected>Наименованию теста, а затем по пользователю и дате прохождения/option>
+    {% else %}
+            <option value="test_name">Наименованию теста, а затем по пользователю и дате прохождения/option>
+    {% endif %}
+
+    {% if sorting == 'correct_answers_percentage' %}
+            <option value="correct_answers_percentage" selected>Проценту правильных ответов (по убыванию), а затем по тесту и пользователю</option>
+    {% else %}
+            <option value="correct_answers_percentage">Проценту правильных ответов (по убыванию), а затем по тесту и пользователю</option>
+    {% endif %}
+
+    {% if sorting == 'passing_date' %}
+            <option value="passing_date" selected>Дате прохождения (сначала новые), а затем по тесту и пользователю</option>
+    {% elif not sorting %}
+            <option value="passing_date" selected>Дате прохождения (сначала новые), а затем по тесту и пользователю</option>
+    {% else %}
+            <option value="passing_date">Дате прохождения (сначала новые)</option>
+    {% endif %}
+        </select>
+
+        <label for="filtering_by_exact_user">Фильтровать по конкретному пользователю:</label>
+    {% if filtering_by_exact_user %}
+        <input id="filtering_by_exact_user" name="filtering_by_exact_user" type="text" placeholder="Введите имя пользователя" class="form-control" value="{{ filtering_by_exact_user }}"></input>
+    {% else %}
+        <input id="filtering_by_exact_user" name="filtering_by_exact_user" type="text" placeholder="Введите имя пользователя" class="form-control"></input>
+    {% endif %}
+
+        <label for="filtering_by_user_partially">Фильтровать по совпадению в имени пользователя:</label>
+    {% if filtering_by_user_partially %}
+        <input name="filtering_by_user_partially" type="text" placeholder="Введите искомый текст" class="form-control" value="{{ filtering_by_user_partially }}"></input>
+    {% else %}
+        <input name="filtering_by_user_partially" type="text" placeholder="Введите искомый текст" class="form-control"></input>
+    {% endif %}
+        <small><p>Т.е. можно получить результаты нескольких пользователей, в имени которых есть искомый текст</p></small>
+        <small><p>NB! Полезно для проверки результатов пользователей, у которых в имени указана их принадлежность к определенной группе, например это может быть группа студентов либо школьный класс.</p></small>
+
+        <label for="filtering_by_test">Фильтровать по конкретному тесту:</label>
+    {% if filtering_by_test %}
+        <input id="filtering_by_test" name="filtering_by_test" type="text" placeholder="Введите наименование" class="form-control" value="{{ filtering_by_test }}"></input>
+    {% else %}
+        <input id="filtering_by_test" name="filtering_by_test" type="text" placeholder="Введите наименование" class="form-control"></input>
+    {% endif %}
+
+        <h4>Фильтровать по дате прохождения</h4>
+        <label for="filtering_by_date_after">Не раньше (начиная с, включительно):</label>
+    {% if filtering_by_date_after %}
+        <input id="filtering_by_date_after" name="filtering_by_date_after" type="date" class="form-control" value="{{ filtering_by_date_after }}"></input>
+    {% else %}
+        <input id="filtering_by_date_after" name="filtering_by_date_after" type="date" class="form-control"></input>
+    {% endif %}
+        <label for="filtering_by_date_before">Не позже (до, исключая, т.е. в 00:00):</label>        
+    {% if filtering_by_date_before %}
+        <input id="filtering_by_date_before" name="filtering_by_date_before" type="date" class="form-control" value="{{ filtering_by_date_before }}"></input>
+    {% else %}
+        <input id="filtering_by_date_before" name="filtering_by_date_before" type="date" class="form-control"></input>
+    {% endif %}
+        
+        <hr>
+        <!-- Не отображаемое поле для передачи номера текущей страницы -->
+        <input type="text" name="page" value="{{ some_page.number }}" style="display: none"></input>
+        <div><input type="submit" value="Выполнить" class="btn btn-block btn-default btn-lg"></input></div>
+        </form>
+    </div>
+    <hr>
+    {% if some_page %}
+    <table class="table table-striped table-hover table-condensed table-bordered" cellpadding="0" cellspacing="0">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Оценка</th>
+                <th>% верных</th>
+                <th>Дата прохождения</th>
+                <th>Пользователь</th>
+                <th>Тест</th>
+            </tr>
+        </thead>
+        {% for result in some_page %}
+        <tr>
+            <td>{{ some_page.start_index|add:forloop.counter|add:"-1" }}</td>
+            <td>{{ result.grade_based_on_scale }}</td>
+            <td>{{ result.correct_answers_percentage }}%</td>
+            <td>{{ result.passing_date }}<br>{{ result.passing_date|naturaltime }}</td>
+            <td>{{ result.user }}&nbsp;{% avatar result.user class="small_custom_thumbnail" %}</td>
+            <td><a class="some_text_link" href="{% url 'test_detail' pk=result.test.pk %}">{{ result.test }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <h3>Нет (таких) результатов прохождения</h3>
+    {% endif %}
+
+{% endblock %}

@@ -62,16 +62,18 @@
 {% endif %}
 
                 <h3>Поиск тестов</h3>
-                <form name="search_form" action="POST">
+                <form name="search_form" action="" method="POST">
 {% csrf_token %}
-                    <input name="search" class="form-control" placeholder="Искать с совпадениями" type="search">
+                    <input name="search" class="form-control" placeholder="Искать с совпадениями" type="search"></input>
                     <div class="search_buttons_div table center-block">
                         <div class="table_row">
                             <div class="table_cell">
+                                <input name="search_type" value="search_in_tests_names" type="text" class="not_displaying"></input>
                                 <button type="submit" class="btn btn-sm btn-default" role=submit>В названиях</button>
                             </div>
                             <div class="empty_gap_cell table_cell"></div>
                             <div class="table_cell">
+                                <input name="search_type" value="search_in_questions" type="text" class="not_displaying"></input>                                
                                 <button type="submit" class="btn btn-sm btn-default" role=submit>В вопросах</button>
                             </div>
                         </div>
@@ -108,7 +110,7 @@
                     </div>
                     <div class="table_row">
                         <div class="table_cell">
-                        <a href="#" class="btn btn-default btn-sm" role="button">
+                        <a href="{% url 'results' %}?filtering_by_exact_user={{ request.user.username }}" class="btn btn-default btn-sm" role="button">
                             Результаты</a>
                         </div>
                         <div class="table_cell">
@@ -116,7 +118,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="admin_moder_button_container"><a href="{% url 'all_results' %}" class="btn btn-default btn-sm">Все результаты</a></div>
+                <div class="admin_moder_button_container"><a href="{% url 'results' %}" class="btn btn-default btn-sm">Все результаты</a></div>
 {% else %}
                 <div class="authorization_div">
                     <form name="login_form" method="POST" action="{% url 'auth_login' %}">
@@ -162,7 +164,6 @@
                     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
                         <a href="" class="btn btn-sm btn-default">О проекте</a>
                         <a href="" class="btn btn-sm btn-default">Демо-ролик</a>
-                        <a href="" class="btn btn-sm btn-default">Инструкция модератора</a>
                         <a href="" class="btn btn-sm btn-default">Инструкция пользователя</a>
                         <a href="" class="btn btn-sm btn-default">Пользовательское соглашение</a>
                         <a href="mailto:danil.cheltigmashev@yandex.ru" class="btn btn-sm btn-default hidden-xs">Обратная связь</a>

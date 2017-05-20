@@ -6,6 +6,8 @@
     {% block before_pagination %}
     {% endblock %}
 
+    {% if some_page %}
+
     <hr>
     <div class="text-center hundred_percentages_width">
         <nav aria-label="Page navigation">
@@ -58,6 +60,8 @@
             </ul>
         </nav>
     </div>
+
+    {% endif %}
 
     {% block after_pagination %}
     {% endblock %}

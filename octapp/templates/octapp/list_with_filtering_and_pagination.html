@@ -16,7 +16,7 @@
 
         <form aria-labelledby="dLabel" class="dropdown-menu sort_filter_form" method="GET" action="">
             <label for="sorting">Сортировать по:</label>
-            <select id="sorting" name="sorting">
+            <select id="sorting" name="sorting" class="form-control">
     {% if sorting == 'rating_desc' %}
                 <option value="rating_desc" selected>Рейтингу (сначала рейтинговые)</option>
     {% else %}
@@ -38,7 +38,6 @@
     {% endif %}
             </select>
 
-            <br>
             <label class="relative" for="filter_ready_for_passing">Только готовые для прохождения
     {% if filter_ready_for_passing %}            
             <input name="filter_ready_for_passing" id="filter_ready_for_passing" type="checkbox" checked></input>

@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import QueryDict, HttpResponseRedirect
 import re
+import datetime
 
 # Модель пользователя
 User = get_user_model()
@@ -226,7 +227,7 @@ def tests(request):
     categories_with_count_of_published_tests = get_categories_with_count_of_published_tests(categories)
     tags = Tag.objects.order_by('name')    
     tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
-    # 25, 5 prod
+    # Production — 25, 5
     context = get_filtered_and_sorted_tests_with_pagination(request, tests, 25, 5)
     context['categories_for_filtering_of_tests'] = categories_with_count_of_published_tests
     context['tags_for_filtering_of_tests'] = tags_with_count_of_published_tests
@@ -235,14 +236,14 @@ def tests(request):
 def categories(request):
     categories = Category.objects.filter(confirmed=True).order_by('name')
     categories_with_count_of_published_tests = get_categories_with_count_of_published_tests(categories)
-    # 35, 5 prod
+    # Production — 35, 5
     context = get_pagination(int(request.GET.get('page', '1')), categories_with_count_of_published_tests, 35, 5)
     return render(request, 'octapp/categories.html', context)
 
 def tags(request):
     tags = Tag.objects.order_by('name')
     tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
-    # 35, 5 prod
+    # Production — 35, 5
     context = get_pagination(int(request.GET.get('page', '1')), tags_with_count_of_published_tests, 35, 5)
     return render(request, 'octapp/tags.html', context)
 
@@ -444,7 +445,7 @@ def get_questions_of_test_context(test_id, page):
                'open_question_form': open_question_form,
                'sequence_question_form': sequence_question_form,
                'comparison_question_form': comparison_question_form}
-    # 5, 4 prod
+    #Production —  5, 4
     pag_context = get_pagination(page, questions_of_test_with_filled_forms, 5, 4)
     context.update(pag_context)
     return context
@@ -1043,14 +1044,16 @@ def test_passing_results(request, pk):
                                             correct_answers_percentage=correct_answers_percentage)
     return render(request, 'octapp/test_passing_results.html', context)
 
-def all_results(request):
-    results = Result.objects.all().order_by('-passing_date')
+def results(request):
+    results = Result.objects.all().order_by('-passing_date', 'test__name', 'user__username')
     page = request.GET.get('page', '1')
     page = int(page)
     q_dict = request.GET.dict()
-    if request.GET.get('sorting', '') == 'username':
-        results = Result.objects.all().order_by('user__username', 'test__name')
+    context = {  }
+    if request.GET.get('sorting', False) == 'username':
+        results = Result.objects.all().order_by('user__username', 'test__name', '-passing_date')
         
+        # Альтернативный способ сортировки
         # results_and_usernames = []
         # for result in results:
         #     results_and_usernames.append([result, result.user.username])
@@ -1062,33 +1065,58 @@ def all_results(request):
         #     sorted_results.append(result_and_username[1])
         # results = sorted_results
 
-        # Передаем тип сортировки в контекст, чтобы в шаблоне подставлять т`екущую сортировку в <select>
+        # Передаем тип сортировки в контекст, чтобы в шаблоне подставлять текущую сортировку в <select>
         context['sorting'] = 'username'
-    elif request.GET.get('sorting', '') == 'passing_date':
-        results = results.order_by('-passing_date')
+    elif request.GET.get('sorting', False) == 'passing_date':
+        # Результаты уже отсортированы по дате прохождения
         context['sorting'] = 'passing_date'
-    elif request.GET.get('sorting', '') == 'test_name':
-        results = Result.objects.all().order_by('test__name', 'user__username')        
-
-        # results_and_test_names = []
-        # for result in results:
-        #     results_and_test_names.append([result, result.test.name])
-        # # Сортируем по алфавиту наименований тестов, соответствующих результатам прохождения
-        # results_and_test_names.sort(key=lambda i: i[1], reverse=False)
-        # # Извлекаем из двумерного массива только результаты
-        # sorted_results = []
-        # for result_and_username in results_and_test_names:
-        #     sorted_results.append(result_and_username[1])
-        # results = sorted_results
-        
+    elif request.GET.get('sorting', False) == 'test_name':
+        results = Result.objects.order_by('test__name', 'user__username', '-passing_date')
         # Передаем тип сортировки в контекст, чтобы в шаблоне подставлять текущую сортировку в <select>
         context['sorting'] = 'test_name'
+    elif request.GET.get('sorting', False) == 'correct_answers_percentage':
+        results = Result.objects.order_by('-correct_answers_percentage', 'test__name', 'user__username')
+        context['sorting'] = '-correct_answers_percentage'
+        
+    if request.GET.get('filtering_by_exact_user', False):
+        exact_user = User.objects.filter(username__iexact=request.GET.get('filtering_by_exact_user'))
+        results = results.filter(user=exact_user)
+        context['filtering_by_exact_user'] = request.GET.get('filtering_by_exact_user')
+    
+    if request.GET.get('filtering_by_test', False):
+        results = results.filter(test__name__iexact=request.GET.get('filtering_by_test'))
+        context['filtering_by_test'] = request.GET.get('filtering_by_test')
 
-    context = get_pagination(page, results, 25, 5)
+    if request.GET.get('filtering_by_user_partially', False):
+        # Регистронезависимая проверка на вхождение искомого текста в имени пользователя
+        results = results.filter(user__username__icontains=request.GET.get('filtering_by_user_partially'))
+        context['filtering_by_user_partially'] = request.GET.get('filtering_by_user_partially')
+
+    if request.GET.get('filtering_by_date_after', False) and request.GET.get('filtering_by_date_before', False):
+        after = datetime.datetime.strptime(request.GET.get('filtering_by_date_after'), '%Y-%m-%d').date()
+        before = datetime.datetime.strptime(request.GET.get('filtering_by_date_before'), '%Y-%m-%d').date()
+        # passing_date__date__range=(after, before) не работает(
+        results = results.filter(passing_date__range=(after, before))
+        context['filtering_by_date_after'] = request.GET.get('filtering_by_date_after')
+        context['filtering_by_date_before'] = request.GET.get('filtering_by_date_before')
+        
+    elif request.GET.get('filtering_by_date_after', False) and not request.GET.get('filtering_by_date_before', False):
+        after = datetime.datetime.strptime(request.GET.get('filtering_by_date_after'), '%Y-%m-%d').date()
+        results = results.filter(passing_date__gte=after)
+        context['filtering_by_date_after'] = request.GET.get('filtering_by_date_after')
+
+    elif not request.GET.get('filtering_by_date_after', False) and request.GET.get('filtering_by_date_before', False):
+        before = datetime.datetime.strptime(request.GET.get('filtering_by_date_before'), '%Y-%m-%d').date()
+        results = results.filter(passing_date__lte=before)
+        context['filtering_by_date_before'] = request.GET.get('filtering_by_date_before') 
+
+
+    # Production — 20, 5
+    context.update(get_pagination(page, results, 20, 5))
 
     q = QueryDict(mutable=True)
     q.update(q_dict)
     context['HTTPparameters'] = '?' + q.urlencode()
 
-    return render(request, 'octapp/all_results.html', context)
+    return render(request, 'octapp/results.html', context)
     

@@ -162,6 +162,10 @@ TIME_INPUT_FORMATS = (
     '%M:%S',
 )
 
+DATE_FORMAT = 'd.m.Y'           # 18.09.2009  
+DATETIME_FORMAT = 'd.m.Y H:i'   # 18.09.2009 22:41  
+TIME_FORMAT = 'H:i'
+
 # Импортируем файл локальных настроек, если он существует
 try:
     from .local_settings import *
