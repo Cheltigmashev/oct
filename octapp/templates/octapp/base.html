@@ -62,9 +62,8 @@
 {% endif %}
 
                 <h3>Поиск тестов</h3>
-                <form name="search_form" action="" method="POST">
-{% csrf_token %}
-                    <input name="search" class="form-control" placeholder="Искать с совпадениями" type="search"></input>
+                <form name="search_form" action="{% url 'search' %}" method="GET">
+                    <input name="search" required class="form-control" placeholder="Искать с совпадениями" type="search"></input>
                     <div class="search_buttons_div table center-block">
                         <div class="table_row">
                             <div class="table_cell">

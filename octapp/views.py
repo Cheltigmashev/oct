@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import TestForm, ClosedQuestionForm, OpenQuestionForm, SequenceQuestionForm, ComparisonQuestionForm, ClosedQuestionOptionForm, SequenceQuestionElementForm, ComparisonQuestionElementForm, CommentForm
-from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest, ClosedQuestionOption, SequenceQuestionElement, Result
+from .models import Test, Comment, TestRate, Tag, Category, QuestionOfTest, ClosedQuestion, OpenQuestion, SequenceQuestion, ComparisonQuestion, ClosedQuestionOption, SequenceQuestionElement, Result
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import QueryDict, HttpResponseRedirect
@@ -232,6 +232,27 @@ def tests(request):
     context['categories_for_filtering_of_tests'] = categories_with_count_of_published_tests
     context['tags_for_filtering_of_tests'] = tags_with_count_of_published_tests
     return render(request, 'octapp/tests.html', context)
+
+def search(request):
+    search_type = request.GET.get('search_type', False)
+    if search_type == 'search_in_tests_names':
+        tests = Test.objects.filter(name__icontains=request.GET.get('search'))
+    elif search_type == 'search_in_questions':
+        matching_questions = []
+        matching_questions.append(ClosedQuestion.objects.filter(question_content__icontains=request.GET.get('search')))
+        matching_questions.append(OpenQuestion.objects.filter(question_content_before_blank__icontains=request.GET.get('search')))
+        matching_questions.append(OpenQuestion.objects.filter(question_content_after_blank__icontains=request.GET.get('search')))        
+        matching_questions.append(SequenceQuestion.objects.filter(sequence_question_content__icontains=request.GET.get('search')))
+        matching_questions.append(ComparisonQuestion.objects.filter(comparison_question_content__icontains=request.GET.get('search')))
+        test_set = set()
+        for questions_of_some_type in matching_questions:
+            for question in questions_of_some_type:
+                test_set.add(question.question_of_test.test)
+        tests = list(test_set)
+        tests.sort(key=lambda i: i.name, reverse=False)
+    # Production — 25, 5
+    context = get_filtered_and_sorted_tests_with_pagination(request, tests, 25, 5)
+    return render(request, 'octapp/search_results.html', context)    
 
 def categories(request):
     categories = Category.objects.filter(confirmed=True).order_by('name')
@@ -1049,7 +1070,7 @@ def results(request):
     page = request.GET.get('page', '1')
     page = int(page)
     q_dict = request.GET.dict()
-    context = {  }
+    context = { }
     if request.GET.get('sorting', False) == 'username':
         results = Result.objects.all().order_by('user__username', 'test__name', '-passing_date')
         
