@@ -62,24 +62,25 @@
 {% endif %}
 
                 <h3>Поиск тестов</h3>
-                <form name="search_form" action="{% url 'search' %}" method="GET">
+                <form name="search_form" id="search_form" action="{% url 'search' %}" method="GET">
                     <input name="search" required class="form-control" placeholder="Искать с совпадениями" type="search"></input>
                     <div class="search_buttons_div table center-block">
                         <div class="table_row">
                             <div class="table_cell">
-                                <input name="search_type" value="search_in_tests_names" type="text" class="not_displaying"></input>
+                                <input name="search_type" class="not_displaying" value="search_in_tests_names" type="checkbox" class=""></input>
                                 <button type="submit" class="btn btn-sm btn-default" role=submit>В названиях</button>
                             </div>
                             <div class="empty_gap_cell table_cell"></div>
                             <div class="table_cell">
-                                <input name="search_type" value="search_in_questions" type="text" class="not_displaying"></input>                                
-                                <button type="submit" class="btn btn-sm btn-default" role=submit>В вопросах</button>
+                                <input name="search_type" class="not_displaying" value="search_in_questions" type="checkbox" class=""></input>                           
+                                <button class="btn btn-sm btn-default">В вопросах</button>
                             </div>
                         </div>
                     </div>
                 </form>
                 </div>
               </div>
+
 
               <div class="col-md-2 col-sm-4 col-xs-6 header_element hidden-xs header_element_3">
 {% if user.is_authenticated %}
@@ -177,15 +178,20 @@
         </footer>
 
     <script type="text/javascript">
-      $(document).ready(function() {
-        $("html").niceScroll({cursorcolor:"#000"});
-        $('[data-toggle="popover"]').popover({
-            // Установление направления отображения popover
-            placement : 'bottom'
+        $(document).ready(function() {
+            $("html").niceScroll({cursorcolor:"#000"});
+            $('[data-toggle="popover"]').popover({
+                // Установление направления отображения popover
+                placement : 'bottom'
+            });
+            // Чтобы сразу после загрузки страницы показать сообщение о неудачной аутентификации
+            $("#signin_button").popover('show');
+            // Активация соответствующих кнопке checkbox’ов и отправка формы (hack...)
+            $("#search_form button").click((event) => {
+                $(event.target).prev().attr('checked', 'checked');
+                $("#search_form").submit();
+            });
         });
-        // Чтобы сразу после загрузки страницы показать сообщение о неудачной аутентификации
-        $("#signin_button").popover('show');
-      });
     </script>
     </body>
 </html>

@@ -236,7 +236,7 @@ def tests(request):
 def search(request):
     search_type = request.GET.get('search_type', False)
     if search_type == 'search_in_tests_names':
-        tests = Test.objects.filter(name__icontains=request.GET.get('search'))
+        tests = Test.objects.filter(name__icontains=request.GET.get('search')).order_by('name')
     elif search_type == 'search_in_questions':
         matching_questions = []
         matching_questions.append(ClosedQuestion.objects.filter(question_content__icontains=request.GET.get('search')))
@@ -251,7 +251,7 @@ def search(request):
         tests = list(test_set)
         tests.sort(key=lambda i: i.name, reverse=False)
     # Production — 25, 5
-    context = get_filtered_and_sorted_tests_with_pagination(request, tests, 25, 5)
+    context = get_pagination(int(request.GET.get('page', '1')), tests, 25, 5)
     return render(request, 'octapp/search_results.html', context)    
 
 def categories(request):
