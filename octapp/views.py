@@ -234,6 +234,8 @@ def tests(request):
     return render(request, 'octapp/tests.html', context)
 
 def search(request):
+    if not request.GET.get('search', False):
+        return redirect('tests_lists')
     search_type = request.GET.get('search_type', False)
     if search_type == 'search_in_tests_names':
         tests = Test.objects.filter(name__icontains=request.GET.get('search')).filter(published_date__lte=timezone.now()).order_by('name')
@@ -249,7 +251,7 @@ def search(request):
             for question in questions_of_some_type:
                 test_set.add(question.question_of_test.test)
         tests = list(test_set)
-        tests = [test for test in tests if test.published_date > timezone.now()]
+        tests = [test for test in tests if test.published_date < timezone.now()]
         tests.sort(key=lambda i: i.name, reverse=False)
     # Production — 25, 5
     context = get_pagination(int(request.GET.get('page', '1')), tests, 25, 5)

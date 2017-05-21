@@ -40,7 +40,7 @@
         {% endif %}
         
         {% if not is_author and request.user.is_superuser %}
-            <p>Вы, как суперпользователь, можете:</p><br>
+            <p>Вы, как суперпользователь, можете:</p>
             {% if not test.published_date %}
             <a href="{% url 'test_publish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Опубликовать</a>
             {% else %}
