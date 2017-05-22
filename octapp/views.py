@@ -1157,3 +1157,6 @@ def results(request):
 
 def user_agreement_and_licenses(request):
     return render(request, 'octapp/user_agreement_and_licenses.html')
+
+def about(request):
+    return render(request, 'octapp/about.html')
