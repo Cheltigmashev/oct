@@ -2,6 +2,10 @@
 {% load staticfiles %}
 {% load avatar_tags humanize %}
 
+{% block title %}
+<title>OnlineCustomTesting: тест «{{ test.name|upper }}»</title>
+{% endblock %}
+
 {% block page_style %}
 <link rel="stylesheet" href="{% static 'octapp/css/test_detail.css' %}">
 {% endblock %}
@@ -148,8 +152,8 @@
 
     {% if user.is_authenticated and not rate_of_current_user %}
         <div class="test_description_element test_description_element_with_buttons">
-    <a href="{% url 'review' test_id=test.id user_rate='dislike' %}" class="btn btn-default voting_btn">-1 к рейтингу</a>
-    <a href="{% url 'review' test_id=test.id user_rate='like' %}" class="btn btn-default voting_btn">+1 к рейтингу</a>
+            <a href="{% url 'review' test_id=test.id user_rate='dislike' %}" class="btn btn-default voting_btn">-1 к рейтингу</a>
+            <a href="{% url 'review' test_id=test.id user_rate='like' %}" class="btn btn-default voting_btn">+1 к рейтингу</a>
         </div>
     {% endif %}
 
@@ -163,6 +167,41 @@
         {% endif %}
         </div>
     {% endif %}
+
+    <div class="dropdown test_description_element test_description_element_with_buttons">
+        <button id="dLabel2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-block btn-default">
+            Поделиться ссылкой на тест
+            <span class="caret"></span>
+        </button>
+        
+        <div aria-labelledby="dLabel2" class="dropdown-menu">
+            <a href="http://vk.com/share.php?url=http://customtesting.pythonanywhere.com{% url 'test_detail' pk=test.pk %}" class="btn btn-default"
+            onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"
+            target="_blank" rel="nofollow">
+                Вконтакте
+            </a>
+            <a href="https://twitter.com/share?url=http://customtesting.pythonanywhere.com{% url 'test_detail' pk=test.pk %}" class="btn btn-default"
+            onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"
+            target="_blank" rel="nofollow">
+                Twitter
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://customtesting.pythonanywhere.com{% url 'test_detail' pk=test.pk %}" class="btn btn-default"
+            onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"
+            target="_blank" rel="nofollow">
+                Facebook
+            </a>
+            <a href="https://plus.google.com/share?url=http://customtesting.pythonanywhere.com{% url 'test_detail' pk=test.pk %}" class="btn btn-default"
+            onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"
+            target="_blank" rel="nofollow">
+                Google+
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://customtesting.pythonanywhere.com{% url 'test_detail' pk=test.pk %}" class="btn btn-default"
+            onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"
+            target="_blank" rel="nofollow">
+                LinkedIn
+            </a>
+        </div>
+    </div>    
 
     <hr>
     <p class="text-left">Теги:

@@ -1,11 +1,14 @@
 {% extends 'octapp/list_with_filtering_and_pagination.html' %}
 {% load staticfiles %}
 
+{% block title %}
+<title>OnlineCustomTesting: список тестов</title>
+{% endblock %}
+
 {% block page_style %}
 <link rel="stylesheet" href="{% static 'octapp/css/sorting_and_pagination.css' %}">
 <link rel="stylesheet" href="{% static 'octapp/css/tests.css' %}">
 {% endblock %}
-
 
 {% block before_filtering_and_sorting %}
 

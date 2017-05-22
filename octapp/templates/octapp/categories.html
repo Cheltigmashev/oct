@@ -1,6 +1,10 @@
 {% extends 'octapp/list_with_pagination.html' %}
 {% load staticfiles %}
 
+{% block title %}
+<title>OnlineCustomTesting: категории тестов</title>
+{% endblock %}
+
 {% block page_style %}
 <link rel="stylesheet" href="{% static 'octapp/css/sorting_and_pagination.css' %}">
 <link rel="stylesheet" href="{% static 'octapp/css/tags_and_categories.css' %}">

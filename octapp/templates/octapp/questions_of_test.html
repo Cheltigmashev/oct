@@ -1,6 +1,10 @@
 {% extends 'octapp/list_with_pagination.html' %}
 {% load staticfiles %}
 
+{% block title %}
+<title>OnlineCustomTesting: вопросы теста «{{ test|upper }}»</title>
+{% endblock %}
+
 {% block page_style %}
 <link rel="stylesheet" href="{% static 'octapp/css/questions_of_test.css' %}">
 {% endblock %}

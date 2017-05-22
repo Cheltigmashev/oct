@@ -1,6 +1,10 @@
 {% extends 'octapp/base.html' %}
 {% load staticfiles %}
 
+{% block title %}
+<title>OnlineCustomTesting: прохождение теста «{{ test.name|upper }}»</title>
+{% endblock %}
+
 {% block page_style %}
 <link rel="stylesheet" href="{% static 'octapp/css/test_passing.css' %}">
 {% endblock %}
