@@ -14,7 +14,6 @@
 {% endblock %}
 
         <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed|Neucha|Roboto+Mono&amp;subset=cyrillic" rel="stylesheet">
-
         <link rel="stylesheet" href="{% static 'octapp/css/bootstrap.min.css' %}">
         <link rel="stylesheet" href="{% static 'octapp/css/bootstrap-theme.min.css' %}">
         <link rel="stylesheet" href="{% static 'octapp/css/base.css' %}">
@@ -168,7 +167,7 @@
                         <a href="" class="btn btn-sm btn-default">О проекте</a>
                         <a href="" class="btn btn-sm btn-default">Демо-ролик</a>
                         <a href="" class="btn btn-sm btn-default">Инструкция пользователя</a>
-                        <a href="" class="btn btn-sm btn-default">Пользовательское соглашение</a>
+                        <a href="{% url 'user_agreement_and_licenses' %}" class="btn btn-sm btn-default">Пользовательское соглашение и сведения о лицензиях</a>
                         <a href="mailto:danil.cheltigmashev@yandex.ru" class="btn btn-sm btn-default hidden-xs">Обратная связь</a>
                         <div class="general_statictics inline_block hidden-xs">
                             <span class="badge">Тестов: {{ all_tests_count }}</span>

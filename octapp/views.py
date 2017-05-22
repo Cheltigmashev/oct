@@ -123,7 +123,6 @@ def tests_lists(request):
 
 # Хотя и принимает request, но не используется в URL-шаблонах как представление
 def get_filtered_and_sorted_tests_with_pagination(request, tests, on_one_page, max_pages_before_or_after_current):
-    q_dict = request.GET.dict()
     context = { }
     if request.GET.get('selected_category', '') == 'null':
         # Отбираем тесты без категории
@@ -198,13 +197,17 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests, on_one_page, m
     tags_for_filtering_of_tests = Tag.objects.order_by('name')
     context.update({'categories_for_filtering_of_tests': categories_for_filtering_of_tests, 'tags_for_filtering_of_tests': tags_for_filtering_of_tests})
 
+    q_dict = request.GET.dict()
+    # Номер страницы в HTTPparameters передавать не нужно
+    if 'page' in q_dict:
+        q_dict.pop('page')
     q = QueryDict(mutable=True)
     q.update(q_dict)
+    # HTTPparameters служит для передачи HTTP-параметров в навигационные ссылки
     context['HTTPparameters'] = '?' + q.urlencode()
     return context
 
 def get_categories_with_count_of_published_tests(categories):
-    # Нужно изменить количество тестов, выводимых при фильтрации по категории
     categories_and_count_of_published_tests_in_them = []
     for category in categories:
         categories_and_count_of_published_tests_in_them.append([category, category.tests.filter(published_date__lte=timezone.now()).count()])
@@ -212,7 +215,6 @@ def get_categories_with_count_of_published_tests(categories):
     return categories_and_count_of_published_tests_in_them
 
 def get_tags_with_count_of_published_tests(tags):
-    # Нужно изменить количество тестов, выводимых при фильтрации по тегу
     tags_and_count_of_published_tests_in_them = []
     for tag in tags:
         tags_and_count_of_published_tests_in_them.append([tag, tag.tests.filter(published_date__lte=timezone.now()).count()])
@@ -229,8 +231,8 @@ def tests(request):
     tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
     # Production — 25, 5
     context = get_filtered_and_sorted_tests_with_pagination(request, tests, 25, 5)
-    context['categories_for_filtering_of_tests'] = categories_with_count_of_published_tests
-    context['tags_for_filtering_of_tests'] = tags_with_count_of_published_tests
+    context['categories_and_count_of_published_tests_in_them'] = categories_with_count_of_published_tests
+    context['tags_and_count_of_published_tests_in_them'] = tags_with_count_of_published_tests
     return render(request, 'octapp/tests.html', context)
 
 def search(request):
@@ -254,8 +256,18 @@ def search(request):
         tests = [test for test in tests if test.published_date < timezone.now()]
         tests.sort(key=lambda i: i.name, reverse=False)
     # Production — 25, 5
-    context = get_pagination(int(request.GET.get('page', '1')), tests, 25, 5)
-    return render(request, 'octapp/search_results.html', context)    
+    context = get_filtered_and_sorted_tests_with_pagination(request, tests, 25, 5)
+
+    categories = Category.objects.filter(confirmed=True).order_by('name')
+    categories_with_count_of_published_tests = get_categories_with_count_of_published_tests(categories)
+    tags = Tag.objects.order_by('name')    
+    tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
+    context['categories_and_count_of_published_tests_in_them'] = categories_with_count_of_published_tests
+    context['tags_and_count_of_published_tests_in_them'] = tags_with_count_of_published_tests
+
+    context['search'] = request.GET.get('search')
+    context['search_type'] = request.GET.get('search_type')
+    return render(request, 'octapp/tests.html', context)    
 
 def categories(request):
     categories = Category.objects.filter(confirmed=True).order_by('name')
@@ -1141,6 +1153,7 @@ def results(request):
     q = QueryDict(mutable=True)
     q.update(q_dict)
     context['HTTPparameters'] = '?' + q.urlencode()
-
     return render(request, 'octapp/results.html', context)
-    
+
+def user_agreement_and_licenses(request):
+    return render(request, 'octapp/user_agreement_and_licenses.html')
