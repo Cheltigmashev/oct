@@ -23,7 +23,8 @@ $comment_padding: 10px
       margin: 1px
       margin-right: -3px
       width: 50%
-    .btn:last-of-type
+    // Если кнопка нечетная (т.е. в первом стобце кнопок) и последняя, то растянуть ее по ширине
+    .btn:last-of-type:nth-of-type(2n-1)
       width: 100%
   div.test_description_element
     border-left: 4px solid gray

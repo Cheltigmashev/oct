@@ -36,6 +36,7 @@ urlpatterns = [
 
     url(r'^user_agreement_and_licenses/$', views.user_agreement_and_licenses, name='user_agreement_and_licenses'),
     url(r'^about/$', views.about, name='about'),
+    url(r'^user_manual/$', views.user_manual, name='user_manual'),
 
     #url(r'^categories_confirming/(?P<pk>\d+)/publish/$', permission_required("octapp.can_confirm")
     # (views.categories_confirming, name='categories_confirming')),

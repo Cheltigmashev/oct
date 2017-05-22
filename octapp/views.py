@@ -1146,7 +1146,6 @@ def results(request):
         results = results.filter(passing_date__lte=before)
         context['filtering_by_date_before'] = request.GET.get('filtering_by_date_before') 
 
-
     # Production — 20, 5
     context.update(get_pagination(page, results, 20, 5))
 
@@ -1160,3 +1159,6 @@ def user_agreement_and_licenses(request):
 
 def about(request):
     return render(request, 'octapp/about.html')
+
+def user_manual(request):
+    return render(request, 'octapp/user_manual.html')
