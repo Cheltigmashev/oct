@@ -1,5 +1,4 @@
-{% load staticfiles %}
-{% load avatar_tags %}
+{% load staticfiles avatar_tags %}
 <!doctype html>
 <html>
     <head>
@@ -165,7 +164,7 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
                         <a href="{% url 'about' %}" class="btn btn-sm btn-default">О проекте</a>
-                        <a href="" class="btn btn-sm btn-default">Демо-ролик</a>
+                        <a href="{% url 'demo_reel' %}" class="btn btn-sm btn-default">Демо-ролик</a>
                         <a href="{% url 'user_manual' %}" class="btn btn-sm btn-default">Инструкция пользователя</a>
                         <a href="{% url 'user_agreement_and_licenses' %}" class="btn btn-sm btn-default">Пользовательское соглашение и сведения о лицензиях</a>
                         <a href="mailto:danil.cheltigmashev@yandex.ru" class="btn btn-sm btn-default hidden-xs">Обратная связь</a>

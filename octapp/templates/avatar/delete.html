@@ -13,7 +13,7 @@
     {% else %}
         <form method="POST" action="{% url 'avatar_delete' %}">
 {{ delete_avatar_form.choices }}
-            <p>{% csrf_token %}<input type="submit" class="btn btn-block btn-lg btn-danger" value="Удалить выбранные аватарки" /></p>
+            <p>{% csrf_token %}<input type="submit" class="btn btn-block btn-lg btn-default" value="Удалить выбранные аватарки" /></p>
         </form>
     {% endif %}
 {% endblock %}

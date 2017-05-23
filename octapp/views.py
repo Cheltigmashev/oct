@@ -1159,3 +1159,6 @@ def about(request):
 
 def user_manual(request):
     return render(request, 'octapp/user_manual.html')
+
+def demo_reel(request):
+    return render(request, 'octapp/demo_reel.html')

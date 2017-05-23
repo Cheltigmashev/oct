@@ -1,0 +1,17 @@
+{% extends 'octapp/base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+<title>OnlineCustomTesting: демонстрационный ролик</title>
+<style type="text/css">
+    video {border: 2px solid orange; width: 78%; box-shadow: 4px 4px 8px 4px gray}
+    .content {text-align: center}
+</style>
+{% endblock %}
+
+{% block content %}
+<video controls autoplay>
+    <source src="{% static 'octapp/OnlineCustomTestingDemoReel.mp4' %}" type="video/mp4">
+</video>
+
+{% endblock %}
