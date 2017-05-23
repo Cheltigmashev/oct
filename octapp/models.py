@@ -57,7 +57,7 @@ class Test(models.Model):
 
 class Comment(models.Model):
     test = models.ForeignKey('octapp.Test', related_name='comments', on_delete=models.CASCADE, verbose_name='Тест, к которому относится комментарий')
-    author = models.ForeignKey('auth.User', related_name='comments', verbose_name='Пользователь-автор комментария')
+    author = models.ForeignKey('auth.User', related_name='comments', on_delete=models.CASCADE, verbose_name='Пользователь-автор комментария')
 
     content = RichTextField('Содержимое (контент) комментария',
                     help_text='Используйте сервисы хранения изображений, если требуется добавить картинку.', blank=False)
