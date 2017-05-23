@@ -13,3 +13,4 @@ db.sqlite3
 /.pylintrc
 /oct/my.ini
 fixture.json
+/oct/secret_key.txt
