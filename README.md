@@ -1,5 +1,5 @@
 # OnlineCustomTesting
-![The main page of system](https://github.com/Cheltigmashev/oct/raw/master/Screenshots/OnlineCustomTesting main page.png)
+![The main page of system](https://github.com/Cheltigmashev/oct/raw/master/OnlineCustomTestingMainPage.png)
 Проект OnlineCustomTesting — выпускная квалификационная работа Челтыгмашева Данила, студента группы М-22 Хакасского государственного университета им. Н.Ф. Катанова.
 
 Система (сайт) позволяет добавлять образовательные тесты различной тематики, присваивая им категорию и теги. Для тестов доступно *4 вида вопросов*: закрытого типа, открытого типа, на упорядочение (сортировку) элементов, на сопоставление элементов. При этом в одном тесте можно использовать все 4 вида вопросов. Присутствует возможность поделиться ссылкой на тест в facebook, twitter, google+ и Вконтакте.
