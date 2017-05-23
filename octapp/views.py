@@ -555,9 +555,6 @@ def new_question(request, test_id, type):
                 new_open_question_object = open_question_form.save(commit=False)
                 new_open_question_object.question_of_test = new_question_of_test
                 new_open_question_object.save()
-                return HttpResponseRedirect('/my_long_url/%s/?q=something', x)
-                return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
-                # return redirect('questions_of_test', test_id=test_id)
 
         if type == 'sequence':
             sequence_question_form = SequenceQuestionForm(request.POST)

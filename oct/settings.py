@@ -143,7 +143,7 @@ MEDIA_URL = '/media/'
 AVATAR_CHANGE_TEMPLATE = 'avatar/change.html'
 AVATAR_DELETE_TEMPLATE = 'avatar/delete.html'
 AVATAR_ADD_TEMPLATE = 'avatar/change.html'
-AVATAR_GRAVATAR_DEFAULT = 'wavatar'
+AVATAR_GRAVATAR_DEFAULT = 'identicon'
 # В байтах, 150КБ
 AVATAR_MAX_SIZE = 153600
 
