@@ -24,11 +24,11 @@
             <span class="caret"></span>
         </button>
         
-        <div aria-labelledby="dLabel" class="dropdown-menu">
+        <div aria-labelledby="dLabel" class="dropdown-menu test_managing">
                 
         {% if is_author %}
             <p>Вы, как тот, кто загрузил данный тест, можете:</p>
-            <a href="{% url 'questions_of_test' test_id=test.pk %}" class="btn btn-default">Просмотреть/редактировать<br> вопросы и/или добавить новые</a>
+            <a href="{% url 'questions_of_test' test_id=test.pk %}" class="btn btn-default btn-lg">Вопросы теста</a>
             {% if not test.published_date %}
             <a href="{% url 'test_publish' pk=test.pk through_user_tests='False' %}" class="btn btn-default btn-lg">Опубликовать</a>
             {% else %}
@@ -267,7 +267,6 @@
         <div class="author_username title_font">{{ comment.author.username }}{% if comment.author == test.author %}, загрузивший данный тест{% endif %}</div>
         <div class="author_avatar">{% avatar comment.author class="scaled_custom_thumbnail" %}</div>        
         <div class="comment_date">{{ comment.created_date }}, {{ comment.created_date|naturaltime }}</div>
-        
         <div class="comment_content">
             {{ comment.content|safe }}
         </div>

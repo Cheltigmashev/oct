@@ -346,7 +346,7 @@ class TestsListsViewTests(TestCase):
     def test_tests_lists_view_with_five_past_tests_and_one_future(self):
         """
         Могут отображаться несколько тестов с минувшей датей публикации, т.е. опубликованных тестов.
-        В том числе, если у них нет тегов, нет категории, либо категория не подтверждена.
+        Даже если у них нет тегов, нет категории, либо категория не подтверждена.
         """
         some_categories = create_some_categories()
         some_tags = create_some_tags()

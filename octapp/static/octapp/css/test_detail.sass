@@ -1,7 +1,7 @@
 @charset "utf-8"
 // НЕОБХОДИМО ПЕРЕКОМПИЛИРОВАТЬ ДАННЫЙ ФАЙЛ ПРИ ИЗМЕНЕНИЯХ В custom_thumbnail.sass
 @import custom_thumbnail
-$comment_padding: 10px
+$comment_padding: 5px
 
 .content
   p
@@ -72,39 +72,34 @@ $comment_padding: 10px
       padding: 4px 6px 3px 4px
   .comment
     margin: 10px 0
-    padding: 32px $comment_padding $comment_padding + 5px $comment_padding
+    padding: $comment_padding
     position: relative
     border: 1px solid gray
     box-shadow: 2px 2px 2px 2px gray
     border-radius: 10px
-    min-height: $full_width_of_resized_avatar + $comment_padding * 2
-    .author_username, .comment_date
-      position: absolute
+    min-height: $full_width_of_resized_avatar * 0.8 + $comment_padding * 2 + 15px
     .author_username
-      top: $comment_padding
-      left: $full_width_of_resized_avatar + 38px
       font-weight: bold
-      padding-right: $comment_padding
+      display: inline
     .author_avatar
-      min-height: $full_width_of_resized_avatar
-      min-width: $full_width_of_resized_avatar
+      height: $full_width_of_resized_avatar * 0.8
+      width: $full_width_of_resized_avatar * 0.8
       float: left
-      margin: -25px 8px 0 0
+      margin: 0 8px 0 0
     .comment_date
+      position: absolute
       color: #555555
       bottom: 0
       right: 14px
     .comment_content
+      display: inline
       padding: 0 4px 0 4px
 
 /*============    	АДАПТИВ    ===========*/
 
 @media(min-width:0px) and (max-width:410px)
-  .content
-    .comment
-      padding-top: 50px
-      .author_avatar
-        margin-top: -43px
+  .content .comment .comment_content
+    word-break: break-all
 
 @media(min-width:0px) and (max-width:767px)
   .test_description_element
@@ -130,7 +125,7 @@ $comment_padding: 10px
 
 @media(min-width:1200px)
   .test_description_element
-    margin: 0  
+    margin: 0
     width: 25%
     margin-right: 4px
   .test_description_element:nth-of-type(4n)
