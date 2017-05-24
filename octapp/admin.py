@@ -10,7 +10,6 @@ admin.site.register(ResultScale)
 admin.site.register(Tag)
 admin.site.register(TestRate)
 admin.site.register(Result)
-
 admin.site.register(QuestionOfTest)
 admin.site.register(ClosedQuestion)
 admin.site.register(ClosedQuestionOption)

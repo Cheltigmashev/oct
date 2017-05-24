@@ -63,7 +63,6 @@
     {% endfor %}
 {% endblock %}
 
-
 {% block tags_options_for_filtering %}
     {% for tag, count in tags_and_count_of_published_tests_in_them %}
         {% if tag.pk == selected_tag_object.pk %}

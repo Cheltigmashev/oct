@@ -16,7 +16,6 @@ User = get_user_model()
 def get_tests_lists_context():
     showing_tests_per_one_column = 14
     showing_tags_and_categories_amount = 58
-
     # Левый ряд тестов для списка новых тестов, диапазон от 0го до showing_tests_per_one_column - 1
     left_number_of_new_tests_list = Test.objects.filter(published_date__lte=timezone.now()).order_by('-published_date', 'name')[:showing_tests_per_one_column]
     # Левый ряд тестов для списка новых тестов
@@ -39,7 +38,6 @@ def get_tests_lists_context():
     showing_categories_and_count_of_published_tests.sort(key=lambda i: i[1], reverse=True)
 
     all_tags_count = Tag.objects.count()
-
     all_published_test_count = Test.objects.filter(published_date__lte=timezone.now()).count()
     all_confirmed_categories_count = Category.objects.filter(confirmed=True).count()
 
@@ -58,10 +56,8 @@ def get_tests_lists_context():
         show_elision_marks_for_tests = None
 
     unconfirmed_categories = Category.objects.filter(confirmed=False)
-
     count_of_tests_without_category = Test.objects.filter(category=None).filter(published_date__lte=timezone.now()).count()
     count_of_tests_without_tags = Test.objects.filter(tags=None).filter(published_date__lte=timezone.now()).count()
-
     count_of_published_tests_with_unconf_cat = 0
     for unconf_cat in unconfirmed_categories:
         count_of_published_tests_with_unconf_cat += unconf_cat.tests.filter(published_date__lte=timezone.now()).count()
@@ -192,11 +188,9 @@ def get_filtered_and_sorted_tests_with_pagination(request, tests, on_one_page, m
     page = int(page)
     pag_context = get_pagination(page, tests, on_one_page, max_pages_before_or_after_current)
     context.update(pag_context)
-
     categories_for_filtering_of_tests = Category.objects.filter(confirmed=True).order_by('name')
     tags_for_filtering_of_tests = Tag.objects.order_by('name')
     context.update({'categories_for_filtering_of_tests': categories_for_filtering_of_tests, 'tags_for_filtering_of_tests': tags_for_filtering_of_tests})
-
     q_dict = request.GET.dict()
     # Номер страницы в HTTPparameters передавать не нужно
     if 'page' in q_dict:
@@ -257,14 +251,12 @@ def search(request):
         tests.sort(key=lambda i: i.name, reverse=False)
     # Production — 25, 5
     context = get_filtered_and_sorted_tests_with_pagination(request, tests, 25, 5)
-
     categories = Category.objects.filter(confirmed=True).order_by('name')
     categories_with_count_of_published_tests = get_categories_with_count_of_published_tests(categories)
     tags = Tag.objects.order_by('name')    
     tags_with_count_of_published_tests = get_tags_with_count_of_published_tests(tags)
     context['categories_and_count_of_published_tests_in_them'] = categories_with_count_of_published_tests
     context['tags_and_count_of_published_tests_in_them'] = tags_with_count_of_published_tests
-
     context['search'] = request.GET.get('search')
     context['search_type'] = request.GET.get('search_type')
     return render(request, 'octapp/tests.html', context)    
@@ -714,7 +706,6 @@ def question_remove(request, test_id, question_of_test_id):
         father_question.save()
     question_of_test.delete()
     return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
-    # return redirect('questions_of_test', test_id=test_id)
 
 @login_required
 def new_options_or_elements(request, test_id, question_of_test_id, row):
@@ -771,7 +762,6 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                     ClosedQuestionOption.objects.create(question=question_of_test.closed_question,
                                 option_number=option_number, content=parsed_single_option_or_element_content)
                 return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
-                # return redirect('questions_of_test', test_id=test_id)
 
         elif question_of_test.type_of_question == 'SqncQ':
             sequence_question_element_form = SequenceQuestionElementForm(request.POST)
@@ -810,7 +800,6 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                     SequenceQuestionElement.objects.create(question=question_of_test.sequence_question,
                                 element_index_number=option_number, element_content=parsed_single_option_or_element_content)
                 return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
-                # return redirect('questions_of_test', test_id=test_id)
 
         elif question_of_test.type_of_question == 'CmprsnQ':
             comparison_question_element_form = ComparisonQuestionElementForm(request.POST)
@@ -880,11 +869,7 @@ def new_options_or_elements(request, test_id, question_of_test_id, row):
                                                                  element_content=parsed_single_option_or_element_content)
                     # question_of_test.comparison_question.save()
                 return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
-                # return redirect('questions_of_test', test_id=test_id)
-
-    # return render(request, 'octapp/questions_of_test.html', get_questions_of_test_context(test_id, int(request.GET.get('page', '1'))))
     return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
-    # return redirect('questions_of_test', test_id=test_id)
 
 @login_required
 def options_or_elements_of_question_remove_all(request, test_id, question_of_test_id):
@@ -898,7 +883,6 @@ def options_or_elements_of_question_remove_all(request, test_id, question_of_tes
     if question_of_test.type_of_question == 'CmprsnQ':
         question_of_test.comparison_question.comparison_elements.all().delete()  
     return HttpResponseRedirect(reverse('questions_of_test', args=[test_id]) + '?page=' + str(page))
-    # return redirect('questions_of_test', test_id=test_id)
 
 @login_required
 def review(request, test_id, user_rate):
@@ -1085,19 +1069,6 @@ def results(request):
     context = { }
     if request.GET.get('sorting', False) == 'username':
         results = Result.objects.all().order_by('user__username', 'test__name', '-passing_date')
-        
-        # Альтернативный способ сортировки
-        # results_and_usernames = []
-        # for result in results:
-        #     results_and_usernames.append([result, result.user.username])
-        # # Сортируем по алфавиту имен пользователей, соответствующих результатам прохождения
-        # results_and_usernames.sort(key=lambda i: i[1], reverse=False)
-        # # Извлекаем из двумерного массива только результаты
-        # sorted_results = []
-        # for result_and_username in results_and_usernames:
-        #     sorted_results.append(result_and_username[1])
-        # results = sorted_results
-
         # Передаем тип сортировки в контекст, чтобы в шаблоне подставлять текущую сортировку в <select>
         context['sorting'] = 'username'
     elif request.GET.get('sorting', False) == 'passing_date':

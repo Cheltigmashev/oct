@@ -28,7 +28,6 @@
     {{ form.media }}
     
     <div class="container flex">
-        
         <div class="col-md-6 col-xs-12 col-lg-6 col-sm-6">
             <div class="form_field_div">
     {{ form.name.label_tag }}
@@ -53,7 +52,6 @@
             </div>
         </div>
 
-
         <div class="col-md-6 col-xs-12 col-lg-6 col-sm-6">
             <div class="form_field_div">
     {{ form.new_category.label_tag }}
@@ -61,13 +59,11 @@
             </div>
         </div>
 
-
         <div class="form_row col-md-12 col-xs-12 col-lg-12 col-sm-12">
     {% if form.new_category.help_text %}<small><p>NB!: {% filter lower %}{{ form.new_category.help_text|safe }}{% endfilter %}</p></small>{% endif %}
     {% if form.new_category.errors %}<p class="field_with_error">Ошибка: {{ form.new_category.errors }}</p>{% endif %}
         </div>
 
-    
         <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
             <div class="form_field_div tags_div">
                 <div class="tag">
@@ -93,8 +89,6 @@
     {% if form.time_restricting.errors %}<p class="field_with_error">Ошибка: {{ form.time_restricting.errors }}</p>{% endif %}
             </div>
         </div>
-
-
 
         <div class="col-md-6 col-xs-12 col-lg-6 col-sm-12">
             <label for="id_anonymous_loader">
@@ -165,17 +159,14 @@
     {% if form.description.errors %}<p class="field_with_error">Ошибка: {{ form.description.errors }}</p>{% endif %}
             </div>
         </div>
-
         <input type="submit" value="Изменить/создать тест" class="btn btn-block btn-default btn-lg">
     </div>
 
 </form>
-
 <script>
     $(document).ready(function() {
         $(".django-ckeditor-widget").css({"width" : "100%"});
     });
 </script>
-
 
 {% endblock %}

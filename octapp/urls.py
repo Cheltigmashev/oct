@@ -38,7 +38,6 @@ urlpatterns = [
     url(r'^about/$', views.about, name='about'),
     url(r'^user_manual/$', views.user_manual, name='user_manual'),
     url(r'^demo_reel/$', views.demo_reel, name='demo_reel'),
-
     #url(r'^categories_confirming/(?P<pk>\d+)/publish/$', permission_required("octapp.can_confirm")
     # (views.categories_confirming, name='categories_confirming')),
 ]

@@ -74,7 +74,6 @@ class TestForm(forms.ModelForm):
         }
 
 # Формы для вопросов
-
 class ClosedQuestionForm(forms.ModelForm):
     question_index_number = forms.IntegerField(
         label=(u'Можете указать другой порядковый номер вопроса'),
