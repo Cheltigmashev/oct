@@ -12,4 +12,3 @@ function changeTime() {
 $(document).ready(() => {
   intervalID = setInterval(changeTime, 60000);
 });
-
