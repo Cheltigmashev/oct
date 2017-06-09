@@ -259,7 +259,7 @@ def search(request):
     context['tags_and_count_of_published_tests_in_them'] = tags_with_count_of_published_tests
     context['search'] = request.GET.get('search')
     context['search_type'] = request.GET.get('search_type')
-    return render(request, 'octapp/tests.html', context)    
+    return render(request, 'octapp/tests.html', context)
 
 def categories(request):
     categories = Category.objects.filter(confirmed=True).order_by('name')

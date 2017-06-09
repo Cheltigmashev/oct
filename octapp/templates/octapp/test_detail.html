@@ -78,7 +78,7 @@
         </div>
 
         <div class="test_description_element">
-    {% if test.controlling %}
+    {% if not test.controlling %}
             <p class="text-left">Без контроля прохождения</p>
     {% else %}
             <p class="text-left">С контролем прохождения</p>    
