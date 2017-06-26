@@ -1061,6 +1061,7 @@ def test_passing_results(request, pk):
                                             correct_answers_percentage=correct_answers_percentage)
     return render(request, 'octapp/test_passing_results.html', context)
 
+@login_required
 def results(request):
     results = Result.objects.all().order_by('-passing_date', 'test__name', 'user__username')
     page = request.GET.get('page', '1')
